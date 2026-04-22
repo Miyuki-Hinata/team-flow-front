@@ -1,6 +1,14 @@
-
+import { useState, useEffect } from 'react'
+import { announcements as fetchAnnouncements } from '../api/announcements'
 
 function DashboardPage() {
+    const [announcements, setAnnouncements] = useState([])
+
+    useEffect(() => {
+        fetchAnnouncements().then(data => {
+            setAnnouncements(data)
+        })
+    }, [])
 
     return (
         <div>
