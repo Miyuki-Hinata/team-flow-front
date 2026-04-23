@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { announcements as fetchAnnouncements } from '../api/announcements'
+import type { Announcement } from '../types/announcement'
+import { Link } from 'react-router-dom'
 
 function DashboardPage() {
-    const [announcements, setAnnouncements] = useState([])
+    const [announcements, setAnnouncements] = useState<Announcement[]>([])
 
     useEffect(() => {
         fetchAnnouncements().then(data => {
@@ -13,6 +15,16 @@ function DashboardPage() {
     return (
         <div>
             <h1>Dashboard</h1>
+            {announcements.map((announcement) => (
+                <div key={announcement.id}>
+                    <h2>{announcement.title}</h2>
+                    <p>{announcement.description}</p>
+                </div>
+            ))}
+            <Link to="/announcements">お知らせ一覧</Link>
+            <Link to="/mypage">マイページ</Link>
+            <Link to="/my-tasks">マイタスク</Link>
+            <Link to="/tasks">全タスク一覧</Link>
         </div>
     )
 }
