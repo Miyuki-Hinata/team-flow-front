@@ -8,6 +8,7 @@ function DashboardPage() {
 
     useEffect(() => {
         fetchAnnouncements().then(data => {
+                    console.log(data)
             setAnnouncements(data)
         })
     }, [])
@@ -15,12 +16,20 @@ function DashboardPage() {
     return (
         <div>
             <h1>Dashboard</h1>
-            {announcements.map((announcement) => (
-                <div key={announcement.id}>
-                    <h2>{announcement.title}</h2>
-                    <p>{announcement.description}</p>
-                </div>
-            ))}
+            {announcements
+                .filter(a => !a.isRead).length === 0 ? (
+                    <p>新規お知らせはありません</p>
+                ) : (
+                announcements
+                    .filter(a => !a.isRead)
+                    .slice(0, 3)
+                    .map((announcement) => (
+                        <div key={announcement.id}>
+                           <Link to="/announcements">{announcement.title}</Link>
+                        </div>
+                    ))
+                )
+            }
             <Link to="/announcements">お知らせ一覧</Link>
             <Link to="/mypage">マイページ</Link>
             <Link to="/my-tasks">マイタスク</Link>

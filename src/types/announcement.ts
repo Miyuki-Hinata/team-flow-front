@@ -12,4 +12,5 @@ export type Announcement = Base & {
     department: Department
     priority: 'LOW' | 'MEDIUM' | 'HIGH'
     expiredAt: string
+    isRead: boolean
 }
