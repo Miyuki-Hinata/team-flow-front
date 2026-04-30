@@ -8,7 +8,6 @@ function DashboardPage() {
 
     useEffect(() => {
         fetchAnnouncements().then(data => {
-                    console.log(data)
             setAnnouncements(data)
         })
     }, [])
