@@ -1,7 +1,10 @@
 
 import { useState, useEffect } from 'react'
-import { announcements as fetchAnnouncements } from '../api/announcements'
+import { announcements as fetchAnnouncements, markAsRead } from '../api/announcements'
 import type { Announcement } from '../types/announcement'
+import UrgentAnnouncements from '../components/UrgentAnnouncements'
+import AnnouncementTabs from '../components/AnnouncementTabs'
+import AnnouncementList from '../components/AnnouncementList'
 
 const AnnouncementsPage = () => {
     const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -18,15 +21,28 @@ const AnnouncementsPage = () => {
         activeTab === 'unread' ? !a.isRead : a.isRead
     )
 
+    const handleRead = async (id: number) => {
+        await markAsRead(id)
+        // 該当のお知らせの isRead を true にする
+        setAnnouncements(announcements.map(a => a.id === id ? {...a, isRead: true}: a
+        ))
+    }
+
     return (
         <div>
-            <UrgentAnnouncements announcements={announcements}/>
-            <Tabs
+            <UrgentAnnouncements
+                announcements={announcements}
+                onRead={handleRead}
+            />
+            <AnnouncementTabs
                 announcements={announcements}
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
             />
-            <Announcements announcements={filteredAnnouncements}/>
+            <AnnouncementList
+                announcements={filteredAnnouncements}
+                onRead={handleRead}
+            />
         </div>
     )
 }
