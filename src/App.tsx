@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import AnnouncementsPage  from './pages/AnnouncementsPage'
 import TasksPage from './pages/TasksPage'
+import TaskDetailPage from './pages/TaskDetailPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/announcements" element={<AnnouncementsPage />}/>
         <Route path="/tasks" element={<TasksPage />}/>
+        <Route path="/tasks/:id" element={<TaskDetailPage/>}/>
       </Routes>
     </BrowserRouter>
   )
