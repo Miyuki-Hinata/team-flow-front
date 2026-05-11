@@ -6,7 +6,7 @@ import { createTask } from '../api/tasks'
 import { projects as fetchProjects } from '../api/projects'
 import { patients as fetchPatients } from '../api/patients'
 import { categories as fetchCategories } from '../api/categories'
-
+import { useNavigate } from 'react-router-dom'
 
 const TaskCreatePage = () => {
     const [title, setTitle] = useState('')
@@ -24,6 +24,8 @@ const TaskCreatePage = () => {
     const [patients, setPatients] = useState<Patient[]>([])
     const [categories, setCategories] = useState<Category[]>([])
 
+    const navigate = useNavigate()
+
     const handleSubmit = async () => {
         await createTask({
             title: title,
@@ -34,9 +36,10 @@ const TaskCreatePage = () => {
             assignedToAll: assignedToAll,
             priority: priority,
             taskStatus: taskStatus,
-            dueDate: dueDate,
+            dueDate: dueDate ? `${dueDate}:00` : undefined,
             assigneeIds: assigneeIds
         })
+        navigate('/tasks')
     }
 
     useEffect(() => {
@@ -116,16 +119,24 @@ const TaskCreatePage = () => {
                 <option value="MEDIUM">MEDIUM</option>
                 <option value="HIGH">HIGH</option>
             </select>
-            <input
-                type="checkbox"
-                checked={assignedToAll}
-                onChange={(e) => setAssignToAll(e.target.checked)}
-            />
-            <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-            />
+            <label>
+                <input
+                    type="checkbox"
+                    checked={assignedToAll}
+                    onChange={(e) => setAssignToAll(e.target.checked)}
+                />
+                全員に割り当て
+            </label>
+
+            <label>
+                    期限
+                   <input
+                        type="datetime-local"
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
+                    />
+            </label>
+         
             <button onClick={handleSubmit}>作成</button>
         </div>
     )
