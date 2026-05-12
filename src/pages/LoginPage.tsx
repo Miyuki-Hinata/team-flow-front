@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { login }  from '../api/auth'
-import { useNavigate } from 'react-router-dom'
 
 function LoginPage() {
     const [loginId, setLoginId] = useState('')
     const [password, setPassword] = useState('')
-    const navigate = useNavigate()
 
     const handleLogin = async () => {
        const result = await login(loginId, password)
        localStorage.setItem('token', result.token)
-       navigate('/dashboard')
+        window.location.href = '/dashboard'
     }
     
     return (
