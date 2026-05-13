@@ -21,6 +21,12 @@ export const getTaskById = async (id:number) => {
         }
     })
 
+    // 404の場合はエラーをthrowする
+    if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error)
+    }
+
     return response.json()
 }
 
@@ -48,4 +54,15 @@ export const createTask = async (task: TaskRequest) => {
     })
 
     return response.json()
+}
+
+export const deleteTask = async (id: number) => {
+    console.log('deleteTask called', id)
+    const response = await fetch(`http://localhost:8080/api/tasks/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
 }

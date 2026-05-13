@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import type { Task } from '../types/task'
-import { useParams } from 'react-router-dom'
-import { getTaskById as fetchTask, updateTask } from '../api/tasks'
+import { useNavigate, useParams } from 'react-router-dom'
+import { deleteTask, getTaskById as fetchTask, updateTask } from '../api/tasks'
 
 const TaskDetailPage = () => {
+    const navigate = useNavigate()
+    
     const { id } = useParams()
 
     const [task, setTask] = useState<Task | null>(null)
@@ -26,11 +28,21 @@ const TaskDetailPage = () => {
         })
     }
 
+    const handleDelete = async () => {
+        await deleteTask(Number(id))
+        navigate('/tasks')
+    }
+
     useEffect(() => {
-        fetchTask(Number(id)).then(data => {
-            setTask(data)
-            setStatus(data.taskStatus)
-        })
+        fetchTask(Number(id))
+            .then(data => {
+                setTask(data)
+                setStatus(data.taskStatus)
+            })
+            .catch((error) => {
+                alert(error.message)
+                navigate('/tasks')
+            })
     },[])
 
     return (
@@ -67,6 +79,8 @@ const TaskDetailPage = () => {
                         <option value="REVIEWING">レビュー中</option>
                         <option value="DONE">完了</option>
                     </select>
+
+                     <button onClick={handleDelete}>削除</button>   
 
                 </div>
 
