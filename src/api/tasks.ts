@@ -57,7 +57,6 @@ export const createTask = async (task: TaskRequest) => {
 }
 
 export const deleteTask = async (id: number) => {
-    console.log('deleteTask called', id)
     const response = await fetch(`http://localhost:8080/api/tasks/${id}`, {
         method: 'DELETE',
         headers: {
@@ -65,4 +64,16 @@ export const deleteTask = async (id: number) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     })
+}
+
+export const getMyTasks = async () => {
+    const response = await fetch(`http://localhost:8080/api/tasks/my-tasks`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+
+    return response.json()
 }
