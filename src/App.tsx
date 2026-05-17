@@ -6,6 +6,7 @@ import TasksPage from './pages/TasksPage'
 import TaskDetailPage from './pages/TaskDetailPage'
 import TaskCreatePage from './pages/TaskCreatePage'
 import Navigation from './components/Navigation'
+import AnnouncementDetailPage from './pages/AnnouncementDetailPage'
 
 function App() {
     const token = localStorage.getItem('token')
@@ -19,6 +20,8 @@ function App() {
                 <Route path="/tasks" element={<TasksPage />}/>
                 <Route path="/tasks/create" element={<TaskCreatePage/>}/>
                 <Route path="/tasks/:id" element={<TaskDetailPage/>}/>
+                <Route path="/announcements/:id" element={<AnnouncementDetailPage/>}
+                />
             </Routes>
         </BrowserRouter>
     )

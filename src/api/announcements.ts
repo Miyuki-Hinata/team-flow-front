@@ -18,3 +18,20 @@ export const markAsRead = async (id: number) => {
         }
     })
 }
+
+export const getAnnouncementById = async (id: number) => {
+    const response = await fetch(`http://localhost:8080/api/announcements/${id}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+
+    if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error)
+    }
+
+    return response.json()
+}
