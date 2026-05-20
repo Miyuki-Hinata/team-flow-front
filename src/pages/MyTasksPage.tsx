@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Task } from '../types/task' 
 import { getMyTasks as fetchMyTasks } from '../api/tasks'
 import { Link } from 'react-router-dom'
-import TaskList from '../components/TaskList'
+import TaskListContainer from '../components/TaskListContainer'
 
 const MyTasksPage = () => {
     const [tasks,  setTasks] = useState<Task[]>([])
@@ -16,7 +16,7 @@ const MyTasksPage = () => {
     return (
         <div>
             <Link to="/tasks/create">タスク作成</Link>
-            <TaskList tasks ={tasks}/>
+            <TaskListContainer tasks ={tasks}/>
         </div>
     )
 }

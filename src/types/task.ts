@@ -4,6 +4,9 @@ import type { Patient } from './patient'
 import type { Project } from './project'
 import type { User } from './user'
 
+export type Priority = 'LOW' | 'MEDIUM' | 'HIGH'
+export type TaskStatus = 'CREATED' | 'PROGRESS' | 'REVIEWING' | 'DONE'
+
 export type Task = Base & {
     id: number
     title: string
@@ -12,8 +15,8 @@ export type Task = Base & {
     category: Category
     patient: Patient
     assignedToAll: boolean
-    priority: 'LOW' | 'MEDIUM' | 'HIGH'
-    taskStatus: 'CREATED' | 'PROGRESS' | 'REVIEWING' | 'DONE'
+    priority: Priority
+    taskStatus: TaskStatus
     dueDate: string
     assignees: User[]
     relatedTasks: Task[]
