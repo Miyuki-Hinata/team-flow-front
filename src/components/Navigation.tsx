@@ -4,9 +4,10 @@ const Navigation = () => {
     return (
         <div>
             <Link to="/announcements">お知らせ一覧</Link>
+            <Link to="/patients">患者一覧</Link>
             <Link to="/tasks">全タスク一覧</Link>
             <Link to="/tasks/my-tasks">マイタスク</Link>
-             <Link to="/mypage">マイページ</Link>
+            <Link to="/mypage">マイページ</Link>
         </div>
     )
 }
