@@ -1,0 +1,12 @@
+export type Role =
+    | 'DOCTOR'
+    | 'NURSE'
+    | 'PHARMACIST'
+    | 'CARE_MANAGER'
+    | 'OT'
+    | 'PT'
+    | 'MT'
+    | 'RADIOLOGIST'
+    | 'DIETITIAN'
+    | 'SOCIAL_WORKER'
+    | 'CLERK'
