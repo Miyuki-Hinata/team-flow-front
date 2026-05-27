@@ -9,6 +9,7 @@ import Navigation from './components/Navigation'
 import AnnouncementDetailPage from './pages/AnnouncementDetailPage'
 import MyTasksPage from './pages/MyTasksPage'
 import PatientPage from './pages/PatientPage'
+import PatientCreatePage from './pages/PatientCreatePage'
 
 function App() {
     const token = localStorage.getItem('token')
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/announcements/:id" element={<AnnouncementDetailPage/>}
                 />
                 <Route path="/patients" element={<PatientPage/>}/>
+                <Route path="/patients/create" element={<PatientCreatePage/>}/>
             </Routes>
         </BrowserRouter>
     )
