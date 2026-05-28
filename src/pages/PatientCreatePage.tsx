@@ -38,7 +38,7 @@ const PatientCreatePage = () => {
 
     // 汎用ハンドラ
     const handleChange = (field: keyof PatientRequest) => 
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: React.ChangeEvent<HTMLInputElement| HTMLSelectElement>) => {
             setPatient({ ...patient, [field]: e.target.value })
         }
     
@@ -64,6 +64,41 @@ const PatientCreatePage = () => {
                 value={patient.firstName}
                 onChange={handleChange('firstName')}
             />
+                        
+            <input
+                type="text"
+                placeholder="苗字のかな"
+                value={patient.lastNameKana}
+                onChange={handleChange('lastNameKana')}
+            />
+
+            <input
+                type="text"
+                placeholder="名前のかな"
+                value={patient.firstNameKana}
+                onChange={handleChange('firstNameKana')}
+            />
+
+            <input
+                type="date"
+                placeholder="生年月日"
+                value={patient.birth}
+                onChange={handleChange('birth')}
+            />
+
+            <select value={patient.sex} onChange={handleChange('sex')}>
+                <option value="">性別を選択</option>
+                <option value="男性">男性</option>
+                <option value="女性">女性</option>
+                <option value="その他">その他</option>
+            </select>
+
+            <input
+                type="text"
+                placeholder="住所"
+                value={patient.address}
+                onChange={handleChange('address')}
+            />
 
             <input
                 type="tel"
@@ -71,6 +106,21 @@ const PatientCreatePage = () => {
                 value={patient.tel ?? ''}
                 onChange={handleChange('tel')}
             />
+
+            <input
+                type="text"
+                placeholder="緊急連絡先の人物名"
+                value={patient.emergencyContactName ?? ''}
+                onChange={handleChange('emergencyContactName')}
+            />
+
+            <input
+                type="tel"
+                placeholder="緊急連絡先の電話番号"
+                value={patient.emergencyContactTel ?? ''}
+                onChange={handleChange('emergencyContactTel')}
+            />
+
 
             
             {/* セレクト：部署 */}
