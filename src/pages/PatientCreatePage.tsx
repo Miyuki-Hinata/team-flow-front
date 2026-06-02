@@ -137,7 +137,7 @@ const PatientCreatePage = () => {
                 ))}
             </select>
             
-            {/* セレクト：担当医 ← 自分で書いてみてください */}
+            {/* セレクト：担当医 */}
             <select
                 value={patient.doctorId ?? ''}
                 onChange={(e) => setPatient({

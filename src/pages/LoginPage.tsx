@@ -4,11 +4,17 @@ import { login }  from '../api/auth'
 function LoginPage() {
     const [loginId, setLoginId] = useState('')
     const [password, setPassword] = useState('')
-
+    const [errorMessage, setErrorMessage] = useState('')
+    
     const handleLogin = async () => {
-       const result = await login(loginId, password)
-       localStorage.setItem('token', result.token)
-        window.location.href = '/dashboard'
+        try {
+            setErrorMessage('')
+            const result = await login(loginId, password)
+            localStorage.setItem('token', result.token)
+            window.location.href = '/dashboard'
+        } catch(error) {
+            setErrorMessage((error as Error).message)
+        }
     }
     
     return (
@@ -26,6 +32,8 @@ function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
+            {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
+
             <button onClick={handleLogin}>ログイン</button>   
         </div>
     )
