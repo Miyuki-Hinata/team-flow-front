@@ -12,6 +12,24 @@ export const patients = async () => {
     return response.json()
 }
 
+export const getPatientById = async (id: number) => {
+    const response = await fetch(`http://localhost:8080/api/patients/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+
+    if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error)
+    }
+
+    return response.json()
+}
+
+
 export const createPatient = async (patient: PatientRequest) => {
     const response = await fetch('http://localhost:8080/api/patients',{
         method: 'POST',

@@ -30,6 +30,23 @@ export const getTaskById = async (id:number) => {
     return response.json()
 }
 
+export const getTasksByPatientId = async (id: number) => {
+    const response = await fetch(`http://localhost:8080/api/tasks/patient/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+
+    if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error)
+    }
+
+    return response.json()
+}
+
 export const updateTask = async (id:number, task: TaskRequest) => {
     const response = await fetch(`http://localhost:8080/api/tasks/${id}`, {
         method: 'PUT',
