@@ -70,6 +70,10 @@ export const createTask = async (task: TaskRequest) => {
         body: JSON.stringify(task)
     })
 
+    if (!response.ok) {
+        throw new Error(`タスク作成に失敗しました (${response.status})`)
+    }
+
     return response.json()
 }
 

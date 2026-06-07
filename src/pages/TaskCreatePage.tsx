@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import type { Project } from '../types/project'
 import type { Patient } from '../types/patient'
 import type { Category } from '../types/category'
+import type { User } from '../types/user'
 import { createTask } from '../api/tasks'
 import { projects as fetchProjects } from '../api/projects'
 import { patients as fetchPatients } from '../api/patients'
 import { categories as fetchCategories } from '../api/categories'
+import { users as fetchUsers } from '../api/users'
 import { useNavigate } from 'react-router-dom'
 
 const TaskCreatePage = () => {
@@ -18,41 +20,47 @@ const TaskCreatePage = () => {
     const [priority, setPriority] = useState<'LOW' | 'MEDIUM' | 'HIGH'>('MEDIUM')
     const [taskStatus, setTaskStatus] = useState<'CREATED' | 'PROGRESS' | 'REVIEWING' | 'DONE'>('CREATED')
     const [dueDate, setDueDate] = useState('')
-    const [assigneeIds, setAssigneeIds] = useState([])
+    const [assigneeIds, setAssigneeIds] = useState<number[]>([])
 
     const [projects, setProjects] = useState<Project[]>([])
     const [patients, setPatients] = useState<Patient[]>([])
     const [categories, setCategories] = useState<Category[]>([])
+    const [userList, setUserList] = useState<User[]>([])
 
     const navigate = useNavigate()
 
+    const handleAssigneeChange = (userId: number, checked: boolean) => {
+        setAssigneeIds(prev =>
+            checked ? [...prev, userId] : prev.filter(id => id !== userId)
+        )
+    }
+
     const handleSubmit = async () => {
-        await createTask({
-            title: title,
-            description: description,
-            projectId: projectId ?? undefined,
-            categoryId: categoryId ?? undefined,
-            patientId: patientId ?? undefined,
-            assignedToAll: assignedToAll,
-            priority: priority,
-            taskStatus: taskStatus,
-            dueDate: dueDate ? `${dueDate}:00` : undefined,
-            assigneeIds: assigneeIds
-        })
-        navigate('/tasks')
+        try {
+            await createTask({
+                title: title,
+                description: description,
+                projectId: projectId ?? undefined,
+                categoryId: categoryId ?? undefined,
+                patientId: patientId ?? undefined,
+                assignedToAll: assignedToAll,
+                priority: priority,
+                taskStatus: taskStatus,
+                dueDate: dueDate ? `${dueDate}:00` : undefined,
+                assigneeIds: assigneeIds
+            })
+            navigate('/tasks')
+        } catch (error) {
+            alert((error as Error).message)
+        }
     }
 
     useEffect(() => {
-        fetchProjects().then(data => {
-            setProjects(data)
-        })
-        fetchPatients().then(data => {
-            setPatients(data)
-        })
-        fetchCategories().then(data => {
-            setCategories(data)
-        })
-    },[])
+        fetchProjects().then(data => setProjects(data))
+        fetchPatients().then(data => setPatients(data))
+        fetchCategories().then(data => setCategories(data))
+        fetchUsers().then(data => setUserList(data))
+    }, [])
 
 
     return (
@@ -74,9 +82,8 @@ const TaskCreatePage = () => {
                 onChange={(e) => setProjectId(Number(e.target.value) || null)}
             >
                 <option value="">プロジェクトを選択</option>
-                {projects.map(project =>(
-                    <option key={project.id} value={project.id}>{project.projectName}
-                    </option>
+                {projects.map(project => (
+                    <option key={project.id} value={project.id}>{project.projectName}</option>
                 ))}
             </select>
 
@@ -86,18 +93,17 @@ const TaskCreatePage = () => {
             >
                 <option value="">カテゴリーを選択</option>
                 {categories.map(category => (
-                    <option key={category.id} value={category.id}>{category.categoryName}
-                    </option>
+                    <option key={category.id} value={category.id}>{category.categoryName}</option>
                 ))}
             </select>
+
             <select
                 value={patientId ?? ''}
                 onChange={(e) => setPatientId(Number(e.target.value) || null)}
             >
                 <option value="">患者名を選択</option>
                 {patients.map(patient => (
-                    <option key={patient.id} value={patient.id}>{patient.lastName}
-                    </option>
+                    <option key={patient.id} value={patient.id}>{patient.lastName}</option>
                 ))}
             </select>
 
@@ -119,6 +125,7 @@ const TaskCreatePage = () => {
                 <option value="MEDIUM">MEDIUM</option>
                 <option value="HIGH">HIGH</option>
             </select>
+
             <label>
                 <input
                     type="checkbox"
@@ -128,15 +135,29 @@ const TaskCreatePage = () => {
                 全員に割り当て
             </label>
 
+            <div>
+                <p>担当者</p>
+                {userList.map(user => (
+                    <label key={user.id}>
+                        <input
+                            type="checkbox"
+                            checked={assigneeIds.includes(user.id)}
+                            onChange={(e) => handleAssigneeChange(user.id, e.target.checked)}
+                        />
+                        {user.lastName} {user.firstName}
+                    </label>
+                ))}
+            </div>
+
             <label>
-                    期限
-                   <input
-                        type="datetime-local"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                    />
+                期限
+                <input
+                    type="datetime-local"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                />
             </label>
-         
+
             <button onClick={handleSubmit}>作成</button>
         </div>
     )

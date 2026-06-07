@@ -10,6 +10,7 @@ import AnnouncementDetailPage from './pages/AnnouncementDetailPage'
 import MyTasksPage from './pages/MyTasksPage'
 import PatientPage from './pages/PatientPage'
 import PatientCreatePage from './pages/PatientCreatePage'
+import PatientDetailPage from './pages/PatientDetailPage'
 
 function App() {
     const token = localStorage.getItem('token')
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/announcements/:id" element={<AnnouncementDetailPage/>}
                 />
                 <Route path="/patients" element={<PatientPage/>}/>
+                <Route path="/patients/:id" element={<PatientDetailPage/>}/>
                 <Route path="/patients/create" element={<PatientCreatePage/>}/>
             </Routes>
         </BrowserRouter>
