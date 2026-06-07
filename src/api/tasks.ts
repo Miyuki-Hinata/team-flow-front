@@ -87,6 +87,17 @@ export const deleteTask = async (id: number) => {
     })
 }
 
+export const getTaskHistories = async (id: number) => {
+    const response = await fetch(`http://localhost:8080/api/tasks/${id}/histories`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+    return response.json()
+}
+
 export const getMyTasks = async () => {
     const response = await fetch(`http://localhost:8080/api/tasks/my-tasks`, {
         method: 'GET',
