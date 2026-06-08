@@ -15,7 +15,11 @@ export const fetchWithAuth = async (input: RequestInfo, init?: RequestInit): Pro
         setAccessToken(data.token)
     } catch {
         // リフレッシュトークンも無効 = 再ログインが必要
+        // ログイン後に元のページへ戻れるよう、現在のURLをsessionStorageに保存する
+        // ※ sessionStorageはタブを閉じると消えるブラウザの一時メモ帳
+        // ※ apiClient.tsはReactの外なのでReact RouterのstateではなくsessionStorageを使う
         setAccessToken(null)
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname + window.location.search)
         window.location.href = '/login'
         return response
     }
