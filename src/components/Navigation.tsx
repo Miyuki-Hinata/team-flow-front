@@ -1,10 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { setAccessToken } from '../api/tokenStore'
+import { useAuth } from '../contexts/AuthContext'
 
 const Navigation = () => {
     const navigate = useNavigate()
+    const { setCurrentUser } = useAuth()
 
     const handleLogout = () => {
-        localStorage.removeItem('token')
+        setAccessToken(null)
+        setCurrentUser(null)
         navigate('/login')
     }
 

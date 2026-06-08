@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { login }  from '../api/auth'
 import { getCurrentUser } from '../api/users'
+import { setAccessToken } from '../api/tokenStore'
 import { useAuth } from '../contexts/AuthContext'
 
 function LoginPage() {
@@ -15,7 +16,7 @@ function LoginPage() {
 
             // ログイン処理
             const result = await login(loginId, password)
-            localStorage.setItem('token', result.token)
+            setAccessToken(result.token)
 
             // ユーザー情報を取得してContextにセット
             const user = await getCurrentUser()

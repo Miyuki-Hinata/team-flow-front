@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { getCurrentUser } from '../api/users'
+import { refresh } from '../api/auth'
+import { setAccessToken } from '../api/tokenStore'
 import type { UserResponse } from '../types/userResponse'
 
 // Contextの型定義
@@ -18,21 +20,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // アプリ起動時（リロード時）に、tokenがあればユーザー情報を取得
+    // アプリ起動時（リロード時）に、HttpOnly Cookieのリフレッシュトークンでアクセストークンをサイレント取得する
+    // ※ アクセストークンはメモリにしか置かないため、リロードのたびにこの処理が必要になる
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            getCurrentUser()
-                .then(data => setCurrentUser(data))
-                .catch(() => {
-                    // 取得失敗したらtokenを消す（期限切れなど）
-                    localStorage.removeItem('token');
-                    setCurrentUser(null);
-                })
-                .finally(() => setIsLoading(false));
-        } else {
-            setIsLoading(false);
-        }
+        refresh()
+            .then(data => {
+                setAccessToken(data.token);
+                return getCurrentUser();
+            })
+            .then(data => setCurrentUser(data))
+            .catch(() => {
+                // リフレッシュトークンが無い・期限切れの場合は未ログイン状態にする
+                setAccessToken(null);
+                setCurrentUser(null);
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (

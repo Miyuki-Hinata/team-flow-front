@@ -1,10 +1,12 @@
+import { getAccessToken } from './tokenStore'
+import { fetchWithAuth } from './apiClient'
 
 export const categories = async () => {
-    const response = await fetch('http://localhost:8080/api/categories', {
+    const response = await fetchWithAuth('http://localhost:8080/api/categories', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${getAccessToken()}`
         }
     })
 

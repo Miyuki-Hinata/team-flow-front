@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import AnnouncementsPage from './pages/AnnouncementsPage'
@@ -13,10 +14,10 @@ import PatientCreatePage from './pages/PatientCreatePage'
 import PatientDetailPage from './pages/PatientDetailPage'
 
 function App() {
-    const token = localStorage.getItem('token')
+    const { currentUser } = useAuth()
     return (
         <BrowserRouter>
-            {token && <Navigation />}
+            {currentUser && <Navigation />}
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
