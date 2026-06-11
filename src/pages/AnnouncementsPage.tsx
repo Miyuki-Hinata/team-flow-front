@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { announcements as fetchAnnouncements, markAsRead } from '../api/announcements'
 import type { Announcement } from '../types/announcement'
 import UrgentAnnouncements from '../components/UrgentAnnouncements'
@@ -30,6 +31,7 @@ const AnnouncementsPage = () => {
 
     return (
         <div>
+            <Link to="/announcements/create">お知らせを作成</Link>
             <UrgentAnnouncements
                 announcements={announcements}
                 onRead={handleRead}

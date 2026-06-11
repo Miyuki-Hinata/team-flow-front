@@ -4,6 +4,7 @@ import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import AnnouncementsPage from './pages/AnnouncementsPage'
+import AnnouncementCreatePage from './pages/AnnouncementCreatePage'
 import TasksPage from './pages/TasksPage'
 import TaskDetailPage from './pages/TaskDetailPage'
 import TaskCreatePage from './pages/TaskCreatePage'
@@ -20,14 +21,17 @@ function PrivateRoute({ children }: { children: ReactNode }) {
     const { currentUser, isLoading } = useAuth()
     const location = useLocation()
 
+    // ①ロード中は何も表示しない
     // 起動時のサイレントリフレッシュ中は何も描画しない（チラつき防止）
     if (isLoading) return null
 
+    // ②未ログインならログインページへ
     if (!currentUser) {
         // state={{ from: ... } でログインページに「どこから来たか」を渡す
         return <Navigate to="/login" state={{ from: location.pathname }} replace />
     }
 
+    // ③ログイン済みなら、本来の子コンポーネントを表示
     return <>{children}</>
 }
 
@@ -40,6 +44,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
                 <Route path="/announcements" element={<PrivateRoute><AnnouncementsPage /></PrivateRoute>} />
+                <Route path="/announcements/create" element={<PrivateRoute><AnnouncementCreatePage /></PrivateRoute>} />
                 <Route path="/tasks" element={<PrivateRoute><TasksPage /></PrivateRoute>} />
                 <Route path="/tasks/create" element={<PrivateRoute><TaskCreatePage /></PrivateRoute>} />
                 <Route path="/tasks/my-tasks" element={<PrivateRoute><MyTasksPage /></PrivateRoute>} />

@@ -17,6 +17,24 @@ export const users = async (role?: Role) => {
     return response.json()
 }
 
+export const changePassword = async (currentPassword: string, newPassword: string) => {
+    const response = await fetchWithAuth('http://localhost:8080/api/users/me/password', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessToken()}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+    })
+
+    if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error)
+    }
+
+    return response.json()
+}
+
 export const getCurrentUser = async () => {
     const response = await fetchWithAuth('http://localhost:8080/api/users/me', {
         method: 'GET',

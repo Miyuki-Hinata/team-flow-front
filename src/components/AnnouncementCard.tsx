@@ -15,7 +15,7 @@ const AnnouncementCard = ({ announcement, onRead }: Props) => {
             >
                 <h1>{announcement.title}</h1>
                 <span>{announcement.category.categoryName}</span>
-                <span>{announcement.department.departmentName}</span>
+                <span>{announcement.department?.departmentName ?? '全体'}</span>
                 <span>{announcement.priority}</span>
             </div>         
         </Link>

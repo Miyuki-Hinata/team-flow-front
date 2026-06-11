@@ -7,4 +7,5 @@ export type UserResponse = {
     role: Role;
     departmentId: number | null;
     departmentName: string | null;
+    admin: boolean;
 };
