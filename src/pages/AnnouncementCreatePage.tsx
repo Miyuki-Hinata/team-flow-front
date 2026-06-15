@@ -50,6 +50,7 @@ const AnnouncementCreatePage = () => {
     const handleDelete = async (id: number) => {
         try {
             await deleteAnnouncement(id)
+            alert('お知らせを削除しました')
             await loadMyAnnouncements()
         } catch (error) {
             alert((error as Error).message)

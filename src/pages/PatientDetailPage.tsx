@@ -6,6 +6,8 @@ import { getTasksByPatientId } from '../api/tasks'
 import type { Patient } from '../types/patient'
 import TaskCard from '../components/TaskCard'
 import { useAuth } from '../contexts/AuthContext'
+import type { TaskSummaryResponse } from '../types/taskSummary'
+import { getTaskSummary, generateTaskSummary } from '../api/taskSummaries'
 
 type TabType = 'all' | 'category' | 'my'
 
@@ -21,6 +23,8 @@ const PatientDetailPage = () => {
     const [activeTab, setActiveTab] = useState<TabType>('all')
     const [sortBy, setSortBy] = useState<'priority' | 'createdAt'>('createdAt')
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+    const [taskSummary, setTaskSummary] = useState<TaskSummaryResponse | null>(null)
+    const [isGenerating, setIsGenerating] = useState(false)  // 生成中かどうか
 
     useEffect(() => {
         getPatientById(Number(id))
@@ -36,6 +40,14 @@ const PatientDetailPage = () => {
                 alert(error.message)
                 navigate('/patients')
             })
+
+        // サマリのキャッシュを取得
+        getTaskSummary(Number(id))
+            .then(data => setTaskSummary(data))
+            .catch(() => {
+                // エラーは無視（サマリ未生成は正常な状態）
+        })
+
     }, [id])
     
     // タブに応じてタスクをフィルタリング
@@ -101,6 +113,18 @@ const PatientDetailPage = () => {
         })
     }
 
+    const handleGenerateSummary = async () => {
+        setIsGenerating(true)
+        try {
+            const data = await generateTaskSummary(Number(id))
+            setTaskSummary(data)
+        } catch (error) {
+            alert((error as Error).message)
+        } finally {
+            setIsGenerating(false)
+        }
+    }
+
 
     
     return (
@@ -128,6 +152,32 @@ const PatientDetailPage = () => {
             ) : (
                 <p>読み込み中...</p>
             )}
+
+            {/* サマリセクション */}
+            <section>
+                <h3>📊 AIタスクサマリ</h3>
+                
+                {taskSummary ? (
+                    <>
+                        <p>
+                            最終更新：{taskSummary.generatedAt} / 生成者：{taskSummary.generatedByName}
+                        </p>
+                        <div style={{ whiteSpace: 'pre-wrap', border: '1px solid #ccc', padding: '12px' }}>
+                            {taskSummary.summary}
+                        </div>
+                        <button onClick={handleGenerateSummary} disabled={isGenerating}>
+                            {isGenerating ? '生成中...' : '再生成'}
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <p>サマリ未生成</p>
+                        <button onClick={handleGenerateSummary} disabled={isGenerating}>
+                            {isGenerating ? '生成中...' : 'サマリを生成'}
+                        </button>
+                    </>
+                )}
+            </section>
             
             {/* タスク一覧セクション */}
             <section>

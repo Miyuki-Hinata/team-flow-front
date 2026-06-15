@@ -78,6 +78,7 @@ const AnnouncementDetailPage = () => {
     const handleDelete = async () => {
         try {
             await deleteAnnouncement(Number(id))
+            alert('お知らせを削除しました')
             navigate('/announcements')
         } catch (error) {
             alert((error as Error).message)

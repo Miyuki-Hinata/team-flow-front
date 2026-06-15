@@ -123,6 +123,4 @@ export const deleteAnnouncement = async (id: number) => {
         const errorData = await response.json()
         throw new Error(errorData.error)
     }
-
-    return response.json()
 }
