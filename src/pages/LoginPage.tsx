@@ -4,6 +4,7 @@ import { login } from '../api/auth'
 import { getCurrentUser } from '../api/users'
 import { setAccessToken } from '../api/tokenStore'
 import { useAuth } from '../contexts/AuthContext'
+import { Button } from '../components/ui/Button'
 
 function LoginPage() {
     const [loginId, setLoginId] = useState('')
@@ -61,7 +62,7 @@ function LoginPage() {
             />
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
-            <button onClick={handleLogin}>ログイン</button>
+            <Button onClick={handleLogin}>ログイン</Button>
         </div>
     )
 }
