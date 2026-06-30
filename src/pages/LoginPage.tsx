@@ -5,7 +5,6 @@ import { getCurrentUser } from '../api/users'
 import { setAccessToken } from '../api/tokenStore'
 import { useAuth } from '../contexts/AuthContext'
 import { Button } from '../components/ui/Button'
-
 function LoginPage() {
     const [loginId, setLoginId] = useState('')
     const [password, setPassword] = useState('')
