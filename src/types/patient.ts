@@ -2,6 +2,8 @@ import type { Base } from './base'
 import type { Department } from './department'
 import type { User } from './user'
 
+export type Sex = 'MALE'| 'FEMALE' | 'UNKNOWN' 
+
 export type Patient = Base & {
     id: number
     lastName: string
@@ -9,7 +11,7 @@ export type Patient = Base & {
     lastNameKana: string
     firstNameKana: string
     birth: string
-    sex: string
+    sex: Sex
     address: string
     tel: string
     emergencyContactName: string
