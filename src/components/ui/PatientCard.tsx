@@ -1,34 +1,42 @@
 import { Card } from "./Card"
-import type { Patient } from "../../types/patient"
 import { StatusBadge } from "./StatusBadge"
+import { PatientIcon } from "./PatientIcon"
+import { useTheme } from "styled-components"
+import type { Patient } from "../../types/patient"
+import { calcAge, getAgeGroup } from "../../utils/patient"
 
 // patient という名前で Patient型を受け取る
 type PatientCardProps = { patient: Patient }
 
-// 生年月日から年齢を計算する
-const calcAge = (birth: string): number => {
-  const today = new Date()
-  const birthDate = new Date(birth)
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const m = today.getMonth() - birthDate.getMonth()
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--
-  }
-  return age
-}
-
 export const PatientCard = ({ patient }: PatientCardProps) => {
-  return (
-    <Card>
-      {/* 氏名 */}
-      <div>{patient.lastName} {patient.firstName}</div>
-      {/* 振り仮名（現場で読み間違い防止のため常に表示） */}
-      <div>{patient.lastNameKana} {patient.firstNameKana}</div>
-      {/* 年齢・性別・部署・担当医 */}
-      <div>
-        {calcAge(patient.birth)}歳　{patient.sex}　
-        {patient.department.departmentName}　担当 {patient.doctor.lastName}
-      </div>
-    </Card>
-  )
+    // ThemeProviderが配るthemeを取得（ライト/ダーク自動対応）
+    const theme = useTheme()
+
+    // 性別 → 色ペア の対応表（themeを使うのでコンポーネント内で作る）
+    const sexToColor = {
+        MALE: theme.colors.patientIcon.male,
+        FEMALE: theme.colors.patientIcon.female,
+        UNKNOWN: theme.colors.patientIcon.unknown,
+    }
+
+    // 患者データから、アイコンに必要な情報を計算
+    const age = calcAge(patient.birth)           // 生年月日 → 年齢
+    const ageGroup = getAgeGroup(age)            // 年齢 → 年齢層（形）
+    const iconColor = sexToColor[patient.sex]    // 性別 → 色ペア
+    
+    return (
+        <Card>
+            {/* 性別×年齢層のアイコン（形=ageGroup、色=iconColor） */}
+            <PatientIcon ageGroup={ageGroup} color={iconColor} />
+
+            {/* 氏名 */}
+            <div>{patient.lastName} {patient.firstName}</div>
+            {/* 振り仮名（読み間違い防止のため常に表示） */}
+            <div>{patient.lastNameKana} {patient.firstNameKana}</div>
+            {/* 年齢・部署・担当医 */}
+            <div>
+                {age}歳　{patient.department.departmentName}　担当 {patient.doctor.lastName}
+            </div>
+        </Card>
+    )
 }

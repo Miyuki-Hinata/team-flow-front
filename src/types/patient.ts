@@ -4,6 +4,9 @@ import type { User } from './user'
 
 export type Sex = 'MALE'| 'FEMALE' | 'UNKNOWN' 
 
+export type AgeGroup = 'child' | 'adult' | 'elderly'
+
+
 export type Patient = Base & {
     id: number
     lastName: string

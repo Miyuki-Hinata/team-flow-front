@@ -96,6 +96,14 @@ const brand = {
   tealDark: '#0B6B60',  // ティール濃いめ：ホバー時など
 } as const;
 
+// colors の中（brand や semantic と並べる位置）に追加
+// 患者アイコン用の色（性別を色で表す。1色1意味）
+const patientIcon = {
+  male:    { main: '#185FA5', bg: '#E6F1FB' },  // 男性：青（線＋薄い青背景）
+  female:  { main: '#9333A8', bg: '#F3EAF6' },  // 女性：紫（線＋薄い紫背景）
+  unknown: { main: '#9298A6', bg: '#EEF0F4' },  // 不明：グレー（中立。青でも紫でもない）
+} as const;
+
 // ------------------------------------------------------------
 // 4. ライトモードの色
 //    背景・文字・枠線など、モードで変わる色をまとめる。
@@ -103,6 +111,7 @@ const brand = {
 const lightColors = {
   brand,      // ブランド色（共通）
   semantic,   // 意味の色（共通）
+  patientIcon, // 患者アイコン（共通）
 
   // 背景：3段階。奥から手前へ surface0 → surface2
   surface: {
@@ -134,6 +143,7 @@ const lightColors = {
 const darkColors = {
   brand,
   semantic,
+  patientIcon,
 
   surface: {
     base: '#0D1117',   // ページ全体の背景（暗い。GitHubのダークに近い）

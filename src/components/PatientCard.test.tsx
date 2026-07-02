@@ -23,7 +23,7 @@ describe('PatientCard', () => {
     it('生年月日と性別が表示される', () => {
         const patient = createMockPatient({ 
             birth: '1990-05-15', 
-            sex: '女性' 
+            sex: 'FEMALE' 
         })
         
         render(
