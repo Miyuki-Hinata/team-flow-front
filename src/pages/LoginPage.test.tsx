@@ -5,7 +5,10 @@ import LoginPage from './LoginPage'
 import userEvent from '@testing-library/user-event'
 import { getCurrentUser } from '../api/users'
 import { login } from '../api/auth'
+import { ThemeProvider } from 'styled-components'
+import { themeLight } from '../styles/theme'
 
+const selectedThemeColor = themeLight
 
 // login と getCurrentUser をモック化
 vi.mock('../api/auth', () => ({
@@ -31,9 +34,11 @@ vi.mock('../contexts/AuthContext', () => ({
 describe('LoginPage', () => {
     it('ログイン画面のタイトルが表示される', () => {
         render(
-            <BrowserRouter>
-                <LoginPage />
-            </BrowserRouter>
+            <ThemeProvider theme={selectedThemeColor}>
+                <BrowserRouter>
+                    <LoginPage />
+                </BrowserRouter>
+            </ThemeProvider>
         )
         
         // 「heading（見出し）」の中の「ログイン」だけを取得
@@ -42,9 +47,11 @@ describe('LoginPage', () => {
     
     it('ログインボタンが表示される', () => {
         render(
-            <BrowserRouter>
-                <LoginPage />
-            </BrowserRouter>
+            <ThemeProvider theme={selectedThemeColor}>
+                <BrowserRouter>
+                    <LoginPage />
+                </BrowserRouter>
+            </ThemeProvider>
         )
         
         // 「button（ボタン）」の中の「ログイン」だけを取得
@@ -55,9 +62,11 @@ describe('LoginPage', () => {
         const user = userEvent.setup()
 
         render(
-            <BrowserRouter>
-                <LoginPage />
-            </BrowserRouter>
+            <ThemeProvider theme={selectedThemeColor}>
+                <BrowserRouter>
+                    <LoginPage />
+                </BrowserRouter>
+            </ThemeProvider>
         )
 
         // 「ログインID」というプレイスホルダーの入力欄を取得
@@ -84,9 +93,11 @@ describe('LoginPage', () => {
         } as any)
         
         render(
-            <BrowserRouter>
-                <LoginPage />
-            </BrowserRouter>
+            <ThemeProvider theme={selectedThemeColor}>
+                <BrowserRouter>
+                    <LoginPage />
+                </BrowserRouter>
+            </ThemeProvider>
         )
         
         // 入力
@@ -110,9 +121,11 @@ describe('LoginPage', () => {
         vi.mocked(login).mockRejectedValue(new Error('ログインIDまたはパスワードが正しくありません'))
         
         render(
-            <BrowserRouter>
-                <LoginPage />
-            </BrowserRouter>
+            <ThemeProvider theme={selectedThemeColor}>
+                <BrowserRouter>
+                    <LoginPage />
+                </BrowserRouter>
+            </ThemeProvider>
         )
         
         // 入力 → クリック

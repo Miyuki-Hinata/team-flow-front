@@ -1,5 +1,5 @@
 import type { Patient } from '../types/patient'
-import PatientCard from './PatientCard'
+import { PatientCard}  from './ui/PatientCard'
 
 type Props = {
     patients: Patient[]

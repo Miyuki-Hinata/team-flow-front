@@ -11,7 +11,7 @@ export function createMockPatient(overrides?: Partial<Patient>): Patient {
         lastNameKana: 'ヤマダ',
         firstNameKana: 'タロウ',
         birth: '1980-01-01',
-        sex: '男性',
+        sex: 'MALE',
         address: '東京都',
         tel: '090-0000-0000',
         emergencyContactName: '山田花子',
