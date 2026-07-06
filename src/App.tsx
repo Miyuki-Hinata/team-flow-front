@@ -14,6 +14,7 @@ import MyTasksPage from './pages/MyTasksPage'
 import PatientPage from './pages/PatientPage'
 import PatientCreatePage from './pages/PatientCreatePage'
 import PatientDetailPage from './pages/PatientDetailPage'
+import { AppLayout} from './layouts/AppLayout'
 
 // ログインしていないと入れないルートのラッパーコンポーネント
 // 未ログインの場合は、今いたパスをstateに乗せてログインページへリダイレクトする
@@ -42,17 +43,21 @@ function App() {
             {currentUser && <Navigation />}
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
-                <Route path="/announcements" element={<PrivateRoute><AnnouncementsPage /></PrivateRoute>} />
-                <Route path="/announcements/create" element={<PrivateRoute><AnnouncementCreatePage /></PrivateRoute>} />
-                <Route path="/tasks" element={<PrivateRoute><TasksPage /></PrivateRoute>} />
-                <Route path="/tasks/create" element={<PrivateRoute><TaskCreatePage /></PrivateRoute>} />
-                <Route path="/tasks/my-tasks" element={<PrivateRoute><MyTasksPage /></PrivateRoute>} />
-                <Route path="/tasks/:id" element={<PrivateRoute><TaskDetailPage /></PrivateRoute>} />
-                <Route path="/announcements/:id" element={<PrivateRoute><AnnouncementDetailPage /></PrivateRoute>} />
-                <Route path="/patients" element={<PrivateRoute><PatientPage /></PrivateRoute>} />
-                <Route path="/patients/:id" element={<PrivateRoute><PatientDetailPage /></PrivateRoute>} />
-                <Route path="/patients/create" element={<PrivateRoute><PatientCreatePage /></PrivateRoute>} />
+
+                {/* ログイン必須のルートをAppLayoutでまとめる */}
+                <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/announcements" element={<AnnouncementsPage />} />
+                    <Route path="/announcements/create" element={<AnnouncementCreatePage />} />
+                    <Route path="/tasks" element={<TasksPage />} />
+                    <Route path="/tasks/create" element={<TaskCreatePage />} />
+                    <Route path="/tasks/my-tasks" element={<MyTasksPage />} />
+                    <Route path="/tasks/:id" element={<TaskDetailPage />} />
+                    <Route path="/announcements/:id" element={<AnnouncementDetailPage />} />
+                    <Route path="/patients" element={<PatientPage />} />
+                    <Route path="/patients/:id" element={<PatientDetailPage />} />
+                    <Route path="/patients/create" element={<PatientCreatePage />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     )

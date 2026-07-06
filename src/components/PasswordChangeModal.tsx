@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { changePassword } from '../api/users'
+import { Modal } from './ui/Modal'
 
 type Props = {
+    isOpen: boolean
     onClose: () => void
 }
 
-const PasswordChangeModal = ({ onClose }: Props) => {
+const PasswordChangeModal = ({ isOpen, onClose }: Props) => {
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
@@ -34,18 +36,7 @@ const PasswordChangeModal = ({ onClose }: Props) => {
     }
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
-            <div style={{ background: 'var(--bg)', padding: '24px', borderRadius: '8px', minWidth: '320px' }}>
+        <Modal isOpen={isOpen} onClose={onClose}>
                 <h2>パスワード変更</h2>
 
                 <div>
@@ -83,8 +74,7 @@ const PasswordChangeModal = ({ onClose }: Props) => {
 
                 <button onClick={handleSubmit}>変更</button>
                 <button onClick={onClose}>閉じる</button>
-            </div>
-        </div>
+        </Modal>
     )
 }
 

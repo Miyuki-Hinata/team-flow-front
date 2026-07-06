@@ -45,9 +45,11 @@ const Navigation = () => {
                 )}
             </div>
 
-            {isPasswordModalOpen && (
-                <PasswordChangeModal onClose={() => setIsPasswordModalOpen(false)} />
-            )}
+            <PasswordChangeModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+            />
+
         </div>
     )
 }
