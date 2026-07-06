@@ -8,7 +8,6 @@ import AnnouncementCreatePage from './pages/AnnouncementCreatePage'
 import TasksPage from './pages/TasksPage'
 import TaskDetailPage from './pages/TaskDetailPage'
 import TaskCreatePage from './pages/TaskCreatePage'
-import Navigation from './components/Navigation'
 import AnnouncementDetailPage from './pages/AnnouncementDetailPage'
 import MyTasksPage from './pages/MyTasksPage'
 import PatientPage from './pages/PatientPage'
@@ -37,10 +36,8 @@ function PrivateRoute({ children }: { children: ReactNode }) {
 }
 
 function App() {
-    const { currentUser } = useAuth()
     return (
         <BrowserRouter>
-            {currentUser && <Navigation />}
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
 

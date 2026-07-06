@@ -16,6 +16,15 @@ export const login = async (loginId: string, password: string) => {
     return response.json()
 }
 
+// サーバー側でリフレッシュトークンを失効させ、HttpOnly Cookieを削除する
+// （これを呼ばないとCookieが残り、リロード時にサイレントリフレッシュで再ログインされてしまう）
+export const logout = async (): Promise<void> => {
+    await fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // Cookie（リフレッシュトークン）を送信するために必要
+    })
+}
+
 // 同時に複数箇所からrefresh()が呼ばれても、リクエストを1つにまとめるための共有Promise
 // （バックエンドはリフレッシュトークンを使うたびにローテーションするため、
 //   同時に2回送ると片方が「すでに失効したトークン」を使うことになり失敗してしまう）

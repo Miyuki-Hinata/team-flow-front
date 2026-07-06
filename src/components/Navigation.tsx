@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { setAccessToken } from '../api/tokenStore'
+import { logout } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
 import PasswordChangeModal from './PasswordChangeModal'
 
@@ -10,10 +11,20 @@ const Navigation = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
 
-    const handleLogout = () => {
-        setAccessToken(null)
-        setCurrentUser(null)
-        navigate('/login')
+    const handleLogout = async () => {
+        try {
+            // サーバーへログアウトを通知し、DBのリフレッシュトークン失効とCookie削除を行う
+            await logout()
+        } catch (e) {
+            // 通信失敗などでサーバー側処理ができなくても、この端末はログアウト状態にしたいのでログだけ残す
+            // （Cookieは残るが、次回リフレッシュ失敗時に未ログイン状態へ落ちる）
+            console.error('ログアウト通知に失敗しました', e)
+        } finally {
+            // 成功・失敗にかかわらず、最低限この端末の画面はログアウト状態にする
+            setAccessToken(null)
+            setCurrentUser(null)
+            navigate('/login')
+        }
     }
 
     return (
