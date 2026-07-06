@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { PatientCard } from './ui/PatientCard'
-import { createMockPatient } from '../test/factories/patientFactory'
+import { PatientCard } from './PatientCard'
+import { createMockPatient } from '../../test/factories/patientFactory'
 import { ThemeProvider } from 'styled-components'
-import { themeLight } from '../styles/theme'
+import { themeLight } from '../../styles/theme'
 
 const selectedThemeColor = themeLight
 

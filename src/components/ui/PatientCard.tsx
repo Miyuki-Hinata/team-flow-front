@@ -4,7 +4,6 @@ import { PatientIcon } from "./PatientIcon"
 import { useTheme } from "styled-components"
 import type { Patient } from "../../types/patient"
 import { calcAge, getAgeGroup } from "../../utils/patient"
-import { Link } from "react-router-dom"
 
 // patient という名前で Patient型を受け取る
 type PatientCardProps = { patient: Patient }
@@ -26,20 +25,18 @@ export const PatientCard = ({ patient }: PatientCardProps) => {
     const iconColor = sexToColor[patient.sex]    // 性別 → 色ペア
     
     return (
-        <Link to={`/patients/${patient.id}`}>
-            <Card>
-                {/* 性別×年齢層のアイコン（形=ageGroup、色=iconColor） */}
-                <PatientIcon ageGroup={ageGroup} color={iconColor} />
+        <Card>
+            {/* 性別×年齢層のアイコン（形=ageGroup、色=iconColor） */}
+            <PatientIcon ageGroup={ageGroup} color={iconColor} />
 
-                {/* 氏名 */}
-                <div>{patient.lastName} {patient.firstName}</div>
-                {/* 振り仮名（読み間違い防止のため常に表示） */}
-                <div>{patient.lastNameKana} {patient.firstNameKana}</div>
-                {/* 年齢・部署・担当医 */}
-                <div>
-                    {age}歳　{patient.department?.departmentName}　担当医師 {patient.doctor ? `${patient.doctor.lastName} ${patient.doctor.firstName}` : '-'}
-                </div>
-            </Card>
-        </Link>
+            {/* 氏名 */}
+            <div>{patient.lastName} {patient.firstName}</div>
+            {/* 振り仮名（読み間違い防止のため常に表示） */}
+            <div>{patient.lastNameKana} {patient.firstNameKana}</div>
+            {/* 年齢・部署・担当医 */}
+            <div>
+                {age}歳　{patient.department?.departmentName}　担当医師 {patient.doctor ? `${patient.doctor.lastName} ${patient.doctor.firstName}` : '-'}
+            </div>
+        </Card>
     )
 }

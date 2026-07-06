@@ -8,6 +8,7 @@ import TaskCard from '../components/TaskCard'
 import { useAuth } from '../contexts/AuthContext'
 import type { TaskSummaryResponse } from '../types/taskSummary'
 import { getTaskSummary, generateTaskSummary } from '../api/taskSummaries'
+import { AISummaryCard } from '../components/ui/AISummaryCard'
 
 type TabType = 'all' | 'category' | 'my'
 
@@ -25,6 +26,7 @@ const PatientDetailPage = () => {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
     const [taskSummary, setTaskSummary] = useState<TaskSummaryResponse | null>(null)
     const [isGenerating, setIsGenerating] = useState(false)  // 生成中かどうか
+    const [isSummaryOpen, setIsSummaryOpne] = useState(false)
 
     useEffect(() => {
         getPatientById(Number(id))
@@ -155,28 +157,12 @@ const PatientDetailPage = () => {
 
             {/* サマリセクション */}
             <section>
-                <h3>📊 AIタスクサマリ</h3>
-                
-                {taskSummary ? (
-                    <>
-                        <p>
-                            最終更新：{taskSummary.generatedAt} / 生成者：{taskSummary.generatedByName}
-                        </p>
-                        <div style={{ whiteSpace: 'pre-wrap', border: '1px solid #ccc', padding: '12px' }}>
-                            {taskSummary.summary}
-                        </div>
-                        <button onClick={handleGenerateSummary} disabled={isGenerating}>
-                            {isGenerating ? '生成中...' : '再生成'}
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <p>サマリ未生成</p>
-                        <button onClick={handleGenerateSummary} disabled={isGenerating}>
-                            {isGenerating ? '生成中...' : 'サマリを生成'}
-                        </button>
-                    </>
-                )}
+                <AISummaryCard
+                    taskSummary={taskSummary}
+                    isGenerating={isGenerating}
+                    handleGenerateSummary={handleGenerateSummary}
+                >
+                </AISummaryCard>
             </section>
             
             {/* タスク一覧セクション */}
