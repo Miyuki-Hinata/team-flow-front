@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <rect width="240" height="240" fill="#00072D"/>
+    <rect x="72" y="72" width="96" height="96" rx="20" fill="#0E9384"/>
+    <path d="M96 122h14l10 24 18-52 10 30h14" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</template>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    ::placeholder { color: #9298A6; }
+
+    /* ===== Responsive  (sm 640 / md 768 / lg 1024 / xl 1280) ===== */
+    /* NB: React serializes inline styles -> "repeat(3, 1fr)" / "rgb(r, g, b)". Selectors below match those normalized forms. */
+    .tf-hamburger { display: none; }
+
+    /* below lg: sidebar becomes an off-canvas drawer + hamburger appears */
+    @media (max-width: 1023.98px) {
+      .tf-hamburger { display: flex !important; }
+      .tf-sidebar {
+        position: fixed !important; left: 0; top: 0; height: 100vh !important;
+        z-index: 60 !important; transform: translateX(-100%);
+        transition: transform .25s ease; box-shadow: 0 16px 48px rgba(0,7,45,.45);
+      }
+      .tf-sidebar.tf-open { transform: translateX(0) !important; }
+    }
+    @media (min-width: 1024px) { .tf-overlay { display: none !important; } }
+
+    /* below md: stack multi-column grids, shrink chrome padding */
+    @media (max-width: 767.98px) {
+      .tf-header { padding: 0 16px !important; }
+      .tf-main   { padding: 16px !important; }
+      .tf-today  { display: none !important; }
+      [style*="grid-template-columns: repeat(3, 1fr)"] { grid-template-columns: 1fr !important; }
+      [style*="grid-template-columns: 1fr 1fr 1fr"]     { grid-template-columns: 1fr !important; }
+      [style*="grid-template-columns: 1fr 1fr;"]        { grid-template-columns: 1fr !important; }
+      [style*="grid-template-columns: repeat(4, 1fr)"] { grid-template-columns: 1fr 1fr !important; }
+      [style*="min-width: 200px"] { min-width: 0 !important; }
+      [style*="min-width: 150px"] { min-width: 0 !important; }
+      .tf-prow  { flex-wrap: wrap !important; }
+      .tf-prow > svg:last-child { display: none !important; }
+      .tf-pnext { width: 100% !important; text-align: left !important; }
+      .tf-pnext > div:last-child { justify-content: flex-start !important; }
+    }
+
+    /* below sm: single-column vitals, hide username label */
+    @media (max-width: 639.98px) {
+      [style*="grid-template-columns: repeat(4, 1fr)"] { grid-template-columns: 1fr !important; }
+      .tf-uname { display: none !important; }
+    }
+
+    /* ===== Dark mode (背景を暗く・文字を明るく反転。ブランド色と意味の色は共通) ===== */
+    .tf-dark ::placeholder { color: #6B7285 !important; }
+    /* inherited (no explicit inline color) text -> light; root also carries the page bg */
+    .tf-dark { color: #E8EAF0 !important; background: #0D1220 !important; }
+    /* surfaces */
+    .tf-dark [style*="background: rgb(247, 248, 250)"] { background: #0D1220 !important; }  /* page */
+    .tf-dark [style*="background: rgb(255, 255, 255)"] { background: #161C2E !important; }  /* card / input / modal / dropdown */
+    .tf-dark [style*="background: rgb(238, 240, 244)"] { background: #1E2740 !important; }  /* sunken: input / chip / kanban col / segment */
+    /* text */
+    .tf-dark [style*="color: rgb(26, 29, 36)"]   { color: #E8EAF0 !important; }  /* primary */
+    .tf-dark [style*="color: rgb(90, 96, 114)"]  { color: #A2A9BA !important; }  /* secondary */
+    .tf-dark [style*="color: rgb(146, 152, 166)"]{ color: #7B8296 !important; }  /* hint */
+    /* borders */
+    .tf-dark [style*="rgb(226, 229, 235)"] { border-color: #2A3350 !important; }
+    /* semantic backgrounds -> dark tint (hue kept) */
+    .tf-dark [style*="background: rgb(234, 243, 222)"] { background: #17240F !important; }  /* success */
+    .tf-dark [style*="background: rgb(250, 238, 218)"] { background: #2A2110 !important; }  /* warning */
+    .tf-dark [style*="background: rgb(252, 235, 235)"] { background: #2A1414 !important; }  /* danger */
+    .tf-dark [style*="background: rgb(230, 241, 251)"] { background: #13202F !important; }  /* info / 男性 */
+    .tf-dark [style*="background: rgb(243, 234, 246)"] { background: #241528 !important; }  /* 女性 */
+    /* semantic text -> brightened same hue for contrast on dark tint */
+    .tf-dark [style*="color: rgb(59, 109, 17)"]  { color: #8FD14F !important; }  /* success */
+    .tf-dark [style*="color: rgb(133, 79, 11)"]  { color: #E0A44E !important; }  /* warning */
+    .tf-dark [style*="color: rgb(163, 45, 45)"]  { color: #F08A8A !important; }  /* danger */
+    .tf-dark [style*="color: rgb(24, 95, 165)"]  { color: #6FA8E6 !important; }  /* info */
+  </style>
+</helmet>
+
+<div class="{{ rootClass }}" style="display:flex; min-height:100vh; width:100%; background:#F7F8FA; font-family:'Noto Sans JP', sans-serif; color:#1A1D24; font-weight:400; line-height:1.6;">
+
+  <!-- ===== Sidebar ===== -->
+  <sc-if value="{{ navOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="tf-overlay" onClick="{{ closeNav }}" style="position:fixed; inset:0; background:rgba(0,7,45,.5); z-index:55;"></div>
+  </sc-if>
+  <aside class="tf-sidebar {{ navClass }}" style="width:248px; flex:0 0 248px; background:#00072D; color:#C5CAD4; display:flex; flex-direction:column; padding:24px 16px; gap:32px; position:sticky; top:0; height:100vh;">
+    <div style="display:flex; align-items:center; gap:12px; padding:0 8px;">
+      <div style="width:32px; height:32px; border-radius:8px; background:#0E9384; display:flex; align-items:center; justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 13h4l2 5 4-12 2 7h4" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span style="color:#FFFFFF; font-size:18px; font-weight:500; letter-spacing:.02em;">TeamFlow</span>
+    </div>
+
+    <nav style="display:flex; flex-direction:column; gap:4px;">
+      <div style="font-size:12px; color:#5A6072; padding:0 12px 8px;">メニュー</div>
+      <a onClick="{{ goDashboard }}" style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; text-decoration:none; font-size:16px; cursor:pointer; background:{{ nav.dashboard.bg }}; color:{{ nav.dashboard.color }}; font-weight:{{ nav.dashboard.weight }};">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 11l8-6 8 6M6 10v9h12v-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ダッシュボード
+      </a>
+      <a onClick="{{ goPatients }}" style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; text-decoration:none; font-size:16px; cursor:pointer; background:{{ nav.patients.bg }}; color:{{ nav.patients.color }}; font-weight:{{ nav.patients.weight }};">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        患者一覧
+      </a>
+      <a onClick="{{ goAnnouncements }}" style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; text-decoration:none; font-size:16px; cursor:pointer; background:{{ nav.announcements.bg }}; color:{{ nav.announcements.color }}; font-weight:{{ nav.announcements.weight }};">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 6h14v9H9l-4 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        お知らせ
+        <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span style="margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:#A32D2D; color:#FFFFFF; font-size:12px; display:flex; align-items:center; justify-content:center;">{{ unreadCount }}</span></sc-if>
+      </a>
+      <a onClick="{{ goTasks }}" style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; text-decoration:none; font-size:16px; cursor:pointer; background:{{ nav.tasks.bg }}; color:{{ nav.tasks.color }}; font-weight:{{ nav.tasks.weight }};">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 6h14M5 12h14M5 18h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        全タスク
+      </a>
+      <a onClick="{{ goMyTasks }}" style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; text-decoration:none; font-size:16px; cursor:pointer; background:{{ nav.mytasks.bg }}; color:{{ nav.mytasks.color }}; font-weight:{{ nav.mytasks.weight }};">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 12l3 3 7-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/></svg>
+        マイタスク
+      </a>
+    </nav>
+
+    <div style="margin-top:auto; padding:16px 12px; border-top:1px solid #1A2348; font-size:12px; color:#5A6072;">
+      さくら総合病院<br>3F 内科病棟
+    </div>
+  </aside>
+
+  <!-- ===== Main column ===== -->
+  <div style="flex:1 1 auto; display:flex; flex-direction:column; min-width:0;">
+
+    <header class="tf-header" style="background:#001F5B; color:#FFFFFF; height:64px; flex:0 0 64px; display:flex; align-items:center; justify-content:space-between; padding:0 32px; position:sticky; top:0; z-index:5;">
+      <div style="display:flex; align-items:center; gap:8px; font-size:14px; color:#C5CAD4;">
+        <button class="tf-hamburger" onClick="{{ toggleNav }}" style="background:transparent; border:none; cursor:pointer; padding:8px; margin-right:4px; margin-left:-8px; border-radius:8px; align-items:center; justify-content:center;" style-hover="background:rgba(255,255,255,.08);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <span>病棟管理</span>
+        <span style="color:#5A6072;">/</span>
+        <span style="color:#FFFFFF;">{{ crumb }}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:24px;">
+        <span class="tf-today" style="font-size:14px; color:#C5CAD4;">{{ today }}</span>
+        <div style="position:relative;">
+          <div onClick="{{ toggleMenu }}" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:4px 8px 4px 4px; border-radius:8px; background:{{ menuBg }};" style-hover="background:rgba(255,255,255,.08);">
+            <div style="width:32px; height:32px; border-radius:8px; background:#0E9384; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500;">中</div>
+            <span class="tf-uname" style="font-size:14px;">中島 看護師</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="transform:{{ caretRotate }};"><path d="M7 10l5 5 5-5" stroke="#C5CAD4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute; right:0; top:48px; width:200px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; box-shadow:0 8px 24px rgba(0,7,45,.16); padding:8px; z-index:30;">
+              <a onClick="{{ openPwModal }}" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; font-size:16px; color:#1A1D24; cursor:pointer; text-decoration:none;" style-hover="background:#EEF0F4;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#5A6072" stroke-width="1.6"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#5A6072" stroke-width="1.6"/></svg>
+                パスワード変更
+              </a>
+              <a onClick="{{ toggleDark }}" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; font-size:16px; color:#1A1D24; cursor:pointer; text-decoration:none;" style-hover="background:#EEF0F4;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 019.5 4a7 7 0 100 16 8 8 0 0010.5-5.5z" stroke="#5A6072" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                {{ darkLabel }}
+              </a>
+              <a onClick="{{ logout }}" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; font-size:16px; color:#A32D2D; cursor:pointer; text-decoration:none;" style-hover="background:#FCEBEB;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 12H5m0 0l4-4m-4 4l4 4" stroke="#A32D2D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 5h4a1 1 0 011 1v12a1 1 0 01-1 1h-4" stroke="#A32D2D" stroke-width="1.6" stroke-linecap="round"/></svg>
+                ログアウト
+              </a>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </header>
+
+    <main class="tf-main" style="flex:1 1 auto; overflow:auto; padding:32px;">
+      <div style="max-width:1080px; margin:0 auto;">
+
+        <!-- ============ DASHBOARD ============ -->
+        <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <h1 style="margin:0; font-size:28px; font-weight:500;">おはようございます、中島さん</h1>
+            <p style="margin:4px 0 24px; font-size:14px; color:#5A6072;">{{ today }} ・ 3F 内科病棟</p>
+
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;">
+              <div onClick="{{ goPatients }}" style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:24px; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                <div style="font-size:14px; color:#5A6072;">担当患者</div>
+                <div style="font-size:28px; font-weight:500; margin-top:4px;">8<span style="font-size:16px; color:#5A6072;"> 名</span></div>
+                <div style="margin-top:8px; display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:#A32D2D; background:#FCEBEB;">緊急 2 名</div>
+              </div>
+              <div onClick="{{ goMyTasks }}" style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:24px; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                <div style="font-size:14px; color:#5A6072;">本日のタスク</div>
+                <div style="font-size:28px; font-weight:500; margin-top:4px;">6<span style="font-size:16px; color:#5A6072;"> 件</span></div>
+                <div style="margin-top:8px; display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:#854F0B; background:#FAEEDA;">未完 4 件</div>
+              </div>
+              <div onClick="{{ goAnnouncements }}" style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:24px; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                <div style="font-size:14px; color:#5A6072;">未読お知らせ</div>
+                <div style="font-size:28px; font-weight:500; margin-top:4px;">3<span style="font-size:16px; color:#5A6072;"> 件</span></div>
+                <div style="margin-top:8px; display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:#A32D2D; background:#FCEBEB;">緊急 1 件</div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+              <!-- 未読お知らせ -->
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                  <span style="font-size:18px; font-weight:500;">未読のお知らせ</span>
+                  <a onClick="{{ goAnnouncements }}" style="font-size:14px; color:#0E9384; cursor:pointer;">すべて見る</a>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <sc-for list="{{ unreadList }}" as="a" hint-placeholder-count="3">
+                    <div onClick="{{ goAnnouncements }}" style="background:#FFFFFF; border:1px solid {{ a.cardBorder }}; border-radius:12px; overflow:hidden; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                      <div style="height:3px; background:{{ a.stripColor }};"></div>
+                      <div style="padding:16px;">
+                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                          <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ a.catColor }}; background:{{ a.catBg }};">{{ a.category }}</span>
+                          <span style="font-size:12px; color:#9298A6;">{{ a.dept }}</span>
+                        </div>
+                        <div style="font-size:16px; font-weight:500;">{{ a.title }}</div>
+                        <div style="font-size:14px; color:#5A6072; margin-top:2px;">{{ a.author }} ・ {{ a.date }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <!-- 本日の要対応患者 -->
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                  <span style="font-size:18px; font-weight:500;">本日の要対応患者</span>
+                  <a onClick="{{ goPatients }}" style="font-size:14px; color:#0E9384; cursor:pointer;">患者一覧へ</a>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <sc-for list="{{ attentionList }}" as="p" hint-placeholder-count="3">
+                    <div onClick="{{ p.open }}" style="background:#FFFFFF; border:1px solid {{ p.cardBorder }}; border-radius:12px; overflow:hidden; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                      <div style="height:3px; background:{{ p.stripColor }};"></div>
+                      <div style="padding:14px 16px; display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; flex:0 0 40px; border-radius:20px; background:{{ p.avatarBg }}; display:flex; align-items:center; justify-content:center;">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="{{ p.avatarColor }}" stroke-width="1.7"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke="{{ p.avatarColor }}" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        </div>
+                        <div style="flex:1 1 auto; min-width:0;">
+                          <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:16px; font-weight:500;">{{ p.name }}</span>
+                            <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ p.badgeColor }}; background:{{ p.badgeBg }};">{{ p.badgeText }}</span>
+                          </div>
+                          <div style="font-size:12px; color:#5A6072;">{{ p.room }} ・ {{ p.nextTask }} {{ p.nextTime }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ PATIENTS LIST ============ -->
+        <sc-if value="{{ isPatients }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px;">
+              <div>
+                <h1 style="margin:0; font-size:28px; font-weight:500;">患者一覧</h1>
+                <p style="margin:4px 0 0; font-size:14px; color:#5A6072;">{{ totalLabel }}</p>
+              </div>
+              <button onClick="{{ goPatientCreate }}" style="display:flex; align-items:center; gap:8px; background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 20px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+                患者を追加
+              </button>
+            </div>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:16px; margin-bottom:24px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+              <div style="position:relative; flex:1 1 240px; min-width:200px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="position:absolute; left:12px; top:50%; transform:translateY(-50%);"><circle cx="11" cy="11" r="6" stroke="#9298A6" stroke-width="1.6"/><path d="M20 20l-4-4" stroke="#9298A6" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="患者名で検索" style="width:100%; height:44px; padding:0 12px 0 38px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+              </div>
+              <select value="{{ statusFilter }}" onChange="{{ onStatus }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer; min-width:150px;">
+                <option value="all">状態：すべて</option>
+                <option value="緊急">緊急</option>
+                <option value="経過観察">経過観察</option>
+                <option value="安定">安定</option>
+                <option value="情報">結果待ち</option>
+              </select>
+              <select value="{{ deptFilter }}" onChange="{{ onDept }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer; min-width:140px;">
+                <option value="all">部署：すべて</option>
+                <option value="内科">内科</option>
+                <option value="外科">外科</option>
+                <option value="小児科">小児科</option>
+              </select>
+              <select value="{{ doctorFilter }}" onChange="{{ onDoctor }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer; min-width:150px;">
+                <option value="all">担当医：すべて</option>
+                <option value="佐藤医師">佐藤医師</option>
+                <option value="高橋医師">高橋医師</option>
+                <option value="伊藤医師">伊藤医師</option>
+              </select>
+            </div>
+
+            <sc-for list="{{ sections }}" as="section" hint-placeholder-count="2">
+              <div style="margin-bottom:32px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; padding:0 4px;">
+                  <span style="width:8px; height:8px; border-radius:4px; background:{{ section.accent }};"></span>
+                  <span style="font-size:14px; font-weight:500;">{{ section.title }}</span>
+                  <span style="font-size:12px; color:#9298A6;">{{ section.count }}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <sc-for list="{{ section.items }}" as="p" hint-placeholder-count="3">
+                    <div onClick="{{ p.open }}" style="position:relative; background:#FFFFFF; border:1px solid {{ p.cardBorder }}; border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color .12s, box-shadow .12s;" style-hover="border-color:#C5CAD4; box-shadow:0 2px 8px rgba(0,7,45,.06);">
+                      <div style="height:3px; background:{{ p.stripColor }};"></div>
+                      <div class="tf-prow" style="display:flex; align-items:center; gap:16px; padding:20px 24px;">
+                        <div style="width:48px; height:48px; flex:0 0 48px; border-radius:24px; background:{{ p.avatarBg }}; display:flex; align-items:center; justify-content:center;">
+                          <sc-if value="{{ p.isChild }}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="4" stroke="{{ p.avatarColor }}" stroke-width="1.7"/><path d="M7 20c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="{{ p.avatarColor }}" stroke-width="1.7" stroke-linecap="round"/></svg></sc-if>
+                          <sc-if value="{{ p.isAdult }}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="{{ p.avatarColor }}" stroke-width="1.7"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke="{{ p.avatarColor }}" stroke-width="1.7" stroke-linecap="round"/></svg></sc-if>
+                          <sc-if value="{{ p.isElderly }}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="7.5" r="3.2" stroke="{{ p.avatarColor }}" stroke-width="1.7"/><path d="M5.5 20c0-3.4 2.5-6.2 5.5-6.2" stroke="{{ p.avatarColor }}" stroke-width="1.7" stroke-linecap="round"/><path d="M16 11.5V20" stroke="{{ p.avatarColor }}" stroke-width="1.7" stroke-linecap="round"/></svg></sc-if>
+                        </div>
+                        <div style="flex:1 1 auto; min-width:0;">
+                          <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:18px; font-weight:500;">{{ p.name }}</span>
+                            <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ p.badgeColor }}; background:{{ p.badgeBg }};">{{ p.badgeText }}</span>
+                          </div>
+                          <div style="font-size:14px; color:#5A6072; margin-top:2px;">{{ p.meta }}</div>
+                        </div>
+                        <div class="tf-pnext" style="flex:0 0 auto; text-align:right; min-width:200px;">
+                          <div style="font-size:12px; color:#9298A6; margin-bottom:4px;">次の対応</div>
+                          <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                            <span style="font-size:16px;">{{ p.nextTask }}</span>
+                            <span style="display:inline-flex; padding:4px 10px; border-radius:8px; background:#EEF0F4; font-size:14px;">{{ p.nextTime }}</span>
+                          </div>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex:0 0 auto;"><path d="M9 6l6 6-6 6" stroke="#9298A6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px; text-align:center; color:#9298A6; font-size:16px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px;">該当する患者がいません</div></sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ============ PATIENT DETAIL ============ -->
+        <sc-if value="{{ isPatient }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <a onClick="{{ goPatients }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              患者一覧へ戻る
+            </a>
+
+            <!-- header card -->
+            <div style="background:#FFFFFF; border:1px solid {{ sel.cardBorder }}; border-radius:12px; overflow:hidden; margin-bottom:24px;">
+              <div style="height:3px; background:{{ sel.stripColor }};"></div>
+              <div style="padding:24px; display:flex; gap:20px; align-items:flex-start;">
+                <div style="width:64px; height:64px; flex:0 0 64px; border-radius:32px; background:{{ sel.avatarBg }}; display:flex; align-items:center; justify-content:center;">
+                  <sc-if value="{{ sel.isChild }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="4" stroke="{{ sel.avatarColor }}" stroke-width="1.6"/><path d="M7 20c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="{{ sel.avatarColor }}" stroke-width="1.6" stroke-linecap="round"/></svg></sc-if>
+                  <sc-if value="{{ sel.isAdult }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="{{ sel.avatarColor }}" stroke-width="1.6"/><path d="M5.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke="{{ sel.avatarColor }}" stroke-width="1.6" stroke-linecap="round"/></svg></sc-if>
+                  <sc-if value="{{ sel.isElderly }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="7.5" r="3.2" stroke="{{ sel.avatarColor }}" stroke-width="1.6"/><path d="M5.5 20c0-3.4 2.5-6.2 5.5-6.2" stroke="{{ sel.avatarColor }}" stroke-width="1.6" stroke-linecap="round"/><path d="M16 11.5V20" stroke="{{ sel.avatarColor }}" stroke-width="1.6" stroke-linecap="round"/></svg></sc-if>
+                </div>
+                <div style="flex:1 1 auto;">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <h1 style="margin:0; font-size:28px; font-weight:500;">{{ sel.name }}</h1>
+                    <span style="display:inline-flex; padding:4px 10px; border-radius:4px; font-size:14px; font-weight:500; color:{{ sel.badgeColor }}; background:{{ sel.badgeBg }};">{{ sel.badgeText }}</span>
+                  </div>
+                  <div style="font-size:14px; color:#5A6072; margin-top:4px;">{{ sel.meta }}</div>
+                  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:20px;">
+                    <div><div style="font-size:12px; color:#9298A6;">生年月日</div><div style="font-size:16px;">{{ sel.birth }}</div></div>
+                    <div><div style="font-size:12px; color:#9298A6;">血液型</div><div style="font-size:16px;">{{ sel.blood }}</div></div>
+                    <div><div style="font-size:12px; color:#9298A6;">入院日</div><div style="font-size:16px;">{{ sel.admit }}</div></div>
+                    <div><div style="font-size:12px; color:#9298A6;">担当医</div><div style="font-size:16px;">{{ sel.doctor }}</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- vitals -->
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px;">
+              <sc-for list="{{ sel.vitals }}" as="v" hint-placeholder-count="4">
+                <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:20px;">
+                  <div style="font-size:12px; color:#9298A6;">{{ v.label }}</div>
+                  <div style="font-size:22px; font-weight:500; margin-top:4px; color:{{ v.color }};">{{ v.value }}<span style="font-size:14px; color:#9298A6; font-weight:400;"> {{ v.unit }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+
+            <!-- AI summary -->
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:24px; margin-bottom:24px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 4.6L18.5 9 14 11l-2 5-2-5L5.5 9 10.2 7.6z" stroke="#0E9384" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                  <span style="font-size:18px; font-weight:500;">AIタスクサマリ</span>
+                </div>
+                <button onClick="{{ regen }}" style="display:flex; align-items:center; gap:6px; background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:8px 14px; font-size:14px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 10-1.5 5M20 5v6h-6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  再生成
+                </button>
+              </div>
+              <p style="margin:0; font-size:16px; line-height:1.6; color:#1A1D24;">{{ sel.aiSummary }}</p>
+            </div>
+
+            <!-- kanban -->
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <span style="font-size:18px; font-weight:500;">タスク</span>
+              <div style="display:flex; gap:4px; background:#EEF0F4; padding:4px; border-radius:8px;">
+                <a onClick="{{ kbAll }}" style="padding:6px 14px; border-radius:6px; font-size:14px; cursor:pointer; background:{{ kb.all.bg }}; color:{{ kb.all.color }}; font-weight:{{ kb.all.weight }};">すべて</a>
+                <a onClick="{{ kbMy }}" style="padding:6px 14px; border-radius:6px; font-size:14px; cursor:pointer; background:{{ kb.my.bg }}; color:{{ kb.my.color }}; font-weight:{{ kb.my.weight }};">マイタスク</a>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+              <sc-for list="{{ kanban }}" as="col" hint-placeholder-count="3">
+                <div style="background:#EEF0F4; border-radius:12px; padding:12px; min-height:120px;">
+                  <div style="display:flex; align-items:center; gap:8px; padding:4px 8px 12px;">
+                    <span style="width:8px; height:8px; border-radius:4px; background:{{ col.accent }};"></span>
+                    <span style="font-size:14px; font-weight:500;">{{ col.title }}</span>
+                    <span style="font-size:12px; color:#9298A6;">{{ col.count }}</span>
+                  </div>
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                    <sc-for list="{{ col.items }}" as="t" hint-placeholder-count="2">
+                      <div onClick="{{ t.open }}" style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; padding:12px; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                        <div style="display:flex; gap:6px; margin-bottom:6px;"><span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ t.prColor }}; background:{{ t.prBg }};">{{ t.prText }}</span></div>
+                        <div style="font-size:16px;">{{ t.title }}</div>
+                        <div style="font-size:12px; color:#5A6072; margin-top:4px;">{{ t.due }} ・ {{ t.assignee }}</div>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#9298A6; padding:8px; text-align:center;">なし</div></sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ ANNOUNCEMENTS ============ -->
+        <sc-if value="{{ isAnnouncements }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px;">
+              <div>
+                <h1 style="margin:0; font-size:28px; font-weight:500;">お知らせ</h1>
+                <p style="margin:4px 0 0; font-size:14px; color:#5A6072;">未読 {{ unreadCount }} 件</p>
+              </div>
+              <button onClick="{{ goAnnouncementCreate }}" style="display:flex; align-items:center; gap:8px; background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 20px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+                新規作成
+              </button>
+            </div>
+
+            <div style="display:flex; gap:4px; background:#EEF0F4; padding:4px; border-radius:8px; margin-bottom:24px; width:fit-content;">
+              <a onClick="{{ annUnread }}" style="padding:8px 18px; border-radius:6px; font-size:14px; cursor:pointer; background:{{ annTab.unread.bg }}; color:{{ annTab.unread.color }}; font-weight:{{ annTab.unread.weight }};">未読 {{ unreadCount }}</a>
+              <a onClick="{{ annRead }}" style="padding:8px 18px; border-radius:6px; font-size:14px; cursor:pointer; background:{{ annTab.read.bg }}; color:{{ annTab.read.color }}; font-weight:{{ annTab.read.weight }};">既読 {{ readCount }}</a>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <sc-for list="{{ annList }}" as="a" hint-placeholder-count="3">
+                <div style="background:#FFFFFF; border:1px solid {{ a.cardBorder }}; border-radius:12px; overflow:hidden; cursor:pointer;" style-hover="border-color:#C5CAD4; box-shadow:0 2px 8px rgba(0,7,45,.06);">
+                  <div style="height:3px; background:{{ a.stripColor }};"></div>
+                  <div style="padding:20px 24px; display:flex; gap:16px; align-items:flex-start;">
+                    <sc-if value="{{ a.unread }}" hint-placeholder-val="{{ true }}"><span style="width:8px; height:8px; flex:0 0 8px; margin-top:8px; border-radius:4px; background:#0E9384;"></span></sc-if>
+                    <div style="flex:1 1 auto;">
+                      <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                        <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ a.catColor }}; background:{{ a.catBg }};">{{ a.category }}</span>
+                        <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; color:#5A6072; background:#EEF0F4;">{{ a.dept }}</span>
+                      </div>
+                      <div style="font-size:18px; font-weight:500;">{{ a.title }}</div>
+                      <div style="font-size:16px; color:#5A6072; margin-top:4px; line-height:1.6;">{{ a.body }}</div>
+                      <div style="font-size:14px; color:#9298A6; margin-top:8px;">{{ a.author }} ・ {{ a.date }}</div>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ annEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px; text-align:center; color:#9298A6; font-size:16px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px;">お知らせはありません</div></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ TASKS ============ -->
+        <sc-if value="{{ isTasksView }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px;">
+              <div>
+                <h1 style="margin:0; font-size:28px; font-weight:500;">{{ taskTitle }}</h1>
+                <p style="margin:4px 0 0; font-size:14px; color:#5A6072;">{{ taskCountLabel }}</p>
+              </div>
+              <button onClick="{{ goTaskCreate }}" style="display:flex; align-items:center; gap:8px; background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 20px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+                タスク作成
+              </button>
+            </div>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:16px; margin-bottom:24px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+              <select value="{{ taskStatusFilter }}" onChange="{{ onTaskStatus }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer; min-width:160px;">
+                <option value="all">状態：すべて</option>
+                <option value="未着手">未着手</option>
+                <option value="進行中">進行中</option>
+                <option value="完了">完了</option>
+              </select>
+              <select value="{{ taskPriorityFilter }}" onChange="{{ onTaskPriority }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer; min-width:160px;">
+                <option value="all">優先度：すべて</option>
+                <option value="HIGH">高</option>
+                <option value="MED">中</option>
+                <option value="LOW">低</option>
+              </select>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <sc-for list="{{ taskList }}" as="t" hint-placeholder-count="4">
+                <div onClick="{{ t.open }}" style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px; cursor:pointer;" style-hover="border-color:#C5CAD4; box-shadow:0 2px 8px rgba(0,7,45,.06);">
+                  <span style="display:inline-flex; padding:4px 10px; border-radius:4px; font-size:12px; font-weight:500; color:{{ t.stColor }}; background:{{ t.stBg }}; min-width:64px; justify-content:center;">{{ t.status }}</span>
+                  <div style="flex:1 1 auto; min-width:0;">
+                    <div style="font-size:18px; font-weight:500;">{{ t.title }}</div>
+                    <div style="font-size:14px; color:#5A6072; margin-top:2px;">{{ t.patient }} ・ {{ t.category }}</div>
+                  </div>
+                  <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ t.prColor }}; background:{{ t.prBg }};">{{ t.prText }}</span>
+                  <div style="text-align:right; min-width:150px;">
+                    <div style="font-size:12px; color:#9298A6;">期限 ・ 担当</div>
+                    <div style="font-size:14px;">{{ t.due }} ・ {{ t.assignee }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ taskEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px; text-align:center; color:#9298A6; font-size:16px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px;">タスクはありません</div></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ PATIENT CREATE ============ -->
+        <sc-if value="{{ isPatientCreate }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:760px;">
+            <a onClick="{{ goPatients }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              患者一覧へ戻る
+            </a>
+            <h1 style="margin:0 0 24px; font-size:28px; font-weight:500;">患者を追加</h1>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:32px; display:flex; flex-direction:column; gap:24px;">
+              <div style="font-size:14px; color:#9298A6; font-weight:500;">氏名</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:-8px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">苗字</span>
+                  <input placeholder="例：山田" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">名前</span>
+                  <input placeholder="例：太郎" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">苗字（かな）</span>
+                  <input placeholder="例：やまだ" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">名前（かな）</span>
+                  <input placeholder="例：たろう" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">生年月日</span>
+                  <input type="date" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">性別</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>男性</option><option>女性</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">電話番号</span>
+                  <input type="tel" placeholder="例：090-1234-5678" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">住所</span>
+                <input placeholder="例：東京都〇〇区〇〇 1-2-3" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+              </label>
+              <div style="border-top:1px solid #E2E5EB; padding-top:24px; font-size:14px; color:#9298A6; font-weight:500;">緊急連絡先</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:-8px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">人物名</span>
+                  <input placeholder="例：山田 花子（妻）" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">電話番号</span>
+                  <input type="tel" placeholder="例：090-8765-4321" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <div style="border-top:1px solid #E2E5EB; padding-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">部署（科）</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>内科</option><option>外科</option><option>小児科</option><option>整形外科</option><option>循環器内科</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">担当医</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>佐藤医師</option><option>高橋医師</option><option>伊藤医師</option>
+                  </select>
+                </label>
+              </div>
+              <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:8px;">
+                <button onClick="{{ goPatients }}" style="background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:12px 24px; font-size:16px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">キャンセル</button>
+                <button onClick="{{ goPatients }}" style="background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 24px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">登録する</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ ANNOUNCEMENT CREATE ============ -->
+        <sc-if value="{{ isAnnouncementCreate }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:760px;">
+            <a onClick="{{ goAnnouncements }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              お知らせ一覧へ戻る
+            </a>
+            <h1 style="margin:0 0 24px; font-size:28px; font-weight:500;">お知らせを作成</h1>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:32px; display:flex; flex-direction:column; gap:24px;">
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">タイトル</span>
+                <input placeholder="お知らせのタイトルを入力" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+              </label>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">カテゴリ</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>緊急</option><option>連絡</option><option>シフト</option><option>その他</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">対象部署</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>全体</option><option>看護部</option><option>内科</option><option>外科</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">優先度</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>高</option><option>中</option><option>低</option>
+                  </select>
+                </label>
+              </div>
+              <label style="display:flex; flex-direction:column; gap:8px; max-width:340px;">
+                <span style="font-size:14px; color:#5A6072;">掲載終了日</span>
+                <input type="date" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                <span style="font-size:12px; color:#9298A6;">この日を過ぎると一覧に表示されなくなります</span>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">本文</span>
+                <textarea placeholder="お知らせの内容を入力してください" rows="6" style="padding:12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; line-height:1.6; font-family:inherit; color:#1A1D24; resize:vertical;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;"></textarea>
+              </label>
+              <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:8px;">
+                <button onClick="{{ goAnnouncements }}" style="background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:12px 24px; font-size:16px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">キャンセル</button>
+                <button onClick="{{ goAnnouncements }}" style="background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 24px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">投稿する</button>
+              </div>
+            </div>
+
+            <!-- 自分が作成したお知らせ -->
+            <div style="margin-top:32px;">
+              <div style="font-size:18px; font-weight:500; margin-bottom:4px;">作成したお知らせ</div>
+              <p style="margin:0 0 16px; font-size:14px; color:#5A6072;">自分が投稿したお知らせを編集・削除できます</p>
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <sc-for list="{{ myAnnouncements }}" as="a" hint-placeholder-count="3">
+                  <div style="background:#FFFFFF; border:1px solid {{ a.cardBorder }}; border-radius:12px; overflow:hidden;">
+                    <div style="height:3px; background:{{ a.stripColor }};"></div>
+                    <div style="padding:16px 20px; display:flex; align-items:center; gap:16px;">
+                      <div style="flex:1 1 auto; min-width:0;">
+                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                          <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ a.catColor }}; background:{{ a.catBg }};">{{ a.category }}</span>
+                          <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; color:#5A6072; background:#EEF0F4;">{{ a.dept }}</span>
+                        </div>
+                        <div style="font-size:16px; font-weight:500;">{{ a.title }}</div>
+                        <div style="font-size:12px; color:#9298A6; margin-top:2px;">投稿 {{ a.date }} ・ 掲載終了 {{ a.endDate }}</div>
+                      </div>
+                      <div style="display:flex; gap:8px; flex:0 0 auto;">
+                        <button onClick="{{ a.edit }}" style="display:flex; align-items:center; gap:6px; background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:8px 14px; font-size:14px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16v4z" stroke="#5A6072" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                          編集
+                        </button>
+                        <button onClick="{{ a.delete }}" style="display:flex; align-items:center; gap:6px; background:#FFFFFF; color:#A32D2D; border:1px solid #E2E5EB; border-radius:8px; padding:8px 14px; font-size:14px; font-family:inherit; cursor:pointer;" style-hover="border-color:#A32D2D; background:#FCEBEB;">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 7h12M9 7V5h6v2M7 7l1 13h8l1-13" stroke="#A32D2D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          削除
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ myAnnEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:32px; text-align:center; color:#9298A6; font-size:16px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px;">作成したお知らせはありません</div></sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ TASK CREATE ============ -->
+        <sc-if value="{{ isTaskCreate }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:760px;">
+            <a onClick="{{ goTasks }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              タスク一覧へ戻る
+            </a>
+            <h1 style="margin:0 0 24px; font-size:28px; font-weight:500;">タスクを作成</h1>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:32px; display:flex; flex-direction:column; gap:24px;">
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">タスク名</span>
+                <input placeholder="例：バイタル測定" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">詳細</span>
+                <textarea placeholder="タスクの内容を入力してください" rows="4" style="padding:12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; line-height:1.6; font-family:inherit; color:#1A1D24; resize:vertical;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;"></textarea>
+              </label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">対象患者</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>田中 一郎</option><option>加藤 誠</option><option>鈴木 花子</option><option>渡辺 三郎</option><option>中村 由美</option><option>佐々木 美咲</option><option>山本 健太</option><option>小林 さくら</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">カテゴリ</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>観察</option><option>投薬</option><option>検査</option><option>処置</option><option>事務</option>
+                  </select>
+                </label>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">ステータス</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option>未着手</option><option>進行中</option><option>完了</option><option>保留</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">優先度</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option value="HIGH">高</option><option value="MED">中</option><option value="LOW">低</option>
+                  </select>
+                </label>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">担当者</span>
+                  <select style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="">選択してください</option><option>中島 看護師</option><option>高橋 看護師</option><option>田村 看護師</option><option>佐藤医師</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">期限</span>
+                  <input type="datetime-local" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:8px;">
+                <button onClick="{{ goTasks }}" style="background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:12px 24px; font-size:16px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">キャンセル</button>
+                <button onClick="{{ goTasks }}" style="background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 24px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">作成する</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ ANNOUNCEMENT EDIT ============ -->
+        <sc-if value="{{ isAnnouncementEdit }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:760px;">
+            <a onClick="{{ goAnnouncementCreate }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              戻る
+            </a>
+            <h1 style="margin:0 0 24px; font-size:28px; font-weight:500;">お知らせを編集</h1>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:32px; display:flex; flex-direction:column; gap:24px;">
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">タイトル</span>
+                <input defaultValue="{{ editAnn.title }}" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+              </label>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">カテゴリ</span>
+                  <select defaultValue="{{ editAnn.category }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option>緊急</option><option>連絡</option><option>シフト</option><option>その他</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">対象部署</span>
+                  <select defaultValue="{{ editAnn.dept }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option>全体</option><option>看護部</option><option>内科</option><option>外科</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">掲載終了日</span>
+                  <input type="date" defaultValue="{{ editAnn.endDate }}" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">本文</span>
+                <textarea rows="6" style="padding:12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; line-height:1.6; font-family:inherit; color:#1A1D24; resize:vertical;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">本文の内容がここに入ります。</textarea>
+              </label>
+              <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:8px;">
+                <button onClick="{{ goAnnouncementCreate }}" style="background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:12px 24px; font-size:16px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">キャンセル</button>
+                <button onClick="{{ goAnnouncementCreate }}" style="background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 24px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">保存する</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ TASK DETAIL ============ -->
+        <sc-if value="{{ isTask }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:880px;">
+            <a onClick="{{ goTasks }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              タスク一覧へ戻る
+            </a>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:32px; margin-bottom:24px;">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:24px;">
+                <div style="min-width:0;">
+                  <div style="display:flex; gap:8px; margin-bottom:10px;">
+                    <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; color:{{ selTask.prColor }}; background:{{ selTask.prBg }};">{{ selTask.prText }}</span>
+                    <span style="display:inline-flex; padding:2px 8px; border-radius:4px; font-size:12px; color:#5A6072; background:#EEF0F4;">{{ selTask.category }}</span>
+                  </div>
+                  <h1 style="margin:0; font-size:28px; font-weight:500;">{{ selTask.title }}</h1>
+                </div>
+                <div style="display:flex; gap:8px; flex:0 0 auto;">
+                  <button onClick="{{ goTaskEdit }}" style="display:flex; align-items:center; gap:6px; background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:10px 16px; font-size:14px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16v4z" stroke="#5A6072" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    編集
+                  </button>
+                  <button onClick="{{ deleteTask }}" style="display:flex; align-items:center; gap:6px; background:#FFFFFF; color:#A32D2D; border:1px solid #E2E5EB; border-radius:8px; padding:10px 16px; font-size:14px; font-family:inherit; cursor:pointer;" style-hover="border-color:#A32D2D; background:#FCEBEB;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 7h12M9 7V5h6v2M7 7l1 13h8l1-13" stroke="#A32D2D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    削除
+                  </button>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:16px; margin:24px 0; padding:16px; background:#EEF0F4; border-radius:8px;">
+                <span style="font-size:14px; color:#5A6072;">ステータス</span>
+                <select defaultValue="{{ selTask.status }}" onChange="{{ changeStatus }}" key="{{ selTask.id }}" style="height:40px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer; min-width:140px;">
+                  <option>未着手</option><option>進行中</option><option>完了</option><option>保留</option>
+                </select>
+                <span style="font-size:12px; color:#9298A6;">変更すると履歴に記録されます</span>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+                <div><div style="font-size:12px; color:#9298A6;">対象患者</div><div style="font-size:16px;">{{ selTask.patient }}</div></div>
+                <div><div style="font-size:12px; color:#9298A6;">担当者</div><div style="font-size:16px;">{{ selTask.assignee }}</div></div>
+                <div><div style="font-size:12px; color:#9298A6;">期限</div><div style="font-size:16px;">{{ selTask.due }}</div></div>
+                <div><div style="font-size:12px; color:#9298A6;">カテゴリ</div><div style="font-size:16px;">{{ selTask.category }}</div></div>
+              </div>
+
+              <div>
+                <div style="font-size:12px; color:#9298A6; margin-bottom:4px;">詳細</div>
+                <p style="margin:0; font-size:16px; line-height:1.6;">{{ selTask.desc }}</p>
+              </div>
+            </div>
+
+            <!-- 変更履歴 -->
+            <div style="font-size:18px; font-weight:500; margin-bottom:12px;">変更履歴</div>
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:8px 24px;">
+              <sc-for list="{{ selTask.history }}" as="h" hint-placeholder-count="2">
+                <div style="display:flex; gap:16px; align-items:flex-start; padding:16px 0; border-bottom:1px solid #E2E5EB;">
+                  <div style="width:8px; height:8px; flex:0 0 8px; margin-top:8px; border-radius:4px; background:#0E9384;"></div>
+                  <div style="flex:1 1 auto;">
+                    <div style="font-size:16px;">{{ h.change }}</div>
+                    <div style="font-size:12px; color:#9298A6; margin-top:2px;">{{ h.at }} ・ {{ h.by }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ noTaskHistory }}" hint-placeholder-val="{{ false }}"><div style="padding:24px 0; text-align:center; color:#9298A6; font-size:14px;">変更履歴はありません</div></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ TASK EDIT ============ -->
+        <sc-if value="{{ isTaskEdit }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:880px;">
+            <a onClick="{{ backToTask }}" style="display:inline-flex; align-items:center; gap:6px; font-size:14px; color:#5A6072; cursor:pointer; margin-bottom:16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              タスク詳細へ戻る
+            </a>
+            <h1 style="margin:0 0 24px; font-size:28px; font-weight:500;">タスクを編集</h1>
+
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:32px; display:flex; flex-direction:column; gap:24px; margin-bottom:24px;">
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">タスク名</span>
+                <input defaultValue="{{ selTask.title }}" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:14px; color:#5A6072;">詳細</span>
+                <textarea rows="4" defaultValue="{{ selTask.desc }}" style="padding:12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; line-height:1.6; font-family:inherit; color:#1A1D24; resize:vertical;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;"></textarea>
+              </label>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">ステータス</span>
+                  <select defaultValue="{{ selTask.status }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option>未着手</option><option>進行中</option><option>完了</option><option>保留</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">優先度</span>
+                  <select defaultValue="{{ selTask.priority }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option value="HIGH">高</option><option value="MED">中</option><option value="LOW">低</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">担当者</span>
+                  <select defaultValue="{{ selTask.assignee }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option>中島 看護師</option><option>高橋 看護師</option><option>田村 看護師</option><option>佐藤医師</option>
+                  </select>
+                </label>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">対象患者</span>
+                  <select defaultValue="{{ selTask.patient }}" style="height:44px; padding:0 12px; background:#FFFFFF; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24; cursor:pointer;">
+                    <option>田中 一郎</option><option>加藤 誠</option><option>鈴木 花子</option><option>渡辺 三郎</option><option>中村 由美</option><option>佐々木 美咲</option><option>山本 健太</option><option>小林 さくら</option>
+                  </select>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:14px; color:#5A6072;">期限</span>
+                  <input defaultValue="{{ selTask.due }}" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+                </label>
+              </div>
+              <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:8px;">
+                <button onClick="{{ backToTask }}" style="background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:12px 24px; font-size:16px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">キャンセル</button>
+                <button onClick="{{ saveTask }}" style="background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 24px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">保存する</button>
+              </div>
+            </div>
+
+            <!-- 変更履歴 -->
+            <div style="font-size:18px; font-weight:500; margin-bottom:12px;">変更履歴</div>
+            <div style="background:#FFFFFF; border:1px solid #E2E5EB; border-radius:12px; padding:8px 24px;">
+              <sc-for list="{{ selTask.history }}" as="h" hint-placeholder-count="2">
+                <div style="display:flex; gap:16px; align-items:flex-start; padding:16px 0; border-bottom:1px solid #E2E5EB;">
+                  <div style="width:8px; height:8px; flex:0 0 8px; margin-top:8px; border-radius:4px; background:#0E9384;"></div>
+                  <div style="flex:1 1 auto;">
+                    <div style="font-size:16px;">{{ h.change }}</div>
+                    <div style="font-size:12px; color:#9298A6; margin-top:2px;">{{ h.at }} ・ {{ h.by }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ noTaskHistory }}" hint-placeholder-val="{{ false }}"><div style="padding:24px 0; text-align:center; color:#9298A6; font-size:14px;">変更履歴はありません</div></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Login screen (full-bleed, no shell) ===== -->
+  <sc-if value="{{ loggedOut }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:80; background:#00072D; display:flex; align-items:center; justify-content:center; padding:24px; font-family:'Noto Sans JP', sans-serif;">
+      <div style="width:100%; max-width:420px;">
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:32px;">
+          <div style="width:40px; height:40px; border-radius:8px; background:#0E9384; display:flex; align-items:center; justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 13h4l2 5 4-12 2 7h4" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span style="color:#FFFFFF; font-size:22px; font-weight:500; letter-spacing:.02em;">TeamFlow</span>
+        </div>
+        <div style="background:#FFFFFF; border-radius:12px; padding:32px;">
+          <h1 style="margin:0 0 4px; font-size:22px; font-weight:500; color:#1A1D24;">ログイン</h1>
+          <p style="margin:0 0 24px; font-size:14px; color:#5A6072;">ログインIDとパスワードを入力してください</p>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <label style="display:flex; flex-direction:column; gap:8px;">
+              <span style="font-size:14px; color:#5A6072;">ログインID</span>
+              <input placeholder="例：nakajima" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+            </label>
+            <label style="display:flex; flex-direction:column; gap:8px;">
+              <span style="font-size:14px; color:#5A6072;">パスワード</span>
+              <input type="password" placeholder="パスワード" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+            </label>
+            <button onClick="{{ login }}" style="margin-top:8px; height:48px; background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">ログイン</button>
+          </div>
+        </div>
+        <p style="margin:24px 0 0; text-align:center; font-size:12px; color:#5A6072;">さくら総合病院 業務支援システム</p>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== Password change modal ===== -->
+  <sc-if value="{{ pwOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePwModal }}" style="position:fixed; inset:0; background:rgba(0,7,45,.5); display:flex; align-items:center; justify-content:center; z-index:50; padding:24px;">
+      <div onClick="{{ stop }}" style="width:440px; max-width:100%; background:#FFFFFF; border-radius:12px; box-shadow:0 16px 48px rgba(0,7,45,.28); padding:32px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+          <h2 style="margin:0; font-size:22px; font-weight:500;">パスワード変更</h2>
+          <a onClick="{{ closePwModal }}" style="cursor:pointer; display:flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:8px;" style-hover="background:#EEF0F4;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#5A6072" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <label style="display:flex; flex-direction:column; gap:8px;">
+            <span style="font-size:14px; color:#5A6072;">現在のパスワード</span>
+            <input type="password" placeholder="現在のパスワード" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+          </label>
+          <label style="display:flex; flex-direction:column; gap:8px;">
+            <span style="font-size:14px; color:#5A6072;">新しいパスワード</span>
+            <input type="password" placeholder="8文字以上" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+          </label>
+          <label style="display:flex; flex-direction:column; gap:8px;">
+            <span style="font-size:14px; color:#5A6072;">新しいパスワード（確認）</span>
+            <input type="password" placeholder="もう一度入力" style="height:44px; padding:0 12px; background:#EEF0F4; border:1px solid #E2E5EB; border-radius:8px; font-size:16px; font-family:inherit; color:#1A1D24;" style-focus="border-color:#0E9384; outline:none; background:#FFFFFF;">
+          </label>
+        </div>
+        <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:24px;">
+          <button onClick="{{ closePwModal }}" style="background:#FFFFFF; color:#1A1D24; border:1px solid #E2E5EB; border-radius:8px; padding:12px 24px; font-size:16px; font-family:inherit; cursor:pointer;" style-hover="border-color:#C5CAD4;">閉じる</button>
+          <button onClick="{{ closePwModal }}" style="background:#0E9384; color:#FFFFFF; border:none; border-radius:8px; padding:12px 24px; font-size:16px; font-weight:500; font-family:inherit; cursor:pointer;" style-hover="background:#0B6B60;">変更する</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- menu backdrop -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMenu }}" style="position:fixed; inset:0; z-index:4;"></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1440, &quot;height&quot;: 940 }
+}">
+class Component extends DCLogic {
+  state = {
+    screen: "dashboard", selectedId: null,
+    query: "", statusFilter: "all", deptFilter: "all", doctorFilter: "all",
+    kanbanTab: "all", annTab: "unread",
+    taskStatusFilter: "all", taskPriorityFilter: "all",
+    menuOpen: false, pwOpen: false, navOpen: false, loggedIn: true, dark: false,
+    selectedTaskId: null, editAnnId: null,
+    myCreated: [
+      { id:101, title:"6月度 病棟ミーティング議事録", category:"連絡", dept:"看護部", date:"6/28 18:00", endDate:"2026-07-15", urgent:false },
+      { id:102, title:"夜勤シフト交代のお願い（7/3）", category:"シフト", dept:"看護部", date:"6/27 12:30", endDate:"2026-07-03", urgent:false },
+      { id:103, title:"点滴在庫不足に関する緊急連絡", category:"緊急", dept:"内科", date:"6/26 09:15", endDate:"2026-06-30", urgent:true }
+    ],
+    taskData: [
+      { id:1, pid:1, title:"バイタル再測定", patient:"田中 一郎", status:"進行中", priority:"HIGH", due:"6/29 09:30", assignee:"中島 看護師", category:"観察", desc:"体温・血圧・脈拍・SpO₂を測定し、前回値と比較して佐藤医師へ報告する。発熱が続く場合はクーリングを継続。", history:[
+        { at:"6/29 09:05", by:"中島 看護師", field:"ステータス", from:"未着手", to:"進行中" },
+        { at:"6/29 08:40", by:"佐藤医師", field:"優先度", from:"中", to:"高" }
+      ]},
+      { id:2, pid:1, title:"解熱剤投与", patient:"田中 一郎", status:"未着手", priority:"HIGH", due:"6/29 10:00", assignee:"中島 看護師", category:"投薬", desc:"医師の指示に基づき解熱剤を投与。投与後30分でバイタルを再確認すること。", history:[
+        { at:"6/29 08:45", by:"佐藤医師", field:"担当者", from:"高橋 看護師", to:"中島 看護師" }
+      ]},
+      { id:3, pid:1, title:"血液検査結果の確認", patient:"田中 一郎", status:"完了", priority:"MED", due:"6/29 08:00", assignee:"佐藤医師", category:"検査", desc:"炎症反応・電解質の確認。異常値があれば主治医に共有。", history:[
+        { at:"6/29 08:10", by:"佐藤医師", field:"ステータス", from:"進行中", to:"完了" }
+      ]},
+      { id:4, pid:2, title:"術後容態確認", patient:"加藤 誠", status:"進行中", priority:"HIGH", due:"6/29 09:45", assignee:"高橋 看護師", category:"観察", desc:"創部の状態と疼痛レベルを確認。離床を段階的に進める。", history:[
+        { at:"6/29 09:20", by:"高橋 看護師", field:"ステータス", from:"未着手", to:"進行中" }
+      ]},
+      { id:5, pid:3, title:"定期採血", patient:"鈴木 花子", status:"未着手", priority:"MED", due:"6/29 10:00", assignee:"中島 看護師", category:"検査", desc:"術後経過観察のための定期採血。スピッツの種類を確認のこと。", history:[] },
+      { id:6, pid:4, title:"服薬確認", patient:"渡辺 三郎", status:"未着手", priority:"LOW", due:"6/29 12:00", assignee:"中島 看護師", category:"投薬", desc:"降圧剤の服薬状況を確認。飲み忘れがないか本人へ聞き取り。", history:[] },
+      { id:7, pid:5, title:"CT検査同行", patient:"中村 由美", status:"未着手", priority:"MED", due:"6/29 14:00", assignee:"中島 看護師", category:"検査", desc:"検査室まで車椅子で同行。検査前の絶食指示を確認すること。", history:[] },
+      { id:8, pid:6, title:"点滴交換", patient:"佐々木 美咲", status:"完了", priority:"LOW", due:"6/29 11:00", assignee:"中島 看護師", category:"処置", desc:"定時の点滴交換。刺入部の発赤・腫脹を確認。", history:[
+        { at:"6/29 11:05", by:"中島 看護師", field:"ステータス", from:"進行中", to:"完了" }
+      ]},
+      { id:9, pid:7, title:"退院手続き", patient:"山本 健太", status:"未着手", priority:"LOW", due:"6/29 15:00", assignee:"田村 看護師", category:"事務", desc:"退院書類の準備と保護者への生活指導。次回外来予約を確認。", history:[] },
+      { id:10, pid:8, title:"定時検温", patient:"小林 さくら", status:"完了", priority:"LOW", due:"6/29 12:30", assignee:"中島 看護師", category:"処置", desc:"定時検温と食事・水分摂取量の記録。", history:[] }
+    ]
+  };
+
+  ME = "中島 看護師";
+
+  patients() {
+    return [
+      { id:1, name:"田中 一郎", age:72, gender:"male", room:"301号室", dept:"内科", doctor:"佐藤医師", status:"緊急", nextTask:"バイタル再測定", nextTime:"09:30", birth:"1953-03-12", blood:"A型", admit:"2026-06-25",
+        vitals:[{label:"体温",value:"38.4",unit:"℃",color:"#A32D2D"},{label:"血圧",value:"148/96",unit:"mmHg",color:"#A32D2D"},{label:"脈拍",value:"96",unit:"bpm",color:"#854F0B"},{label:"SpO₂",value:"95",unit:"%",color:"#1A1D24"}],
+        ai:"発熱（38.4℃）と血圧上昇が継続中。本日は解熱剤投与とバイタル再測定が最優先。血液検査の結果が午前中に出る予定のため、結果確認後に佐藤医師へ報告すること。" },
+      { id:2, name:"加藤 誠", age:54, gender:"male", room:"308号室", dept:"外科", doctor:"佐藤医師", status:"緊急", nextTask:"術後容態確認", nextTime:"09:45", birth:"1971-01-05", blood:"O型", admit:"2026-06-27",
+        vitals:[{label:"体温",value:"37.6",unit:"℃",color:"#854F0B"},{label:"血圧",value:"132/88",unit:"mmHg",color:"#1A1D24"},{label:"脈拍",value:"88",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"97",unit:"%",color:"#1A1D24"}],
+        ai:"術後2日目。微熱が続いており創部の観察が必要。離床を段階的に進める方針。疼痛コントロール状況を高橋看護師と共有のこと。" },
+      { id:3, name:"鈴木 花子", age:45, gender:"female", room:"512号室", dept:"外科", doctor:"高橋医師", status:"経過観察", nextTask:"採血", nextTime:"10:00", birth:"1980-09-22", blood:"B型", admit:"2026-06-26",
+        vitals:[{label:"体温",value:"36.9",unit:"℃",color:"#1A1D24"},{label:"血圧",value:"118/74",unit:"mmHg",color:"#1A1D24"},{label:"脈拍",value:"72",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"99",unit:"%",color:"#1A1D24"}],
+        ai:"術後経過は良好。本日は定期採血を実施し、炎症反応の推移を確認する。明日以降の食事再開を検討。" },
+      { id:4, name:"渡辺 三郎", age:81, gender:"male", room:"315号室", dept:"内科", doctor:"佐藤医師", status:"経過観察", nextTask:"服薬確認", nextTime:"12:00", birth:"1944-11-30", blood:"A型", admit:"2026-06-20",
+        vitals:[{label:"体温",value:"36.5",unit:"℃",color:"#1A1D24"},{label:"血圧",value:"138/82",unit:"mmHg",color:"#854F0B"},{label:"脈拍",value:"68",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"96",unit:"%",color:"#1A1D24"}],
+        ai:"降圧剤の用量調整中。服薬アドヒアランスの確認が必要。ふらつきによる転倒リスクに注意し、歩行時は見守りを行うこと。" },
+      { id:5, name:"中村 由美", age:68, gender:"female", room:"302号室", dept:"内科", doctor:"伊藤医師", status:"情報", nextTask:"CT検査同行", nextTime:"14:00", birth:"1957-07-14", blood:"AB型", admit:"2026-06-28",
+        vitals:[{label:"体温",value:"36.7",unit:"℃",color:"#1A1D24"},{label:"血圧",value:"124/78",unit:"mmHg",color:"#1A1D24"},{label:"脈拍",value:"74",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"98",unit:"%",color:"#1A1D24"}],
+        ai:"精査入院。本日14時のCT検査に同行予定。検査結果を待って今後の治療方針を決定する。検査前の絶食指示を確認すること。" },
+      { id:6, name:"佐々木 美咲", age:33, gender:"female", room:"309号室", dept:"内科", doctor:"高橋医師", status:"安定", nextTask:"点滴交換", nextTime:"11:00", birth:"1993-02-18", blood:"O型", admit:"2026-06-24",
+        vitals:[{label:"体温",value:"36.6",unit:"℃",color:"#1A1D24"},{label:"血圧",value:"110/70",unit:"mmHg",color:"#1A1D24"},{label:"脈拍",value:"66",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"99",unit:"%",color:"#1A1D24"}],
+        ai:"全身状態は安定。定時の点滴交換を継続。明後日の退院に向けて服薬指導を予定。" },
+      { id:7, name:"山本 健太", age:7, gender:"male", room:"405号室", dept:"小児科", doctor:"伊藤医師", status:"安定", nextTask:"退院手続き", nextTime:"15:00", birth:"2018-12-03", blood:"A型", admit:"2026-06-23",
+        vitals:[{label:"体温",value:"36.8",unit:"℃",color:"#1A1D24"},{label:"血圧",value:"100/62",unit:"mmHg",color:"#1A1D24"},{label:"脈拍",value:"84",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"99",unit:"%",color:"#1A1D24"}],
+        ai:"回復良好で本日退院予定。退院手続きと保護者への生活指導を実施。次回外来予約を確認すること。" },
+      { id:8, name:"小林 さくら", age:9, gender:"female", room:"406号室", dept:"小児科", doctor:"伊藤医師", status:"安定", nextTask:"検温", nextTime:"16:00", birth:"2016-05-09", blood:"B型", admit:"2026-06-27",
+        vitals:[{label:"体温",value:"37.0",unit:"℃",color:"#1A1D24"},{label:"血圧",value:"98/60",unit:"mmHg",color:"#1A1D24"},{label:"脈拍",value:"88",unit:"bpm",color:"#1A1D24"},{label:"SpO₂",value:"99",unit:"%",color:"#1A1D24"}],
+        ai:"経過良好。定時検温を継続し、食欲・水分摂取量を観察。明日の回診で退院時期を相談予定。" }
+    ];
+  }
+
+  tasks() { return this.state.taskData; }
+
+  announcements() {
+    return [
+      { id:1, title:"B病棟 East入口の一時閉鎖について", body:"設備点検のため、本日13時〜15時はB病棟East入口を閉鎖します。該当時間帯はCentral入口をご利用ください。", category:"緊急", dept:"全体", author:"管理者", date:"6/29 09:00", urgent:true, unread:true },
+      { id:2, title:"7月度 勤務シフト確定のお知らせ", body:"7月度の勤務シフトを確定しました。勤怠システムよりご確認のうえ、変更希望は7/2までに申請してください。", category:"シフト", dept:"看護部", author:"高橋 師長", date:"6/28 17:30", urgent:false, unread:true },
+      { id:3, title:"院内感染対策の徹底について", body:"季節性感染症の増加に伴い、手指衛生と標準予防策の再徹底をお願いします。詳細は感染対策マニュアルを参照。", category:"連絡", dept:"全体", author:"管理者", date:"6/28 10:15", urgent:false, unread:true },
+      { id:4, title:"電子カルテ更新メンテナンス", body:"7/5 深夜2時〜4時にシステムメンテナンスを実施します。該当時間はカルテ参照ができません。", category:"その他", dept:"全体", author:"システム管理", date:"6/27 14:00", urgent:false, unread:false },
+      { id:5, title:"新人看護師研修スケジュール", body:"7月入職の新人研修スケジュールを掲示しました。プリセプター担当者は内容をご確認ください。", category:"連絡", dept:"看護部", author:"教育担当", date:"6/26 11:00", urgent:false, unread:false }
+    ];
+  }
+
+  statusMeta(s) {
+    const m = { "緊急":{text:"緊急",color:"#A32D2D",bg:"#FCEBEB"}, "経過観察":{text:"経過観察",color:"#854F0B",bg:"#FAEEDA"}, "安定":{text:"安定",color:"#3B6D11",bg:"#EAF3DE"}, "情報":{text:"結果待ち",color:"#185FA5",bg:"#E6F1FB"} };
+    return m[s] || m["情報"];
+  }
+  taskStatusMeta(s) {
+    const m = { "未着手":{color:"#5A6072",bg:"#EEF0F4"}, "進行中":{color:"#185FA5",bg:"#E6F1FB"}, "完了":{color:"#3B6D11",bg:"#EAF3DE"}, "保留":{color:"#854F0B",bg:"#FAEEDA"} };
+    return m[s] || m["未着手"];
+  }
+  priorityMeta(p) {
+    const m = { "HIGH":{text:"優先度 高",color:"#A32D2D",bg:"#FCEBEB"}, "MED":{text:"優先度 中",color:"#854F0B",bg:"#FAEEDA"}, "LOW":{text:"優先度 低",color:"#3B6D11",bg:"#EAF3DE"} };
+    return m[p] || m["LOW"];
+  }
+  catMeta(c) {
+    const m = { "緊急":{color:"#A32D2D",bg:"#FCEBEB"}, "連絡":{color:"#185FA5",bg:"#E6F1FB"}, "シフト":{color:"#5A6072",bg:"#EEF0F4"}, "その他":{color:"#5A6072",bg:"#EEF0F4"} };
+    return m[c] || m["連絡"];
+  }
+  ageGroup(age) { if (age < 15) return {key:"child",label:"小児"}; if (age >= 65) return {key:"elderly",label:"高齢"}; return {key:"adult",label:"成人"}; }
+
+  decorate(p) {
+    const s = this.statusMeta(p.status), g = this.ageGroup(p.age), male = p.gender === "male";
+    return { ...p,
+      badgeText:s.text, badgeColor:s.color, badgeBg:s.bg,
+      avatarColor: male ? "#185FA5" : "#9333A8", avatarBg: male ? "#E6F1FB" : "#F3EAF6",
+      isChild:g.key==="child", isAdult:g.key==="adult", isElderly:g.key==="elderly",
+      meta:`${p.age}歳　${male?"男性":"女性"}・${g.label}　|　${p.room}　|　${p.dept}・担当 ${p.doctor}`,
+      cardBorder: p.status==="緊急" ? "#A32D2D" : "#E2E5EB",
+      stripColor: p.status==="緊急" ? "#A32D2D" : "transparent",
+      open: () => this.setState({ screen:"patient", selectedId:p.id })
+    };
+  }
+  decorateAnn(a) { const c = this.catMeta(a.category); return { ...a, catColor:c.color, catBg:c.bg, cardBorder:a.urgent?"#A32D2D":"#E2E5EB", stripColor:a.urgent?"#A32D2D":"transparent" }; }
+  decorateTask(t) { const s=this.taskStatusMeta(t.status), p=this.priorityMeta(t.priority); return { ...t, stColor:s.color, stBg:s.bg, prColor:p.color, prBg:p.bg, prText:p.text, open:()=>this.setState({screen:"task", selectedTaskId:t.id}) }; }
+
+  navStyle(key) {
+    const active = this.state.screen === key;
+    return active ? {bg:"#0E9384",color:"#FFFFFF",weight:"500"} : {bg:"transparent",color:"#9298A6",weight:"400"};
+  }
+  tabStyle(active) { return active ? {bg:"#FFFFFF",color:"#1A1D24",weight:"500"} : {bg:"transparent",color:"#5A6072",weight:"400"}; }
+
+  renderVals() {
+    const sc = this.state.screen;
+    const q = (this.state.query||"").replace(/\s/g,"");
+    const all = this.patients();
+    const filtered = all.filter(p =>
+      (q==="" || p.name.replace(/\s/g,"").includes(q)) &&
+      (this.state.statusFilter==="all" || p.status===this.state.statusFilter) &&
+      (this.state.deptFilter==="all" || p.dept===this.state.deptFilter) &&
+      (this.state.doctorFilter==="all" || p.doctor===this.state.doctorFilter)
+    ).map(p=>this.decorate(p));
+
+    const groups = [
+      {key:"urgent",title:"緊急・要対応",accent:"#A32D2D",match:["緊急"]},
+      {key:"watch",title:"経過観察",accent:"#854F0B",match:["経過観察"]},
+      {key:"stable",title:"安定・その他",accent:"#3B6D11",match:["安定","情報"]}
+    ];
+    const sections = groups.map(g=>{const items=filtered.filter(p=>g.match.includes(p.status)); return {...g,items,count:`${items.length}名`};}).filter(g=>g.items.length>0);
+
+    // selected patient
+    const selRaw = all.find(p=>p.id===this.state.selectedId) || all[0];
+    const sel = this.decorate(selRaw);
+    sel.aiSummary = selRaw.ai; sel.vitals = selRaw.vitals;
+
+    // kanban for selected
+    let ptasks = this.tasks().filter(t=>t.pid===sel.id);
+    if (this.state.kanbanTab==="my") ptasks = ptasks.filter(t=>t.assignee===this.ME);
+    const cols = [
+      {key:"未着手",title:"未着手",accent:"#5A6072"},
+      {key:"進行中",title:"進行中",accent:"#185FA5"},
+      {key:"完了",title:"完了",accent:"#3B6D11"}
+    ];
+    const kanban = cols.map(c=>{const items=ptasks.filter(t=>t.status===c.key).map(t=>this.decorateTask(t)); return {...c,items,count:`${items.length}`,empty:items.length===0};});
+
+    // announcements
+    const anns = this.announcements();
+    const annFiltered = anns.filter(a=> this.state.annTab==="unread" ? a.unread : !a.unread).map(a=>this.decorateAnn(a));
+    const unreadCount = anns.filter(a=>a.unread).length;
+    const readCount = anns.filter(a=>!a.unread).length;
+    const unreadList = anns.filter(a=>a.unread).slice(0,3).map(a=>this.decorateAnn(a));
+
+    // tasks view
+    const isMy = sc==="mytasks";
+    let tlist = this.tasks().filter(t=> !isMy || t.assignee===this.ME);
+    tlist = tlist.filter(t=>
+      (this.state.taskStatusFilter==="all"||t.status===this.state.taskStatusFilter) &&
+      (this.state.taskPriorityFilter==="all"||t.priority===this.state.taskPriorityFilter)
+    ).map(t=>this.decorateTask(t));
+
+    // dashboard attention list
+    const attentionList = all.filter(p=>p.status==="緊急"||p.status==="経過観察").map(p=>this.decorate(p));
+
+    // selected task (detail / edit)
+    const selTaskRaw = this.tasks().find(t=>t.id===this.state.selectedTaskId) || this.tasks()[0];
+    const selTask = this.decorateTask(selTaskRaw);
+    selTask.history = (selTaskRaw.history||[]).map(h=>({ ...h, change:`${h.field}：${h.from} → ${h.to}` }));
+    selTask.hasHistory = (selTaskRaw.history||[]).length>0;
+
+    // announcement being edited
+    const editAnn = this.state.myCreated.find(a=>a.id===this.state.editAnnId) || this.state.myCreated[0] || {};
+
+    const crumbs = { dashboard:"ダッシュボード", patients:"患者一覧", patient:sel.name, announcements:"お知らせ", tasks:"全タスク", mytasks:"マイタスク", patientCreate:"患者を追加", announcementCreate:"お知らせを作成", taskCreate:"タスクを作成", task:selTask.title, taskEdit:"タスク編集", announcementEdit:"お知らせ編集" };
+
+    return {
+      today:"2026年6月29日（月）",
+      crumb: crumbs[sc],
+      isDashboard: sc==="dashboard", isPatients: sc==="patients", isPatient: sc==="patient",
+      isAnnouncements: sc==="announcements", isTasksView: sc==="tasks"||sc==="mytasks",
+      isPatientCreate: sc==="patientCreate", isAnnouncementCreate: sc==="announcementCreate",
+      isTaskCreate: sc==="taskCreate",
+      goPatientCreate:()=>this.setState({screen:"patientCreate"}),
+      goAnnouncementCreate:()=>this.setState({screen:"announcementCreate"}),
+      goTaskCreate:()=>this.setState({screen:"taskCreate"}),
+      menuOpen:this.state.menuOpen, pwOpen:this.state.pwOpen,
+      menuBg: this.state.menuOpen ? "rgba(255,255,255,.08)" : "transparent",
+      caretRotate: this.state.menuOpen ? "rotate(180deg)" : "rotate(0deg)",
+      toggleMenu:()=>this.setState(s=>({menuOpen:!s.menuOpen})),
+      closeMenu:()=>this.setState({menuOpen:false}),
+      openPwModal:()=>this.setState({menuOpen:false, pwOpen:true}),
+      closePwModal:()=>this.setState({pwOpen:false}),
+      logout:()=>this.setState({menuOpen:false, navOpen:false, loggedIn:false}),
+      login:()=>this.setState({loggedIn:true, screen:"dashboard"}),
+      loggedOut: !this.state.loggedIn,
+      rootClass: this.state.dark ? "tf-dark" : "",
+      darkLabel: this.state.dark ? "ライトモード" : "ダークモード",
+      toggleDark:()=>this.setState(s=>({dark:!s.dark, menuOpen:false})),
+      stop:(e)=>e.stopPropagation(),
+      myAnnouncements: this.state.myCreated.map(a=>({ ...this.decorateAnn(a), delete:()=>this.setState(s=>({myCreated:s.myCreated.filter(x=>x.id!==a.id)})), edit:()=>this.setState({screen:"announcementEdit", editAnnId:a.id}) })),
+      myAnnEmpty: this.state.myCreated.length===0,
+      isAnnouncementEdit: sc==="announcementEdit", editAnn,
+      goAnnouncementCreateBack:()=>this.setState({screen:"announcementCreate"}),
+      nav: { dashboard:this.navStyle("dashboard"), patients:this.navStyle("patients"), announcements:this.navStyle("announcements"), tasks:this.navStyle("tasks"), mytasks:this.navStyle("mytasks") },
+      goDashboard:()=>this.setState({screen:"dashboard", navOpen:false}),
+      goPatients:()=>this.setState({screen:"patients", navOpen:false}),
+      goAnnouncements:()=>this.setState({screen:"announcements", navOpen:false}),
+      goTasks:()=>this.setState({screen:"tasks", navOpen:false}),
+      goMyTasks:()=>this.setState({screen:"mytasks", navOpen:false}),
+      navOpen:this.state.navOpen, navClass: this.state.navOpen ? "tf-open" : "",
+      toggleNav:()=>this.setState(s=>({navOpen:!s.navOpen})),
+      closeNav:()=>this.setState({navOpen:false}),
+      hasUnread: unreadCount>0, unreadCount, readCount,
+
+      // patients
+      query:this.state.query, statusFilter:this.state.statusFilter, deptFilter:this.state.deptFilter, doctorFilter:this.state.doctorFilter,
+      onQuery:e=>this.setState({query:e.target.value}), onStatus:e=>this.setState({statusFilter:e.target.value}),
+      onDept:e=>this.setState({deptFilter:e.target.value}), onDoctor:e=>this.setState({doctorFilter:e.target.value}),
+      sections, isEmpty:filtered.length===0,
+      totalLabel:`全 ${filtered.length} 名　・　緊急 ${filtered.filter(p=>p.status==="緊急").length} 名`,
+
+      // patient detail
+      sel,
+      kanban,
+      kb:{ all:this.tabStyle(this.state.kanbanTab==="all"), my:this.tabStyle(this.state.kanbanTab==="my") },
+      kbAll:()=>this.setState({kanbanTab:"all"}), kbMy:()=>this.setState({kanbanTab:"my"}),
+      regen:()=>{},
+
+      // announcements
+      annList:annFiltered, annEmpty:annFiltered.length===0, unreadList,
+      annTab:{ unread:this.tabStyle(this.state.annTab==="unread"), read:this.tabStyle(this.state.annTab==="read") },
+      annUnread:()=>this.setState({annTab:"unread"}), annRead:()=>this.setState({annTab:"read"}),
+      attentionList,
+
+      // tasks
+      taskTitle: isMy ? "マイタスク" : "全タスク",
+      taskCountLabel: `${tlist.length} 件 ・ 未完 ${tlist.filter(t=>t.status!=="完了").length} 件`,
+      taskList:tlist, taskEmpty:tlist.length===0,
+      taskStatusFilter:this.state.taskStatusFilter, taskPriorityFilter:this.state.taskPriorityFilter,
+      onTaskStatus:e=>this.setState({taskStatusFilter:e.target.value}), onTaskPriority:e=>this.setState({taskPriorityFilter:e.target.value}),
+
+      // task detail / edit
+      isTask: sc==="task", isTaskEdit: sc==="taskEdit", selTask, noTaskHistory: !selTask.hasHistory,
+      goTaskEdit:()=>this.setState({screen:"taskEdit"}),
+      backToTask:()=>this.setState({screen:"task"}),
+      changeStatus:(e)=>{ const v=e.target.value; this.setState(s=>({ taskData:s.taskData.map(t=> t.id===s.selectedTaskId ? { ...t, status:v, history:[{at:"たった今", by:this.ME, field:"ステータス", from:t.status, to:v}, ...(t.history||[])] } : t) })); },
+      deleteTask:()=>{ const id=this.state.selectedTaskId; this.setState(s=>({ taskData:s.taskData.filter(t=>t.id!==id), screen:"tasks", selectedTaskId:null })); },
+      saveTask:()=>this.setState({screen:"task"})
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+# TeamFlow フロントエンド 実装進捗管理
+
+このファイルは Issue #18（UI整備）の進捗を管理する。CLAUDE.md フェーズ0で作成。
+チェックの付いた項目は「完了」。フェーズ1（コンポーネント）→ フェーズ2（ページ）の順で1つずつ進める。
+
+- 参照元：
+  - `docs/design/README.md`（デザインの唯一の正解）
+  - `docs/design/TeamFlow.dc.html`（見た目・挙動の正解プロトタイプ。※CLAUDE.md表記の `TeamFlow_dc.html` の実ファイル名）
+  - `docs/design/TeamFlow_to_share.html`（ブラウザ確認用バンドル）
+  - `docs/frontend-overview-and-ui-audit.md`（現状の地図・優先順位）
+
+---
+
+## フェーズ0：全体把握（完了）
+
+- [x] モック全体を確認（README / TeamFlow.dc.html の Screens・Design Tokens・App Shell）
+- [x] `docs/progress.md` 作成
+- [x] ページ一覧の書き出し（下記）
+- [x] コンポーネント一覧の書き出し（実装済み/未実装を明記、下記）
+
+---
+
+## コンポーネント一覧（フェーズ1）
+
+### 実装済み（再作成しない）
+
+`src/components/ui/` 配下の共通コンポーネント：
+
+- [x] **Button** — `ui/Button.tsx`（variant: primary / secondary / danger）※neutral / ghost の追加と全画面への適用は要検討（audit C）
+- [x] **Badge** — `ui/Badge.tsx`（tone ベースの汎用バッジ）
+- [x] **PriorityBadge** — `ui/PriorityBadge.tsx`（優先度→tone マッピング内包）
+- [x] **StatusBadge** — `ui/StatusBadge.tsx`（ステータス→tone マッピング内包）
+- [x] **Card** — `ui/Card.tsx`（surface / 角丸 / 余白の土台）
+- [x] **PatientCard** — `ui/PatientCard.tsx`（お手本／表示のみ・単一責任）
+- [x] **PatientIcon** — `ui/PatientIcon.tsx`（性別=色・年齢層=形の患者アバター）
+- [x] **Modal** — `ui/Modal.tsx`（お手本／isOpen・onClose・children の汎用化）
+- [x] **AISummaryCard** — `ui/AISummaryCard.tsx`（お手本／Card 土台・開閉トグル）
+- [x] **UserMenu** — `ui/UserMenu.tsx`（ヘッダーのユーザードロップダウン。audit K の DropdownMenu 相当）
+- [x] **AppLayout** — `layouts/AppLayout.tsx`（お手本／Outlet でページ差し込み）
+
+### 既存だが「素の実装」で、共通コンポーネント適用によるリファクタ対象
+
+`src/components/` 直下。存在はするが、audit によれば内部が素の `<button>/<input>/<select>/<span>` で書かれており、下記の土台コンポーネント完成後に置き換える。
+
+- AnnouncementCard / AnnouncementList / AnnouncementTabs
+- TaskCard / TaskList / TaskListContainer / TaskFilter
+- PatientList / PatientListContainer / PatientFilter
+- Navigation / UrgentAnnouncements / PasswordChangeModal
+
+### 未実装（今回作る。audit の推奨着手順どおりに上から1つずつ）
+
+**土台（最優先）**
+
+- [x] **Input** — 全フォームの素 `<input>`（text/password/date/tel/datetime-local）を置換（audit B・優先1）→ `ui/Input.tsx` / doc: `implementation/Input.md`
+- [x] **Select**（汎用） — `options: {value,label}[]` を受ける（audit A・優先2）→ `ui/Select.tsx` / doc: `implementation/Select.md`
+- [x] **PrioritySelect** — Select の固定ラップ（優先度）→ `ui/PrioritySelect.tsx` / doc: `implementation/PrioritySelect.md`
+- [x] **TaskStatusSelect** — Select の固定ラップ（ステータス）→ `ui/TaskStatusSelect.tsx` / doc: `implementation/TaskStatusSelect.md`
+- [x] **FormField** — `<label>` ＋ エラー枠を内包（audit B）→ `ui/FormField.tsx` / doc: `implementation/FormField.md`
+- [x] **ConfirmDialog** — Modal 派生の削除確認ダイアログ（audit H・優先6）→ `ui/ConfirmDialog.tsx` / doc: `implementation/ConfirmDialog.md`
+
+**専用（後回し可）**
+
+- [ ] **HistoryList** — 変更履歴の共通描画（お知らせ/タスク詳細で同一。audit J・優先7）
+- [ ] **Tabs**（汎用・カウント付き） — お知らせ未読/既読・患者詳細カンバンタブ（audit G・優先8）
+- [ ] **FilterBar** — Select を横並びにする器（audit F・優先9。Select 共通化後は薄い）
+- [ ] **KanbanBoard** — 患者詳細のカンバン（現状 PatientDetailPage にローカル定義。audit 10）
+- [ ] **List**（ジェネリック） — カードを map する器（audit E）
+- [ ] **PageHeader** — タイトル＋作成リンクの一覧共通ヘッダー（audit M）
+- [ ] **EmptyState** — 「〜ありません」の共通表示（audit L）
+- [ ] **Loading** — 「読み込み中...」の共通表示（audit L）
+
+> 着手順（audit 推奨）：`Input → Select(+Priority/Status) → Badge(済) → Card(済) → Button適用 → Modal(済/ConfirmDialog)` → 専用（History/Tabs/Kanban…）。
+> 実質、未実装の土台は **Input → Select → PrioritySelect → TaskStatusSelect → FormField → ConfirmDialog** の順で着手する。
+
+---
+
+## ページ一覧（フェーズ2）
+
+`src/App.tsx` のルーティングと README の Screens/Views を突き合わせたもの。
+（※ページ自体は既に存在するが、共通コンポーネント適用による整備がフェーズ2の対象。）
+
+| # | 画面（README） | ルート | ファイル | 整備 |
+|---|---|---|---|---|
+| 1 | ログイン | `/login` | `pages/LoginPage.tsx` | [ ] |
+| 2 | ダッシュボード | `/dashboard` | `pages/DashboardPage.tsx` | [ ] |
+| 3 | 患者一覧 | `/patients` | `pages/PatientPage.tsx` | [ ] |
+| 4 | 患者詳細 | `/patients/:id` | `pages/PatientDetailPage.tsx` | [ ] |
+| — | 患者作成 | `/patients/create` | `pages/PatientCreatePage.tsx` | [ ] |
+| 5 | お知らせ一覧 | `/announcements` | `pages/AnnouncementsPage.tsx` | [ ] |
+| 6 | お知らせ作成 | `/announcements/create` | `pages/AnnouncementCreatePage.tsx` | [ ] |
+| 7 | お知らせ編集 | （詳細内インライン） | `pages/AnnouncementDetailPage.tsx` | [ ] |
+| — | お知らせ詳細 | `/announcements/:id` | `pages/AnnouncementDetailPage.tsx` | [ ] |
+| 8 | 全タスク | `/tasks` | `pages/TasksPage.tsx` | [ ] |
+| 8 | マイタスク | `/tasks/my-tasks` | `pages/MyTasksPage.tsx` | [ ] |
+| 9 | タスク作成 | `/tasks/create` | `pages/TaskCreatePage.tsx` | [ ] |
+| 10 | タスク詳細 | `/tasks/:id` | `pages/TaskDetailPage.tsx` | [ ] |
+| 11 | タスク編集 | （詳細内インライン） | `pages/TaskDetailPage.tsx` | [ ] |
+| 12 | パスワード変更モーダル | ヘッダーから起動 | `components/PasswordChangeModal.tsx` | [ ] |
+
+### 備考（README の Screens と実ルーティングの差分）
+
+- README の「お知らせ編集(7)」「タスク編集(11)」は独立画面として記載されているが、実装では詳細ページ内のインライン編集。今回は既存構造を踏襲する。
+- 「パスワード変更モーダル(12)」はルートを持たず、ヘッダーのユーザーメニューから起動するモーダル。
+- audit「仕様が曖昧だった箇所」（Dashboard のリンク先不一致 `/mypage` `/my-tasks`、catch-all 無し、権限チェック非一貫、Role 未活用 等）は **Issue #18 の範囲外**。今回は触らず別Issueへ。
+
+---
+
+## 進め方（CLAUDE.md §5 準拠）
+
+- コンポーネント／ページは **必ず1つずつ** 実装 → `docs/implementation/<名前>.md` 作成 → 本ファイルにチェック → **一旦停止して報告**。自動で次に進まない。
+- お手本（AISummaryCard / Modal / AppLayout / PatientCard）と §2 技術ルール（theme トークン厳守・styled-components・props 分割代入・1責任・日本語コメント・型省略なし）に従う。
