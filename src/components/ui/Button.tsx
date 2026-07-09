@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 // Buttonが受け取るpropsの型を定義
 // variantは「この3つのどれか」しか受け付けない、と型で縛る
 type ButtonProps = {
-    variant?: 'primary' | 'secondary' | 'danger'
+    variant?: 'primary' | 'secondary' | 'danger' | 'neutral' | 'ghost'
 }
 
 // variantごとのスタイル「対応表」を作る
@@ -25,6 +25,16 @@ const variantStyles = {
     danger: css`
         background: ${props => props.theme.colors.semantic.danger.main};
         color: ${props => props.theme.colors.text.onBrand};
+        border: none;
+    `,
+    neutral: css`
+        background: ${props => props.theme.colors.surface.raised};   /* 白 */
+        color: ${props => props.theme.colors.text.primary};          /* 黒文字 */
+        border: 1px solid ${props => props.theme.colors.border.default}; /* グレー枠 */
+    `,
+    ghost: css`
+        background: transparent;                                      /* 背景なし */
+        color: ${props => props.theme.colors.text.secondary};        /* 控えめな文字 */
         border: none;
     `,
 }

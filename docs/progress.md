@@ -40,10 +40,20 @@
 
 ### 既存だが「素の実装」で、共通コンポーネント適用によるリファクタ対象
 
-`src/components/` 直下。存在はするが、audit によれば内部が素の `<button>/<input>/<select>/<span>` で書かれており、下記の土台コンポーネント完成後に置き換える。
+`src/components/` 直下。存在はするが、audit によれば内部が素の `<button>/<input>/<select>/<span>` で書かれており、土台コンポーネント完成後に置き換える。土台が揃ったので順次リファクタ中。
 
-- AnnouncementCard / AnnouncementList / AnnouncementTabs
-- TaskCard / TaskList / TaskListContainer / TaskFilter
+お知らせ系：
+- [x] **AnnouncementCard** — Card/Badge/PriorityBadge へ置換・未読ドット化（デザイン準拠）→ doc: `implementation/AnnouncementCard.md`
+- [x] **AnnouncementList** — 器 `<div>` を縦積み＋gap の styled コンテナへ（トークン化）→ doc: `implementation/AnnouncementList.md`
+- [x] **AnnouncementTabs** — 素 `<button>` をセグメント表現に（theme化・`$active` transient prop）→ doc: `implementation/AnnouncementTabs.md`
+
+タスク系：
+- [x] **TaskCard** — Card/StatusBadge/PriorityBadge/Badge へ置換・`styled(Link)` リンク化 → doc: `implementation/TaskCard.md`
+- [x] **TaskList** — 器 `<div>` を縦積み＋gap の styled コンテナへ（AnnouncementList と同一方針）→ doc: `implementation/TaskList.md`
+- [x] **TaskListContainer** — 器 `<div>` を縦積み＋gap の styled コンテナへ（フィルタ状態は不変）→ doc: `implementation/TaskListContainer.md`
+- [x] **TaskFilter** — 素 `<select>`×2 を TaskStatusSelect / PrioritySelect へ置換（「すべて」は placeholder で）→ doc: `implementation/TaskFilter.md`
+
+その他（未着手）：
 - PatientList / PatientListContainer / PatientFilter
 - Navigation / UrgentAnnouncements / PasswordChangeModal
 
