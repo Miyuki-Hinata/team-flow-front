@@ -14,7 +14,8 @@ export const announcements = async () => {
 }
 
 export const markAsRead = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/announcements/${id}/read`,{
+    // 既読化は結果値を必要としないため、レスポンスは受け取らない（fire-and-forget）
+    await fetchWithAuth(`http://localhost:8080/api/announcements/${id}/read`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

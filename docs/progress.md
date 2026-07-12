@@ -19,6 +19,10 @@
 - [ ] **列揃えの min-width**：TaskCard の状態列(64px)/期限担当列(150px) など、複数行でカラムを揃えるレイアウト値。トークンに無い px のため保留中。必要ならレイアウト定数として導入。
 - [ ] **カテゴリの意味色**：AnnouncementCard のカテゴリは現状 neutral バッジ。デザインは緊急=赤等の意味色。カテゴリ名→tone マッピングの要否を検討。
 - [ ] 全体の見た目確認は **App Shell（AppLayout/Navigation）実装後**にまとめて行う（サイドバー・ヘッダー・ページ背景・最大幅が入って初めて各ページが正しく見えるため）。
+- [ ] **App Shell のオフキャンバス（レスポンシブ）**：lg 未満でサイドバーをドロワー化＋ハンバーガーボタン。今回スコープ外・後で実装予定。
+- [ ] **未読お知らせバッジ（サイドバーのお知らせ項目右）**：件数取得の設計が必要。今回スコープ外・後で実装予定。
+- [ ] **ダークモード切替 UI**（ヘッダーのユーザーメニュー内）：theme 側は対応済み、切替 UI・状態管理は未接続。今回スコープ外・後で実装予定。
+- [ ] **成功通知の UI 統一（`alert` → アプリ内通知）**：現状 `PasswordChangeModal` の成功時などで `window.alert()` を使っている。ブラウザ標準ダイアログは見た目がアプリと合わず、複数積み重なりや自動消えにも対応できない。トースト等のアプリ内通知コンポーネント（例：`ui/Toast` + Context プロバイダ）を新設し、成功/情報通知を統一する。既存の `alert('パスワードを変更しました')` 等を横断で置換予定。
 
 ---
 
@@ -69,8 +73,16 @@
 - [x] **PatientListContainer** — 器 `<div>` を縦積み styled へ（フィルタ state 不変）→ doc: `implementation/PatientListContainer.md`
 - [x] **PatientFilter** — 素 `<select>`×2 を汎用 `ui/Select` に置換（placeholder に「部署：」「担当医：」プレフィックス）→ doc: `implementation/PatientFilter.md`
 
-その他（未着手）：
-- Navigation / UrgentAnnouncements / PasswordChangeModal
+その他：
+- [x] **Navigation**（暫定・App Shell フェーズで再設計）— 素 `<button>`/`<Link>` を `ui/Button`/`styled(Link)` へ・`var(--bg)` を theme へ → doc: `implementation/Navigation.md`
+- [x] **UrgentAnnouncements** — 器 `<div>` を縦積み styled へ（他一覧と同じ `spacing.md`）→ doc: `implementation/UrgentAnnouncements.md`
+- [x] **PasswordChangeModal** — 素 `<input>`×3・`<button>`×2 を Input/FormField/Button へ・エラー表示を theme 化 → doc: `implementation/PasswordChangeModal.md`
+
+App Shell（4分割）：
+- [x] **navItems**（ナビ定義の単一情報源）— Sidebar/AppHeader パンくずで共有する `NAV_ITEMS` 配列と `findCurrentLabel(pathname)` → `layouts/navItems.ts`
+- [x] **Sidebar** — 248px サイドバー（ロゴ/ナビ×5/施設情報・現在地ハイライト）→ `layouts/Sidebar.tsx` / doc: `implementation/Sidebar.md`
+- [x] **AppHeader** — パンくず／日付／ユーザーメニュー（旧 Navigation のロジック移植＋外クリック閉じ追加）→ `layouts/AppHeader.tsx` / doc: `implementation/AppHeader.md`
+- [x] **AppLayout 再実装** — Shell/MainColumn/Main+Container の3層に整理、ページ背景 `surface.base`・最大幅 1080px、旧 `components/Navigation.tsx` 削除 → doc: `implementation/AppLayout.md`
 
 ### 未実装（今回作る。audit の推奨着手順どおりに上から1つずつ）
 

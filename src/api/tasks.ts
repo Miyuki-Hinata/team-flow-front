@@ -80,7 +80,8 @@ export const createTask = async (task: TaskRequest) => {
 }
 
 export const deleteTask = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks/${id}`, {
+    // 削除は結果値を必要としないため、レスポンスは受け取らない（fire-and-forget）
+    await fetchWithAuth(`http://localhost:8080/api/tasks/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

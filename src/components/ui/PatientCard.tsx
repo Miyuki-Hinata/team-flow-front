@@ -1,5 +1,4 @@
 import { Card } from "./Card"
-import { StatusBadge } from "./StatusBadge"
 import { PatientIcon } from "./PatientIcon"
 import { useTheme } from "styled-components"
 import type { Patient } from "../../types/patient"

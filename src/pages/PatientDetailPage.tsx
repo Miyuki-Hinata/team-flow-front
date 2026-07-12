@@ -26,7 +26,6 @@ const PatientDetailPage = () => {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
     const [taskSummary, setTaskSummary] = useState<TaskSummaryResponse | null>(null)
     const [isGenerating, setIsGenerating] = useState(false)  // 生成中かどうか
-    const [isSummaryOpen, setIsSummaryOpne] = useState(false)
 
     useEffect(() => {
         getPatientById(Number(id))
