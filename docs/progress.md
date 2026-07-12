@@ -11,6 +11,17 @@
 
 ---
 
+## 後回しの微調整メモ（全体整備後にまとめて対応）
+
+構造を先に整え、細部（サイド）の微修正は全体が揃ってから一括で行う方針。忘れないための控え。
+
+- [ ] **氏名のスペース**：`lastName + '' + firstName`（詰まる）を `+ ' ' +` に。TaskCard 他、氏名表示を横断で統一（PatientCard 等も確認）。
+- [ ] **列揃えの min-width**：TaskCard の状態列(64px)/期限担当列(150px) など、複数行でカラムを揃えるレイアウト値。トークンに無い px のため保留中。必要ならレイアウト定数として導入。
+- [ ] **カテゴリの意味色**：AnnouncementCard のカテゴリは現状 neutral バッジ。デザインは緊急=赤等の意味色。カテゴリ名→tone マッピングの要否を検討。
+- [ ] 全体の見た目確認は **App Shell（AppLayout/Navigation）実装後**にまとめて行う（サイドバー・ヘッダー・ページ背景・最大幅が入って初めて各ページが正しく見えるため）。
+
+---
+
 ## フェーズ0：全体把握（完了）
 
 - [x] モック全体を確認（README / TeamFlow.dc.html の Screens・Design Tokens・App Shell）
@@ -53,8 +64,12 @@
 - [x] **TaskListContainer** — 器 `<div>` を縦積み＋gap の styled コンテナへ（フィルタ状態は不変）→ doc: `implementation/TaskListContainer.md`
 - [x] **TaskFilter** — 素 `<select>`×2 を TaskStatusSelect / PrioritySelect へ置換（「すべて」は placeholder で）→ doc: `implementation/TaskFilter.md`
 
+患者系：
+- [x] **PatientList** — 器 `<div>` を縦積み styled へ、素 `<Link>` を `styled(Link)` へ → doc: `implementation/PatientList.md`
+- [x] **PatientListContainer** — 器 `<div>` を縦積み styled へ（フィルタ state 不変）→ doc: `implementation/PatientListContainer.md`
+- [x] **PatientFilter** — 素 `<select>`×2 を汎用 `ui/Select` に置換（placeholder に「部署：」「担当医：」プレフィックス）→ doc: `implementation/PatientFilter.md`
+
 その他（未着手）：
-- PatientList / PatientListContainer / PatientFilter
 - Navigation / UrgentAnnouncements / PasswordChangeModal
 
 ### 未実装（今回作る。audit の推奨着手順どおりに上から1つずつ）
