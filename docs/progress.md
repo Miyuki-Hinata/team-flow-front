@@ -102,9 +102,9 @@ App Shell（4分割）：
 - [ ] **FilterBar** — Select を横並びにする器（audit F・優先9。Select 共通化後は薄い）
 - [ ] **KanbanBoard** — 患者詳細のカンバン（現状 PatientDetailPage にローカル定義。audit 10）
 - [ ] **List**（ジェネリック） — カードを map する器（audit E）
-- [ ] **PageHeader** — タイトル＋作成リンクの一覧共通ヘッダー（audit M）
-- [ ] **EmptyState** — 「〜ありません」の共通表示（audit L）
-- [ ] **Loading** — 「読み込み中...」の共通表示（audit L）
+- [x] **PageHeader** — タイトル＋作成リンクの一覧共通ヘッダー（audit M）→ `ui/PageHeader.tsx` / doc: `implementation/PageHeader.md`
+- [x] **EmptyState** — 「〜ありません」の共通表示（audit L）→ `ui/EmptyState.tsx` / doc: `implementation/EmptyState.md`
+- [x] **Loading** — 「読み込み中...」の共通表示（audit L）→ `ui/Loading.tsx` / doc: `implementation/Loading.md`
 
 > 着手順（audit 推奨）：`Input → Select(+Priority/Status) → Badge(済) → Card(済) → Button適用 → Modal(済/ConfirmDialog)` → 専用（History/Tabs/Kanban…）。
 > 実質、未実装の土台は **Input → Select → PrioritySelect → TaskStatusSelect → FormField → ConfirmDialog** の順で着手する。

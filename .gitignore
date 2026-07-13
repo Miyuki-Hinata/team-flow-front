@@ -30,3 +30,6 @@ ds-bundle/
 *.njsproj
 *.sln
 *.sw?
+
+# leaning-logは学習用
+docs/learning-log.md
