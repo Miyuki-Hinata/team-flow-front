@@ -23,6 +23,11 @@
 - [ ] **未読お知らせバッジ（サイドバーのお知らせ項目右）**：件数取得の設計が必要。今回スコープ外・後で実装予定。
 - [ ] **ダークモード切替 UI**（ヘッダーのユーザーメニュー内）：theme 側は対応済み、切替 UI・状態管理は未接続。今回スコープ外・後で実装予定。
 - [ ] **成功通知の UI 統一（`alert` → アプリ内通知）**：現状 `PasswordChangeModal` の成功時などで `window.alert()` を使っている。ブラウザ標準ダイアログは見た目がアプリと合わず、複数積み重なりや自動消えにも対応できない。トースト等のアプリ内通知コンポーネント（例：`ui/Toast` + Context プロバイダ）を新設し、成功/情報通知を統一する。既存の `alert('パスワードを変更しました')` 等を横断で置換予定。
+- [ ] **Dashboard 本格実装（別Issue化候補）**：`pages/DashboardPage.tsx` は現状「未読お知らせ最大3件」のみ。デザイン（README §2）の主要要素が未実装。以下4項目を1つのIssueとしてまとめて対応するのが望ましい：
+    - **サマリカード×3**（担当患者 / 本日のタスク / 未読お知らせ数）：それぞれ件数と状態バッジ（緊急・未完等）を表示。3列グリッド。クリックで各画面へ遷移。
+    - **本日の要対応患者リスト**：患者データの新規取得＋緊急=赤ストリップの表示。`PatientCard` 系との統一。
+    - **loading 状態の追加**：現状 `isLoading` state が無いため、取得中も EmptyState が一瞬表示される（ちらつき）。`useState<boolean>` 追加＋`ui/Loading` を条件分岐で表示。
+    - **PageHeader の subtitle 追加**：デザインは「〇月〇日（曜）・3F 内科病棟」。`currentUser` の所属情報取得＋日付整形（`AppHeader.tsx` の `formatToday()` を参考）。
 
 ---
 
@@ -118,8 +123,8 @@ App Shell（4分割）：
 
 | # | 画面（README） | ルート | ファイル | 整備 |
 |---|---|---|---|---|
-| 1 | ログイン | `/login` | `pages/LoginPage.tsx` | [ ] |
-| 2 | ダッシュボード | `/dashboard` | `pages/DashboardPage.tsx` | [ ] |
+| 1 | ログイン | `/login` | `pages/LoginPage.tsx` | [x] doc: `implementation/LoginPage.md` |
+| 2 | ダッシュボード | `/dashboard` | `pages/DashboardPage.tsx` | [x] doc: `implementation/DashboardPage.md` |
 | 3 | 患者一覧 | `/patients` | `pages/PatientPage.tsx` | [ ] |
 | 4 | 患者詳細 | `/patients/:id` | `pages/PatientDetailPage.tsx` | [ ] |
 | — | 患者作成 | `/patients/create` | `pages/PatientCreatePage.tsx` | [ ] |

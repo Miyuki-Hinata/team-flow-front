@@ -69,8 +69,8 @@ describe('LoginPage', () => {
             </ThemeProvider>
         )
 
-        // 「ログインID」というプレイスホルダーの入力欄を取得
-        const idInput = screen.getByPlaceholderText('ログインID')
+        // FormField の label 経由で入力欄を取得（placeholder はデザイン変更で例値になったため）
+        const idInput = screen.getByLabelText('ログインID')
 
         // 「admin」 と入力
         await user.type(idInput, 'admin')
@@ -101,8 +101,8 @@ describe('LoginPage', () => {
         )
         
         // 入力
-        const idInput = screen.getByPlaceholderText('ログインID')
-        const passwordInput = screen.getByPlaceholderText('パスワード')
+        const idInput = screen.getByLabelText('ログインID')
+        const passwordInput = screen.getByLabelText('パスワード')
         await user.type(idInput, 'admin')
         await user.type(passwordInput, 'pass123')
         
@@ -129,8 +129,8 @@ describe('LoginPage', () => {
         )
         
         // 入力 → クリック
-        await user.type(screen.getByPlaceholderText('ログインID'), 'wrong')
-        await user.type(screen.getByPlaceholderText('パスワード'), 'wrong')
+        await user.type(screen.getByLabelText('ログインID'), 'wrong')
+        await user.type(screen.getByLabelText('パスワード'), 'wrong')
         await user.click(screen.getByRole('button', { name: 'ログイン' }))
         
         // エラーメッセージが表示されることを確認
