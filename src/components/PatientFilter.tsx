@@ -2,8 +2,12 @@ import type { Department } from '../types/department'
 import type { User } from '../types/user'
 import styled from 'styled-components'
 import { Select } from './ui/Select'
+import { Input } from './ui/Input'
 
 type Props = {
+    query: string,
+    onQueryChange: (value: string) => void,
+
     selectedDepartmentId: number | null,
     departments: Department[],
     onDepartmentChange: (value: number | null) => void,
@@ -13,14 +17,56 @@ type Props = {
     onDoctorChange: (value: number | null) => void
 }
 
-// フィルタの各セレクトを横並びにする器（TaskFilter と同じ方針）
+// フィルタ全体：検索・Select 群を1行で横並び。狭い画面では自然に折り返す。
+// box-sizing: border-box で子要素の padding/border が幅に含まれるようにし、
+// styled(Input) の width:100% でも親をはみ出さないようにする。
 const Filters = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: ${props => props.theme.spacing.sm};
+    align-items: center;
+
+    * {
+        box-sizing: border-box;
+    }
 `
 
+// 検索欄の器：Input の左に虫眼鏡アイコンを重ねるための relative コンテナ。
+// flex-basis 240px で程よい幅、Select と同じ行に自然に並ぶ。
+const SearchWrapper = styled.div`
+    position: relative;
+    flex: 0 1 240px;
+    min-width: 200px;
+`
+
+// 虫眼鏡アイコン：Input の左端に絶対配置。pointer-events:none で入力を妨げない
+const SearchIconWrap = styled.span`
+    position: absolute;
+    left: ${props => props.theme.spacing.sm};
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    color: ${props => props.theme.colors.text.muted};
+    pointer-events: none;
+`
+
+// 検索 Input：虫眼鏡アイコン分だけ左パディングを広げる。
+// 通常の Input は padding-left が spacing.md(16px)。アイコン18px + 前後の余白分を確保する。
+const SearchInput = styled(Input)`
+    width: 100%;
+    padding-left: calc(${props => props.theme.spacing.md} + 18px + ${props => props.theme.spacing.xs});
+`
+
+// 虫眼鏡 SVG（Sidebar / AppHeader と同じ currentColor パターン）
+const SearchIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M20 20l-4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+)
+
 const PatientFilter = ({
+    query, onQueryChange,
     selectedDepartmentId, departments, onDepartmentChange,
     selectedDoctorId, doctors, onDoctorChange
 }: Props) => {
@@ -38,7 +84,19 @@ const PatientFilter = ({
 
     return (
         <Filters>
-            {/* 部署絞り込み：placeholder で「部署：すべて」を先頭に。'' ⇔ null の変換は従来どおり維持 */}
+            {/* 患者名検索：虫眼鏡アイコン付き Input */}
+            <SearchWrapper>
+                <SearchIconWrap>
+                    <SearchIcon />
+                </SearchIconWrap>
+                <SearchInput
+                    type="text"
+                    placeholder="患者名で検索"
+                    value={query}
+                    onChange={(e) => onQueryChange(e.target.value)}
+                />
+            </SearchWrapper>
+
             <Select
                 placeholder="部署：すべて"
                 options={departmentOptions}
@@ -46,7 +104,6 @@ const PatientFilter = ({
                 onChange={(e) => onDepartmentChange(e.target.value === '' ? null : Number(e.target.value))}
             />
 
-            {/* 担当医絞り込み：同上 */}
             <Select
                 placeholder="担当医：すべて"
                 options={doctorOptions}

@@ -1,8 +1,8 @@
 import { getAccessToken } from './tokenStore'
-import { fetchWithAuth } from './apiClient'
+import { fetchWithAuth , API_BASE_URL } from './apiClient'
 
 export const categories = async () => {
-    const response = await fetchWithAuth('http://localhost:8080/api/categories', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/categories`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

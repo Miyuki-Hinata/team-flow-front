@@ -42,6 +42,9 @@ const variantStyles = {
 // Button本体
 export const Button = styled.button<ButtonProps>`
     /* 全variant共通のスタイル */
+    display: inline-flex;             /* アイコン + テキストを並べられるように */
+    align-items: center;              /* アイコンと文字の縦中央揃え */
+    gap: ${props => props.theme.spacing.xs};  /* アイコンと文字の間隔（テキストのみの場合は影響なし） */
     padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
     border-radius: ${props => props.theme.radius.md};
     font-size: ${props => props.theme.fontSize.md};

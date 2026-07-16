@@ -1,11 +1,13 @@
 import { Badge } from "./Badge"
-
-type Status = 'CREATED' | 'PROGRESS' | 'REVIEWING' |'DONE'
+import type { TaskStatus } from "../../types/task"
+import { statusLabel } from "../../utils/task"
 
 type StatusBadgeProps = {
-    status: Status
+    status: TaskStatus
 }
 
+// ステータス値 → tone（色）の対応表。
+// StatusBadge 固有の視覚表現なのでここに置く（ラベルは utils/task.ts で共通化）。
 const statusToTone = {
     CREATED: 'neutral',
     PROGRESS: 'info',
@@ -13,19 +15,10 @@ const statusToTone = {
     DONE: 'success'
 } as const
 
-
-const statusToLabel = {
-    CREATED: '未着手',
-    PROGRESS: '進行中',
-    REVIEWING: 'レビュー待ち',
-    DONE: '完了'
-} as const
-
-
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
     return (
         <Badge tone={statusToTone[status]}>
-            {statusToLabel[status]}
+            {statusLabel[status]}
         </Badge>
     )
 }

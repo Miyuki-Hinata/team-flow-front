@@ -10,16 +10,36 @@ type PatientIconProps = {
     color: IconColor
 }
 
-// 背景の丸：薄い色の円の中に、人型SVGを中央配置する
-// props で背景色($bg)を受け取る。$を付けるのはstyled-componentsの作法（後述）
+// 背景の丸：薄い色の円の中に、人型SVGを中央配置する。
+// デザインの標準サイズ（48px）に合わせつつ、xl 以上の広い画面ではさらに大きく（56px）表示する。
+// SVG のサイズも合わせて拡大し、線の細さが目立たないようにしている（SVG は無限解像度なのでぼやけない）。
+// props で背景色($bg)を受け取る。$を付けるのはstyled-componentsの作法。
 const IconCircle = styled.div<{ $bg: string }>`
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;              /* 完全な円にする */
   background: ${props => props.$bg}; /* 薄い色の背景 */
   display: flex;                    /* 中身を中央に置くため */
   align-items: center;              /* 縦中央 */
   justify-content: center;          /* 横中央 */
+  flex: 0 0 48px;                   /* フレックス親内で潰されないよう固定 */
+
+  /* xl 以上の広い画面ではアイコンを大きくして、視認性を上げる */
+  @media (min-width: ${props => props.theme.breakpoints.xl}) {
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
+  }
+
+  svg {
+    width: 28px;
+    height: 28px;
+
+    @media (min-width: ${props => props.theme.breakpoints.xl}) {
+      width: 32px;
+      height: 32px;
+    }
+  }
 `
 
 export const PatientIcon = ({ ageGroup, color }: PatientIconProps) => {

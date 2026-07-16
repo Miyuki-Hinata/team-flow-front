@@ -21,10 +21,13 @@ const Wrapper = styled.div`
     margin-bottom: ${props => props.theme.spacing.lg};
 `
 
-// 左ブロック：タイトル＋サブテキストを縦積み
+// 左ブロック：タイトル＋サブテキストを縦積み。
+// align-items: flex-start でタイトル・サブテキストを明示的に左寄せに固定する
+// （既定の stretch のままだと親幅に引き伸ばされ、視覚的に中央っぽく見える問題があった）
 const TitleGroup = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: ${props => props.theme.spacing.xs};
 `
 

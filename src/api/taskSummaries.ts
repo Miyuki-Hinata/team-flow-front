@@ -1,8 +1,8 @@
-import { fetchWithAuth } from "./apiClient"
+import { fetchWithAuth, API_BASE_URL } from "./apiClient"
 import { getAccessToken } from "./tokenStore"
 
 export const getTaskSummary = async (patientId: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/patients/${patientId}/summary`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/patients/${patientId}/summary`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ export const getTaskSummary = async (patientId: number) => {
 }
 
 export const generateTaskSummary = async (patientId: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/patients/${patientId}/summary`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/patients/${patientId}/summary`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

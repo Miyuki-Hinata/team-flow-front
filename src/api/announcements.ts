@@ -1,9 +1,9 @@
 import { getAccessToken } from './tokenStore'
-import { fetchWithAuth } from './apiClient'
+import { fetchWithAuth , API_BASE_URL } from './apiClient'
 import type { AnnouncementRequest } from '../types/announcementRequest'
 
 export const announcements = async () => {
-    const response = await fetchWithAuth('http://localhost:8080/api/announcements', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export const announcements = async () => {
 
 export const markAsRead = async (id: number) => {
     // 既読化は結果値を必要としないため、レスポンスは受け取らない（fire-and-forget）
-    await fetchWithAuth(`http://localhost:8080/api/announcements/${id}/read`,{
+    await fetchWithAuth(`${API_BASE_URL}/api/announcements/${id}/read`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export const markAsRead = async (id: number) => {
 }
 
 export const getAnnouncementById = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/announcements/${id}`,{
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements/${id}`,{
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export const getAnnouncementById = async (id: number) => {
 }
 
 export const getMyAnnouncements = async () => {
-    const response = await fetchWithAuth('http://localhost:8080/api/announcements/my', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements/my`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const getMyAnnouncements = async () => {
 }
 
 export const getAnnouncementHistories = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/announcements/${id}/histories`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements/${id}/histories`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export const getAnnouncementHistories = async (id: number) => {
 }
 
 export const createAnnouncement = async (announcement: AnnouncementRequest) => {
-    const response = await fetchWithAuth('http://localhost:8080/api/announcements', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export const createAnnouncement = async (announcement: AnnouncementRequest) => {
 }
 
 export const updateAnnouncement = async (id: number, announcement: AnnouncementRequest) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/announcements/${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ export const updateAnnouncement = async (id: number, announcement: AnnouncementR
 }
 
 export const deleteAnnouncement = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/announcements/${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

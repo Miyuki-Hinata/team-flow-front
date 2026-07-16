@@ -1,11 +1,11 @@
 import type { Role } from '../types/role'
 import { getAccessToken } from './tokenStore'
-import { fetchWithAuth } from './apiClient'
+import { fetchWithAuth , API_BASE_URL } from './apiClient'
 
 export const users = async (role?: Role) => {
     const url = role
-        ? `http://localhost:8080/api/users?role=${role}`
-        : 'http://localhost:8080/api/users'
+        ? `${API_BASE_URL}/api/users?role=${role}`
+        : `${API_BASE_URL}/api/users`
     
     const response = await fetchWithAuth(url, {
         method: 'GET',
@@ -18,7 +18,7 @@ export const users = async (role?: Role) => {
 }
 
 export const changePassword = async (currentPassword: string, newPassword: string) => {
-    const response = await fetchWithAuth('http://localhost:8080/api/users/me/password', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/users/me/password`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export const changePassword = async (currentPassword: string, newPassword: strin
 }
 
 export const getCurrentUser = async () => {
-    const response = await fetchWithAuth('http://localhost:8080/api/users/me', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/users/me`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

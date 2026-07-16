@@ -1,9 +1,9 @@
 import type { TaskRequest } from "../types/taskRequest"
 import { getAccessToken } from './tokenStore'
-import { fetchWithAuth } from './apiClient'
+import { fetchWithAuth , API_BASE_URL } from './apiClient'
 
 export const tasks = async () => {
-    const response = await fetchWithAuth('http://localhost:8080/api/tasks', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export const tasks = async () => {
 }
 
 export const getTaskById = async (id:number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks/${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks/${id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export const getTaskById = async (id:number) => {
 }
 
 export const getTasksByPatientId = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks/patient/${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks/patient/${id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export const getTasksByPatientId = async (id: number) => {
 }
 
 export const updateTask = async (id:number, task: TaskRequest) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks/${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export const updateTask = async (id:number, task: TaskRequest) => {
 }
 
 export const createTask = async (task: TaskRequest) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export const createTask = async (task: TaskRequest) => {
 
 export const deleteTask = async (id: number) => {
     // 削除は結果値を必要としないため、レスポンスは受け取らない（fire-and-forget）
-    await fetchWithAuth(`http://localhost:8080/api/tasks/${id}`, {
+    await fetchWithAuth(`${API_BASE_URL}/api/tasks/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export const deleteTask = async (id: number) => {
 }
 
 export const getTaskHistories = async (id: number) => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks/${id}/histories`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks/${id}/histories`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export const getTaskHistories = async (id: number) => {
 }
 
 export const getMyTasks = async () => {
-    const response = await fetchWithAuth(`http://localhost:8080/api/tasks/my-tasks`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/tasks/my-tasks`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

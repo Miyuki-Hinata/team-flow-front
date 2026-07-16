@@ -1,8 +1,8 @@
 import { getAccessToken } from './tokenStore'
-import { fetchWithAuth } from './apiClient'
+import { fetchWithAuth , API_BASE_URL } from './apiClient'
 
 export const projects = async () => {
-    const response = await fetchWithAuth('http://localhost:8080/api/projects', {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/projects`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

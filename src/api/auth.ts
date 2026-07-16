@@ -1,5 +1,7 @@
+import { API_BASE_URL } from './config'
+
 export const login = async (loginId: string, password: string) => {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -19,7 +21,7 @@ export const login = async (loginId: string, password: string) => {
 // サーバー側でリフレッシュトークンを失効させ、HttpOnly Cookieを削除する
 // （これを呼ばないとCookieが残り、リロード時にサイレントリフレッシュで再ログインされてしまう）
 export const logout = async (): Promise<void> => {
-    await fetch('http://localhost:8080/api/auth/logout', {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include', // Cookie（リフレッシュトークン）を送信するために必要
     })
@@ -38,7 +40,7 @@ export const refresh = async (): Promise<{ token: string }> => {
 
     refreshPromise = (async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/auth/refresh', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
                 method: 'POST',
                 credentials: 'include', // Cookie（リフレッシュトークン）を送信するために必要
             })

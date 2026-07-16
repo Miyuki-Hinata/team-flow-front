@@ -1,5 +1,8 @@
 import { getAccessToken, setAccessToken } from './tokenStore'
 import { refresh } from './auth'
+// API_BASE_URL は循環 import 回避のため config.ts に置き、ここから再エクスポートする。
+// 既存の `from './apiClient'` 経由の利用を壊さないため。
+export { API_BASE_URL } from './config'
 
 // fetchをラップし、401（アクセストークン切れ）を検知したら
 // リフレッシュトークンで新しいアクセストークンを取得し、リクエストを1度だけ自動リトライする

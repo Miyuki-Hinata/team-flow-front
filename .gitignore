@@ -33,3 +33,8 @@ ds-bundle/
 
 # leaning-logは学習用
 docs/learning-log.md
+# 環境変数（本番URLや秘密情報を含むため git に含めない）
+# .env.example は git に含めて、キー一覧を示す
+.env
+.env.local
+.env.*.local
