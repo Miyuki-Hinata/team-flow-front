@@ -38,3 +38,18 @@ export const PRIORITY_OPTIONS = (['HIGH', 'MEDIUM', 'LOW'] as Priority[]).map(va
     value,
     label: priorityLabel[value],
 }))
+
+// タスクの期限（ISO 文字列）を日本語風の短い表示に整形する。
+// 例: "2026-11-11T11:11:00" → "11/11 11:11"
+// デザイン準拠（README §8 / TeamFlow.dc.html の期限表示形式）。
+// 空文字や不正な日付はそのまま（もしくは空）を返し、UI がクラッシュしないようにフォールバックする。
+export const formatDueDate = (isoString: string | null | undefined): string => {
+    if (!isoString) return ''
+    const d = new Date(isoString)
+    if (isNaN(d.getTime())) return isoString  // パース失敗時は元の文字列をそのまま返す
+    const mm = String(d.getMonth() + 1) // 月：先頭0埋めせず「6/29」のような表記に
+    const dd = String(d.getDate())
+    const hh = String(d.getHours()).padStart(2, '0')
+    const mi = String(d.getMinutes()).padStart(2, '0')
+    return `${mm}/${dd} ${hh}:${mi}`
+}

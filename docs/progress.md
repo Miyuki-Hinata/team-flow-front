@@ -29,11 +29,9 @@
     - サマリ・フォーム・カンバンの複数列グリッド → md 未満で1列
     - バイタル4列 → sm 未満で1列
     - 患者カードの「次の対応」ブロック折り返し
-- [ ] **【要調査】新規患者登録が失敗する**：`pages/PatientCreatePage.tsx` で「登録する」ボタンを押すと登録できない。原因未特定。次回起動時に切り分け：
-    - Network タブで `POST /api/patients` の HTTP ステータス確認（400? 401? 500?）
-    - サーバー側のログ確認（バリデーションエラーの可能性）
-    - リクエストボディの内容確認（`sex` が日本語で送られている、必須項目に空文字が入っている等の疑い）
-    - Preview の `preview_network` ツールで確認可能
+- [x] ~~【要調査】新規患者登録が失敗する~~：SEX_OPTIONS 英語化 + エラーハンドリング + フロントバリデーション追加 で解決。
+- [x] ~~【バックエンド】バリデーションエラーが 401 で返る問題~~：GlobalExceptionHandler に HttpMessageNotReadableException / DataIntegrityViolationException のハンドラを追加、Entity の @NotEmpty 削除 + DB カラムを NULL 許容に変更で解決。
+- [x] ~~【フロント】必須項目の再検討~~：バックエンド DTO の @NotEmpty / @NotNull と一致させて 6 項目に絞った（苗字/名前/かな2つ/生年月日/性別）。住所・緊急連絡先・部署・担当医は任意。
 - [ ] **成功通知の UI 統一（`alert` → アプリ内通知）**：現状 `PasswordChangeModal` の成功時などで `window.alert()` を使っている。ブラウザ標準ダイアログは見た目がアプリと合わず、複数積み重なりや自動消えにも対応できない。トースト等のアプリ内通知コンポーネント（例：`ui/Toast` + Context プロバイダ）を新設し、成功/情報通知を統一する。既存の `alert('パスワードを変更しました')` 等を横断で置換予定。
 - [ ] **Dashboard 本格実装（別Issue化候補）**：`pages/DashboardPage.tsx` は現状「未読お知らせ最大3件」のみ。デザイン（README §2）の主要要素が未実装。以下4項目を1つのIssueとしてまとめて対応するのが望ましい：
     - **サマリカード×3**（担当患者 / 本日のタスク / 未読お知らせ数）：それぞれ件数と状態バッジ（緊急・未完等）を表示。3列グリッド。クリックで各画面へ遷移。
@@ -114,7 +112,7 @@ App Shell（4分割）：
 
 **専用（後回し可）**
 
-- [ ] **HistoryList** — 変更履歴の共通描画（お知らせ/タスク詳細で同一。audit J・優先7）
+- [x] **HistoryList** — 変更履歴の共通描画（お知らせ/タスク詳細で同一。audit J・優先7）→ doc: `implementation/HistoryList.md`
 - [ ] **Tabs**（汎用・カウント付き） — お知らせ未読/既読・患者詳細カンバンタブ（audit G・優先8）
 - [ ] **FilterBar** — Select を横並びにする器（audit F・優先9。Select 共通化後は薄い）
 - [ ] **KanbanBoard** — 患者詳細のカンバン（現状 PatientDetailPage にローカル定義。audit 10）
@@ -140,13 +138,13 @@ App Shell（4分割）：
 | 3 | 患者一覧 | `/patients` | `pages/PatientPage.tsx` | [x] doc: `implementation/PatientPage.md` |
 | 4 | 患者詳細 | `/patients/:id` | `pages/PatientDetailPage.tsx` | [ ] |
 | — | 患者作成 | `/patients/create` | `pages/PatientCreatePage.tsx` | [x] doc: `implementation/PatientCreatePage.md` |
-| 5 | お知らせ一覧 | `/announcements` | `pages/AnnouncementsPage.tsx` | [ ] |
-| 6 | お知らせ作成 | `/announcements/create` | `pages/AnnouncementCreatePage.tsx` | [ ] |
+| 5 | お知らせ一覧 | `/announcements` | `pages/AnnouncementsPage.tsx` | [x] |
+| 6 | お知らせ作成 | `/announcements/create` | `pages/AnnouncementCreatePage.tsx` | [x] |
 | 7 | お知らせ編集 | （詳細内インライン） | `pages/AnnouncementDetailPage.tsx` | [ ] |
 | — | お知らせ詳細 | `/announcements/:id` | `pages/AnnouncementDetailPage.tsx` | [ ] |
-| 8 | 全タスク | `/tasks` | `pages/TasksPage.tsx` | [ ] |
-| 8 | マイタスク | `/tasks/my-tasks` | `pages/MyTasksPage.tsx` | [ ] |
-| 9 | タスク作成 | `/tasks/create` | `pages/TaskCreatePage.tsx` | [ ] |
+| 8 | 全タスク | `/tasks` | `pages/TasksPage.tsx` | [x] |
+| 8 | マイタスク | `/tasks/my-tasks` | `pages/MyTasksPage.tsx` | [x] |
+| 9 | タスク作成 | `/tasks/create` | `pages/TaskCreatePage.tsx` | [x] |
 | 10 | タスク詳細 | `/tasks/:id` | `pages/TaskDetailPage.tsx` | [ ] |
 | 11 | タスク編集 | （詳細内インライン） | `pages/TaskDetailPage.tsx` | [ ] |
 | 12 | パスワード変更モーダル | ヘッダーから起動 | `components/PasswordChangeModal.tsx` | [ ] |

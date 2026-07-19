@@ -137,19 +137,17 @@ const PatientCreatePage = () => {
 
         // 送信前の簡易バリデーション：必須項目が空なら送信中止しエラー表示。
         // どの項目が足りないかを日本語で列挙して、ユーザーが即座に修正できるようにする。
-        // ※ tel は PatientRequest 型上 optional なので必須チェックから除外している。
+        //
+        // 必須はバックエンド DTO(PatientRequest.java) の @NotEmpty / @NotNull と揃えた 6 項目：
+        //   苗字 / 名前 / かな2つ / 生年月日 / 性別
+        // 住所・緊急連絡先・電話番号・部署・担当医は緊急入院時に不明なことがあるため任意とする。
         const missing: string[] = []
-        if (!patient.lastName.trim())             missing.push('苗字')
-        if (!patient.firstName.trim())            missing.push('名前')
-        if (!patient.lastNameKana.trim())         missing.push('苗字（かな）')
-        if (!patient.firstNameKana.trim())        missing.push('名前（かな）')
-        if (!patient.birth)                       missing.push('生年月日')
-        if (!patient.sex)                         missing.push('性別')
-        if (!patient.address.trim())              missing.push('住所')
-        if (!patient.emergencyContactName.trim()) missing.push('緊急連絡先の人物名')
-        if (!patient.emergencyContactTel.trim()) missing.push('緊急連絡先の電話番号')
-        if (patient.departmentId === undefined)   missing.push('部署')
-        if (patient.doctorId === undefined)       missing.push('担当医')
+        if (!patient.lastName.trim())      missing.push('苗字')
+        if (!patient.firstName.trim())     missing.push('名前')
+        if (!patient.lastNameKana.trim())  missing.push('苗字（かな）')
+        if (!patient.firstNameKana.trim()) missing.push('名前（かな）')
+        if (!patient.birth)                missing.push('生年月日')
+        if (!patient.sex)                  missing.push('性別')
 
         if (missing.length > 0) {
             setErrorMessage(`以下の項目を入力してください：${missing.join('、')}`)

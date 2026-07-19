@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Card } from './ui/Card'
 import { StatusBadge } from './ui/StatusBadge'
 import { PriorityBadge } from './ui/PriorityBadge'
+import { formatDueDate } from '../utils/task'
 
 type Props = {
     task: Task
@@ -69,7 +70,8 @@ const TaskCard = ({ task }: Props) => {
     const assigneeText = task.assignees?.map(assignee => assignee.lastName).join('、')
 
     // 「期限 ・ 担当」の値：存在する項目だけを「・」で連結
-    const dueAssignee = [task.dueDate, assigneeText].filter(Boolean).join(' ・ ')
+    // 「期限 ・ 担当」の値：期限は ISO 文字列を "M/D H:mm" に整形。存在する項目だけを「・」で連結
+    const dueAssignee = [formatDueDate(task.dueDate), assigneeText].filter(Boolean).join(' ・ ')
 
     return (
         // クリックで詳細へ遷移。挙動は従来どおり維持する
