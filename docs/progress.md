@@ -141,11 +141,11 @@ App Shell（4分割）：
 | 5 | お知らせ一覧 | `/announcements` | `pages/AnnouncementsPage.tsx` | [x] |
 | 6 | お知らせ作成 | `/announcements/create` | `pages/AnnouncementCreatePage.tsx` | [x] |
 | 7 | お知らせ編集 | （詳細内インライン） | `pages/AnnouncementDetailPage.tsx` | [ ] |
-| — | お知らせ詳細 | `/announcements/:id` | `pages/AnnouncementDetailPage.tsx` | [ ] |
+| — | お知らせ詳細 | `/announcements/:id` | `pages/AnnouncementDetailPage.tsx` | [x] |
 | 8 | 全タスク | `/tasks` | `pages/TasksPage.tsx` | [x] |
 | 8 | マイタスク | `/tasks/my-tasks` | `pages/MyTasksPage.tsx` | [x] |
 | 9 | タスク作成 | `/tasks/create` | `pages/TaskCreatePage.tsx` | [x] |
-| 10 | タスク詳細 | `/tasks/:id` | `pages/TaskDetailPage.tsx` | [ ] |
+| 10 | タスク詳細 | `/tasks/:id` | `pages/TaskDetailPage.tsx` | [x] |
 | 11 | タスク編集 | （詳細内インライン） | `pages/TaskDetailPage.tsx` | [ ] |
 | 12 | パスワード変更モーダル | ヘッダーから起動 | `components/PasswordChangeModal.tsx` | [ ] |
 
