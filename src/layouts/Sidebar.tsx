@@ -1,7 +1,9 @@
 // layouts/Sidebar.tsx
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { NAV_ITEMS } from './navItems'
+import { announcements as fetchAnnouncements } from '../api/announcements'
 
 type Props = {
     // lg 未満（off-canvas モード）でのみ意味を持つ開閉状態。lg 以上では常に表示される
@@ -95,6 +97,27 @@ const NavLink = styled(Link)<{ $active: boolean }>`
     font-weight: ${props => props.$active ? props.theme.fontWeight.bold : props.theme.fontWeight.normal};
 `
 
+// 未読件数バッジ：ナビ項目の右端に赤 pill で表示。margin-left:auto で右端に押し出す
+// アクティブ時は白背景+赤文字、非アクティブは赤背景+白文字で常に「未対応の緊急度」を伝える
+const UnreadBadge = styled.span<{ $active: boolean }>`
+    margin-left: auto;
+    min-width: 20px;
+    padding: 0 ${props => props.theme.spacing.xs};
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: ${props => props.theme.radius.full};
+    font-size: ${props => props.theme.fontSize.xs};
+    font-weight: ${props => props.theme.fontWeight.bold};
+    background: ${props => props.$active
+        ? props.theme.colors.text.onBrand
+        : props.theme.colors.semantic.danger.main};
+    color: ${props => props.$active
+        ? props.theme.colors.semantic.danger.main
+        : props.theme.colors.text.onBrand};
+`
+
 // 施設情報：サイドバー下端に押し出し。区切り線はデザインの #1A2348 を暗背景専用色として直書き
 // （テーマトークンに「サイドバー内の区切り線」が無いため、README §Design Tokens の当該定義値を採用）
 const Facility = styled.div`
@@ -159,6 +182,19 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
     // ただし「/tasks/my-tasks」と「/tasks」の両方に一致してしまわないよう、より長いパスを優先。
     const { pathname } = useLocation()
 
+    // お知らせの未読件数。サイドバーの「お知らせ」項目右にバッジで表示するために、
+    // AppLayout マウント時に一度だけ取得する。既読化直後の即時反映はスコープ外（次回リロードで反映）
+    // ※厳密なリアルタイム同期には Context 化が必要だが、今回は初回同期で妥協
+    const [unreadCount, setUnreadCount] = useState(0)
+
+    useEffect(() => {
+        fetchAnnouncements()
+            .then(list => setUnreadCount(list.filter(a => !a.isRead).length))
+            .catch(() => {
+                // 取得失敗時はバッジ非表示（0 のまま）。ここは黙って無視しても UX は損なわない
+            })
+    }, [])
+
     const isActive = (itemPath: string): boolean => {
         // より具体的な（長い）パスが他にも一致するなら、そちらを優先させる
         const specificMatch = NAV_ITEMS.find(item =>
@@ -181,18 +217,24 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
 
             <NavList>
                 <NavHeading>メニュー</NavHeading>
-                {NAV_ITEMS.map(item => (
-                    // ナビ項目タップで off-canvas を閉じる（lg 以上では onClose は無害な no-op）
-                    <NavLink
-                        key={item.path}
-                        to={item.path}
-                        $active={isActive(item.path)}
-                        onClick={onClose}
-                    >
-                        {iconByPath[item.path]}
-                        {item.label}
-                    </NavLink>
-                ))}
+                {NAV_ITEMS.map(item => {
+                    const active = isActive(item.path)
+                    // お知らせ項目にのみ未読バッジを付ける。0 件のときは出さない（存在感で「未対応がない」を伝える）
+                    const showBadge = item.path === '/announcements' && unreadCount > 0
+                    return (
+                        // ナビ項目タップで off-canvas を閉じる（lg 以上では onClose は無害な no-op）
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            $active={active}
+                            onClick={onClose}
+                        >
+                            {iconByPath[item.path]}
+                            {item.label}
+                            {showBadge && <UnreadBadge $active={active}>{unreadCount}</UnreadBadge>}
+                        </NavLink>
+                    )
+                })}
             </NavList>
 
             {/* 施設情報：現状は固定文言。将来は currentUser の所属情報から出す想定 */}
