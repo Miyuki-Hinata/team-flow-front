@@ -7,7 +7,7 @@ import type { Project } from "../types/project"
 import type { Category } from "../types/category"
 import type { Department } from "../types/department"
 import type { Priority } from "../types/task"
-import { getAnnouncementById as fetchAnnouncement, getAnnouncementHistories, updateAnnouncement, deleteAnnouncement } from "../api/announcements"
+import { getAnnouncementById as fetchAnnouncement, getAnnouncementHistories, updateAnnouncement, deleteAnnouncement, markAsRead } from "../api/announcements"
 import { projects as fetchProjects } from '../api/projects'
 import { categories as fetchCategories } from '../api/categories'
 import { departments as fetchDepartments } from '../api/departments'
@@ -26,6 +26,7 @@ import { Loading } from '../components/ui/Loading'
 import { formatDueDate } from '../utils/task'
 import { getCategoryTone } from '../utils/category'
 import { useToast } from '../contexts/ToastContext'
+import { useAnnouncementCount } from '../contexts/AnnouncementCountContext'
 
 // ------------------------------------------------------------
 // レイアウト（お知らせ詳細は本文がある画面なので詳細ページ用の 880px を採用。
@@ -171,6 +172,8 @@ const AnnouncementDetailPage = () => {
     const { id } = useParams()
     const { currentUser } = useAuth()
     const toast = useToast()
+    // 詳細ページを開いた瞬間に既読化する導線用。サイドバー未読バッジも同時に同期する
+    const { refresh: refreshUnreadCount } = useAnnouncementCount()
 
     const [announcement, setAnnouncement] = useState<Announcement | null>(null)
     const [histories, setHistories] = useState<AnnouncementHistory[]>([])
@@ -256,6 +259,16 @@ const AnnouncementDetailPage = () => {
         fetchProjects().then(setProjects)
         fetchCategories().then(setCategories)
         fetchDepartments().then(setDepartments)
+
+        // 詳細ページ到達＝閲覧＝既読とみなして自動で既読化する。
+        // Dashboard の未読カード / 直リンクからのアクセスなど、一覧の onRead を経由しない導線でも
+        // ちゃんと既読化されるようにする（バックエンドは冪等なので二重呼び出しでも安全）。
+        // 成功時にサイドバー未読バッジも同期する
+        markAsRead(Number(id))
+            .then(() => refreshUnreadCount())
+            .catch(() => {
+                // 既読化失敗はサイレント（詳細閲覧自体は成立しているので UI に出さない）
+            })
     }, [])
 
     // 読み込み中は Loading コンポーネントで統一表示
