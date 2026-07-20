@@ -136,7 +136,7 @@ App Shell（4分割）：
 | 1 | ログイン | `/login` | `pages/LoginPage.tsx` | [x] doc: `implementation/LoginPage.md` |
 | 2 | ダッシュボード | `/dashboard` | `pages/DashboardPage.tsx` | [x] doc: `implementation/DashboardPage.md` |
 | 3 | 患者一覧 | `/patients` | `pages/PatientPage.tsx` | [x] doc: `implementation/PatientPage.md` |
-| 4 | 患者詳細 | `/patients/:id` | `pages/PatientDetailPage.tsx` | [ ] |
+| 4 | 患者詳細 | `/patients/:id` | `pages/PatientDetailPage.tsx` | [x] |
 | — | 患者作成 | `/patients/create` | `pages/PatientCreatePage.tsx` | [x] doc: `implementation/PatientCreatePage.md` |
 | 5 | お知らせ一覧 | `/announcements` | `pages/AnnouncementsPage.tsx` | [x] |
 | 6 | お知らせ作成 | `/announcements/create` | `pages/AnnouncementCreatePage.tsx` | [x] |
