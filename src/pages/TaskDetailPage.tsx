@@ -113,11 +113,15 @@ const StatusChangeHint = styled.span`
     color: ${props => props.theme.colors.text.muted};
 `
 
-// 情報グリッド（対象患者 / 担当者 / 期限 / プロジェクト を並べる 2 列）
+// 情報グリッド（対象患者 / 担当者 / 期限 / プロジェクト を並べる 2 列）。md 未満は 1 列
 const InfoGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: ${props => props.theme.spacing.md};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 const InfoItem = styled.div`

@@ -105,11 +105,15 @@ const MetaDivider = styled.span`
     background: ${props => props.theme.colors.border.default};
 `
 
-// 追加情報のグリッド（住所・電話・緊急連絡先 等）
+// 追加情報のグリッド（住所・電話・緊急連絡先 等）。sm 未満では 1 列に
 const InfoGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: ${props => props.theme.spacing.md};
+
+    @media (max-width: ${props => props.theme.breakpoints.sm}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 const InfoItem = styled.div`

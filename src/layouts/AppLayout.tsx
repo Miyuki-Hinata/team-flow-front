@@ -1,4 +1,5 @@
 // layouts/AppLayout.tsx
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import styled from 'styled-components'
 import { Sidebar } from './Sidebar'
@@ -21,10 +22,15 @@ const MainColumn = styled.div`
 `
 
 // メイン本体：ページの余白（32px）と、スクロール時にヘッダーだけ固定するための overflow:auto
+// md 未満では余白を spacing.md (16px) に絞る（README §レスポンシブ挙動）
 const Main = styled.main`
     flex: 1 1 auto;
     overflow: auto;
     padding: ${props => props.theme.spacing.xl};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        padding: ${props => props.theme.spacing.md};
+    }
 `
 
 // コンテンツ中央寄せ＋最大幅（README §Design Tokens「本文コンテンツの最大幅：1080px」を反映）。
@@ -34,12 +40,36 @@ const Container = styled.div`
     margin: 0 auto;
 `
 
+// off-canvas サイドバー背後の半透明オーバーレイ。
+// lg 未満で「サイドバーが開いているとき」だけ表示。クリックで閉じる導線も担う。
+// README §レスポンシブ挙動：rgba(0,7,45,.5) をそのまま採用
+const Overlay = styled.div`
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 7, 45, 0.5);
+    z-index: 30;                     /* Sidebar より下・Header より上 */
+
+    @media (max-width: ${props => props.theme.breakpoints.lg}) {
+        display: block;
+    }
+`
+
 export const AppLayout = () => {
+    // サイドバー開閉状態は Layout 側で一元管理し、Sidebar / AppHeader / Overlay の3者で共有する
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+    const openSidebar = () => setIsSidebarOpen(true)
+    const closeSidebar = () => setIsSidebarOpen(false)
+
     return (
         <Shell>
-            <Sidebar />
+            <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+
+            {/* オーバーレイは開いているときだけ描画。lg 以上では CSS 側で非表示 */}
+            {isSidebarOpen && <Overlay onClick={closeSidebar} />}
+
             <MainColumn>
-                <AppHeader />
+                <AppHeader onOpenSidebar={openSidebar} />
                 <Main>
                     <Container>
                         {/* 各ページ（PatientPage / DashboardPage など）がここに差し込まれる */}

@@ -17,19 +17,27 @@ import AnnouncementCard from '../components/AnnouncementCard'
 // レイアウト
 // ------------------------------------------------------------
 
-// サマリカード×3 のグリッド。3列固定（md 未満で 1 列化はレスポンシブ Issue で対応）
+// サマリカード×3 のグリッド。md 未満（<768px）では 1 列に落として縦積みに（README §レスポンシブ挙動）
 const SummaryGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: ${props => props.theme.spacing.md};
     margin-bottom: ${props => props.theme.spacing.xl};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
-// 2 セクション（未読お知らせ / 本日の要対応患者）を横並びに
+// 2 セクション（未読お知らせ / 本日の要対応患者）を横並びに。md 未満では 1 列に
 const TwoColumn = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: ${props => props.theme.spacing.lg};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 // セクションの縦積みコンテナ（見出し + 中身）

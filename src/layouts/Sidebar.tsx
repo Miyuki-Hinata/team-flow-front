@@ -3,9 +3,17 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { NAV_ITEMS } from './navItems'
 
+type Props = {
+    // lg 未満（off-canvas モード）でのみ意味を持つ開閉状態。lg 以上では常に表示される
+    isOpen: boolean
+    // ナビ項目タップ / オーバーレイクリック時に呼び、off-canvas を閉じる
+    onClose: () => void
+}
+
 // サイドバー本体：デザインの 248px 幅・#00072D 背景・sticky・100vh・縦フレックス
 // トークン：spacing.xl(32px) と spacing.md(16px) はデザインの padding:24px 16px の縦(≒lg=24px)/横(md=16px)に対応
-const Aside = styled.aside`
+// lg 未満では position:fixed で off-canvas 化し、$open が false のときは transform で画面外へ退避する
+const Aside = styled.aside<{ $open: boolean }>`
     width: 248px;
     flex: 0 0 248px;
     background: ${props => props.theme.colors.brand.navyDeep};
@@ -17,6 +25,18 @@ const Aside = styled.aside`
     position: sticky;
     top: 0;
     height: 100vh;
+
+    @media (max-width: ${props => props.theme.breakpoints.lg}) {
+        /* lg 未満：ドロワー化。fixed で本文の外に出し、transform でスライド表示 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100vh;
+        z-index: 40;                 /* Overlay(30) より上に */
+        transform: translateX(${props => props.$open ? '0' : '-100%'});
+        transition: transform 0.25s ease;
+    }
 `
 
 // ロゴ行：ティール四角のアイコン枠 ＋ "TeamFlow" 白文字
@@ -134,7 +154,7 @@ const iconByPath: Record<string, React.ReactNode> = {
     ),
 }
 
-export const Sidebar = () => {
+export const Sidebar = ({ isOpen, onClose }: Props) => {
     // 現在のパスを取得し、ナビ項目のアクティブ判定に使う（前方一致）。
     // ただし「/tasks/my-tasks」と「/tasks」の両方に一致してしまわないよう、より長いパスを優先。
     const { pathname } = useLocation()
@@ -151,7 +171,7 @@ export const Sidebar = () => {
     }
 
     return (
-        <Aside>
+        <Aside $open={isOpen}>
             <Brand>
                 <LogoMark>
                     <LogoIcon />
@@ -162,7 +182,13 @@ export const Sidebar = () => {
             <NavList>
                 <NavHeading>メニュー</NavHeading>
                 {NAV_ITEMS.map(item => (
-                    <NavLink key={item.path} to={item.path} $active={isActive(item.path)}>
+                    // ナビ項目タップで off-canvas を閉じる（lg 以上では onClose は無害な no-op）
+                    <NavLink
+                        key={item.path}
+                        to={item.path}
+                        $active={isActive(item.path)}
+                        onClick={onClose}
+                    >
                         {iconByPath[item.path]}
                         {item.label}
                     </NavLink>

@@ -56,6 +56,11 @@ const Grid2 = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: ${props => props.theme.spacing.lg};
+
+    /* md 未満（<768px）はフォームの複数列を 1 列に */
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 const Actions = styled.div`

@@ -54,11 +54,15 @@ const FormCard = styled.div`
     gap: ${props => props.theme.spacing.lg};
 `
 
-// 3列グリッド（カテゴリ・対象部署・優先度の並び）
+// 3列グリッド（カテゴリ・対象部署・優先度の並び）。md 未満では 1 列に
 const Grid3 = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: ${props => props.theme.spacing.lg};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 // ボタン列

@@ -127,6 +127,11 @@ const Grid3 = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: ${props => props.theme.spacing.lg};
+
+    /* md 未満（<768px）ではフォームの複数列を 1 列に落として縦積みに（README §レスポンシブ挙動） */
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 const Actions = styled.div`

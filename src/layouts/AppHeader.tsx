@@ -9,6 +9,7 @@ import PasswordChangeModal from '../components/PasswordChangeModal'
 import { findCurrentLabel } from './navItems'
 
 // ヘッダー本体：h:64・#001F5B・sticky・左右32px padding、左右のブロックを justify-between で配置
+// md 未満では左右パディングを spacing.md (16px) に絞る（README §レスポンシブ挙動）
 const Header = styled.header`
     background: ${props => props.theme.colors.brand.navy};
     color: ${props => props.theme.colors.text.onBrand};
@@ -21,6 +22,39 @@ const Header = styled.header`
     position: sticky;
     top: 0;
     z-index: 5;
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        padding: 0 ${props => props.theme.spacing.md};
+    }
+`
+
+// 左側ブロック：ハンバーガー(lg未満のみ) + パンくずの横並び
+const LeftGroup = styled.div`
+    display: flex;
+    align-items: center;
+    gap: ${props => props.theme.spacing.md};
+`
+
+// ハンバーガーボタン：lg 未満でだけ表示。素の <button> をリセットし、theme トークンで塗り分ける
+// off-canvas サイドバーの開くトリガー。閉じるはオーバーレイ or ナビ項目タップに委譲する
+const MenuButton = styled.button`
+    display: none;                    /* lg 以上ではサイドバー常時表示のため不要 */
+    background: transparent;
+    border: none;
+    padding: ${props => props.theme.spacing.xs};
+    color: ${props => props.theme.colors.text.onBrand};
+    cursor: pointer;
+    border-radius: ${props => props.theme.radius.md};
+
+    @media (max-width: ${props => props.theme.breakpoints.lg}) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
 `
 
 // パンくず：「病棟管理 / <現在画面>」
@@ -47,9 +81,23 @@ const Right = styled.div`
     gap: ${props => props.theme.spacing.lg};
 `
 
+// 日付：md 未満では非表示（README §レスポンシブ挙動）
 const Today = styled.span`
     font-size: ${props => props.theme.fontSize.sm};
     color: ${props => props.theme.colors.border.strong};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        display: none;
+    }
+`
+
+// ユーザー名ラベル：sm 未満ではアバターだけにしてスペースを稼ぐ
+const UserNameLabel = styled.span`
+    font-size: ${props => props.theme.fontSize.sm};
+
+    @media (max-width: ${props => props.theme.breakpoints.sm}) {
+        display: none;
+    }
 `
 
 // ユーザーメニューのトグル（アバター＋名前＋キャレット）を包む器
@@ -84,10 +132,6 @@ const Avatar = styled.div`
     justify-content: center;
     font-size: ${props => props.theme.fontSize.sm};
     font-weight: ${props => props.theme.fontWeight.bold};
-`
-
-const UserName = styled.span`
-    font-size: ${props => props.theme.fontSize.sm};
 `
 
 // キャレット：open で 180 度回転
@@ -150,7 +194,12 @@ const formatToday = (): string => {
     return `${now.getMonth() + 1}/${now.getDate()} (${dow})`
 }
 
-export const AppHeader = () => {
+type Props = {
+    // ハンバーガーボタンから呼ぶ off-canvas サイドバーの開くトリガー
+    onOpenSidebar: () => void
+}
+
+export const AppHeader = ({ onOpenSidebar }: Props) => {
     const navigate = useNavigate()
     const { pathname } = useLocation()
     const { currentUser, setCurrentUser } = useAuth()
@@ -197,16 +246,25 @@ export const AppHeader = () => {
     return (
         <>
             <Header>
-                {/* 左：パンくず */}
-                <Crumb>
-                    <span>病棟管理</span>
-                    {currentLabel && (
-                        <>
-                            <CrumbSep>/</CrumbSep>
-                            <CrumbCurrent>{currentLabel}</CrumbCurrent>
-                        </>
-                    )}
-                </Crumb>
+                {/* 左：ハンバーガー(lg未満のみ) + パンくず */}
+                <LeftGroup>
+                    <MenuButton onClick={onOpenSidebar} aria-label="メニューを開く">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 6h16M4 12h16M4 18h16"
+                                  stroke="currentColor" strokeWidth="1.8"
+                                  strokeLinecap="round" />
+                        </svg>
+                    </MenuButton>
+                    <Crumb>
+                        <span>病棟管理</span>
+                        {currentLabel && (
+                            <>
+                                <CrumbSep>/</CrumbSep>
+                                <CrumbCurrent>{currentLabel}</CrumbCurrent>
+                            </>
+                        )}
+                    </Crumb>
+                </LeftGroup>
 
                 {/* 右：日付＋ユーザーメニュー */}
                 <Right>
@@ -215,9 +273,9 @@ export const AppHeader = () => {
                     <UserMenuWrapper ref={wrapperRef}>
                         <UserToggle $open={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)}>
                             <Avatar>{avatarChar}</Avatar>
-                            <UserName>
+                            <UserNameLabel>
                                 {currentUser?.lastName} {currentUser?.firstName}
-                            </UserName>
+                            </UserNameLabel>
                             <Caret $open={isMenuOpen}>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                     <path d="M7 10l5 5 5-5"

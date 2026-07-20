@@ -64,18 +64,26 @@ const Divider = styled.div`
     font-weight: ${props => props.theme.fontWeight.bold};
 `
 
-// 2列グリッド：苗字/名前などの並び
+// 2列グリッド：苗字/名前などの並び。md 未満は 1 列
 const Grid2 = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: ${props => props.theme.spacing.lg};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
-// 3列グリッド：生年月日/性別/電話番号などの並び
+// 3列グリッド：生年月日/性別/電話番号などの並び。md 未満は 1 列
 const Grid3 = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: ${props => props.theme.spacing.lg};
+
+    @media (max-width: ${props => props.theme.breakpoints.md}) {
+        grid-template-columns: 1fr;
+    }
 `
 
 // ボタン列：右寄せ・横並び（ConfirmDialog と同じレイアウト方針）
