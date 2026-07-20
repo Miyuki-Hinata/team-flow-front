@@ -9,6 +9,7 @@ import AnnouncementList from '../components/AnnouncementList'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Button } from '../components/ui/Button'
 import { useAnnouncementCount } from '../contexts/AnnouncementCountContext'
+import { useToast } from '../contexts/ToastContext'
 
 // セクション同士の間隔（緊急 / タブ / リスト）を統一するための縦積み器
 const Sections = styled.div`
@@ -31,11 +32,16 @@ const AnnouncementsPage = () => {
     const [activeTab, setActiveTab] = useState<'unread' | 'read'>('unread')
     // サイドバー未読バッジ同期用。既読化後に refresh を呼んでバッジ数を最新化する
     const { refresh: refreshUnreadCount } = useAnnouncementCount()
+    const toast = useToast()
 
     useEffect(() => {
-        fetchAnnouncements().then(data => {
-            setAnnouncements(data)
-        })
+        fetchAnnouncements()
+            .then(setAnnouncements)
+            .catch((error) => {
+                // 一覧取得の失敗を無視すると「登録できていない」ように見えるので、
+                // 明示的にトースト通知する（ユーザーが状況を把握できるようにする）
+                toast.error((error as Error).message)
+            })
     }, [])
 
     // タブに応じて絞り込む

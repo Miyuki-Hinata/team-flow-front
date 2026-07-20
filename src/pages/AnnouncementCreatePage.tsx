@@ -193,6 +193,8 @@ const AnnouncementCreatePage = () => {
                 priority: priority,
                 expiredAt: expiredAt ? `${expiredAt}:00` : undefined,
             })
+            // 成功通知：無音だと「登録できたのか」がユーザーに伝わらないため明示する
+            toast.success('お知らせを作成しました')
             navigate('/announcements')
         } catch (error) {
             setErrorMessage((error as Error).message)
