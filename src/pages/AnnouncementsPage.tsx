@@ -8,6 +8,7 @@ import AnnouncementTabs from '../components/AnnouncementTabs'
 import AnnouncementList from '../components/AnnouncementList'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Button } from '../components/ui/Button'
+import { useAnnouncementCount } from '../contexts/AnnouncementCountContext'
 
 // セクション同士の間隔（緊急 / タブ / リスト）を統一するための縦積み器
 const Sections = styled.div`
@@ -28,6 +29,8 @@ const AnnouncementsPage = () => {
     const navigate = useNavigate()
     const [announcements, setAnnouncements] = useState<Announcement[]>([])
     const [activeTab, setActiveTab] = useState<'unread' | 'read'>('unread')
+    // サイドバー未読バッジ同期用。既読化後に refresh を呼んでバッジ数を最新化する
+    const { refresh: refreshUnreadCount } = useAnnouncementCount()
 
     useEffect(() => {
         fetchAnnouncements().then(data => {
@@ -44,6 +47,8 @@ const AnnouncementsPage = () => {
         await markAsRead(id)
         // 該当のお知らせの isRead を true にする
         setAnnouncements(announcements.map(a => a.id === id ? { ...a, isRead: true } : a))
+        // サイドバー未読バッジも同期。await せず投げっぱなしで良い（UI 更新はローカル state で先に反映済み）
+        refreshUnreadCount()
     }
 
     // subtitle 用に未読件数を軽く算出（fetch 済みデータから）

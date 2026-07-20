@@ -1,9 +1,8 @@
 // layouts/Sidebar.tsx
-import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { NAV_ITEMS } from './navItems'
-import { announcements as fetchAnnouncements } from '../api/announcements'
+import { useAnnouncementCount } from '../contexts/AnnouncementCountContext'
 
 type Props = {
     // lg 未満（off-canvas モード）でのみ意味を持つ開閉状態。lg 以上では常に表示される
@@ -182,18 +181,9 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
     // ただし「/tasks/my-tasks」と「/tasks」の両方に一致してしまわないよう、より長いパスを優先。
     const { pathname } = useLocation()
 
-    // お知らせの未読件数。サイドバーの「お知らせ」項目右にバッジで表示するために、
-    // AppLayout マウント時に一度だけ取得する。既読化直後の即時反映はスコープ外（次回リロードで反映）
-    // ※厳密なリアルタイム同期には Context 化が必要だが、今回は初回同期で妥協
-    const [unreadCount, setUnreadCount] = useState(0)
-
-    useEffect(() => {
-        fetchAnnouncements()
-            .then(list => setUnreadCount(list.filter(a => !a.isRead).length))
-            .catch(() => {
-                // 取得失敗時はバッジ非表示（0 のまま）。ここは黙って無視しても UX は損なわない
-            })
-    }, [])
+    // お知らせの未読件数は AnnouncementCountContext から取得。
+    // 既読化した側（AnnouncementsPage 等）が refresh を呼ぶことでバッジが即座に更新される
+    const { unreadCount } = useAnnouncementCount()
 
     const isActive = (itemPath: string): boolean => {
         // より具体的な（長い）パスが他にも一致するなら、そちらを優先させる
