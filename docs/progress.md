@@ -145,14 +145,14 @@ App Shell（4分割）：
 | — | 患者作成 | `/patients/create` | `pages/PatientCreatePage.tsx` | [x] doc: `implementation/PatientCreatePage.md` |
 | 5 | お知らせ一覧 | `/announcements` | `pages/AnnouncementsPage.tsx` | [x] |
 | 6 | お知らせ作成 | `/announcements/create` | `pages/AnnouncementCreatePage.tsx` | [x] |
-| 7 | お知らせ編集 | （詳細内インライン） | `pages/AnnouncementDetailPage.tsx` | [ ] |
+| 7 | お知らせ編集 | （詳細内インライン） | `pages/AnnouncementDetailPage.tsx` | [x] AnnouncementDetailPage 内の isEditing モードでインライン編集を実装済み |
 | — | お知らせ詳細 | `/announcements/:id` | `pages/AnnouncementDetailPage.tsx` | [x] |
 | 8 | 全タスク | `/tasks` | `pages/TasksPage.tsx` | [x] |
 | 8 | マイタスク | `/tasks/my-tasks` | `pages/MyTasksPage.tsx` | [x] |
 | 9 | タスク作成 | `/tasks/create` | `pages/TaskCreatePage.tsx` | [x] |
 | 10 | タスク詳細 | `/tasks/:id` | `pages/TaskDetailPage.tsx` | [x] |
-| 11 | タスク編集 | （詳細内インライン） | `pages/TaskDetailPage.tsx` | [ ] |
-| 12 | パスワード変更モーダル | ヘッダーから起動 | `components/PasswordChangeModal.tsx` | [ ] |
+| 11 | タスク編集 | （詳細内インライン） | `pages/TaskDetailPage.tsx` | [x] TaskDetailPage 内の編集モードでインライン編集を実装済み |
+| 12 | パスワード変更モーダル | ヘッダーから起動 | `components/PasswordChangeModal.tsx` | [x] doc: `implementation/PasswordChangeModal.md`（Toast 化 + FormField/Input 適用済み） |
 
 ### 備考（README の Screens と実ルーティングの差分）
 
