@@ -1,18 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
-import type { Task, TaskStatus } from '../types/task'
+import type { Task } from '../types/task'
 import { getPatientById } from '../api/patients'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getTasksByPatientId } from '../api/tasks'
 import type { Patient } from '../types/patient'
-import TaskCard from '../components/TaskCard'
 import { useAuth } from '../contexts/AuthContext'
 import type { TaskSummaryResponse } from '../types/taskSummary'
 import { getTaskSummary, generateTaskSummary } from '../api/taskSummaries'
 import { AISummaryCard } from '../components/ui/AISummaryCard'
+import { KanbanBoard } from '../components/ui/KanbanBoard'
 
 type TabType = 'all' | 'category' | 'my'
-
-const TASK_STATUSES: TaskStatus[] = ['CREATED', 'PROGRESS', 'REVIEWING', 'DONE']
 
 const PatientDetailPage = () => {
     const navigate = useNavigate()
@@ -77,19 +75,6 @@ const PatientDetailPage = () => {
         return groups
     }, [filteredTasks])
     
-    // ステータス別にグルーピング
-    const tasksByStatus = (taskList: Task[]) => {
-        const groups: { [key in TaskStatus]: Task[] } = {
-            CREATED: [],
-            PROGRESS: [],
-            REVIEWING: [],
-            DONE: []
-        }
-        taskList.forEach(task => {
-            groups[task.taskStatus]?.push(task)
-        })
-        return groups
-    }
     // 優先度を数値に変換（並び替え用）
     const priorityValue = (priority: string) => {
         if (priority === 'HIGH') return 3
@@ -196,50 +181,22 @@ const PatientDetailPage = () => {
                 
                 {tasks ? (
                     activeTab === 'category' ? (
-                        // カテゴリ別表示
+                        // カテゴリ別表示：各カテゴリごとに1つの KanbanBoard を並べる。
+                        // 並び替えはページ側で完了させ、KanbanBoard には並び替え済みの配列を渡す。
                         Object.entries(tasksByCategory).map(([categoryName, categoryTasks]) => (
                             <div key={categoryName}>
                                 <h4>{categoryName}</h4>
-                                <KanbanBoard tasks={categoryTasks} statuses={TASK_STATUSES} groupByStatus={tasksByStatus} sortTasks={sortTasks}/>
+                                <KanbanBoard tasks={sortTasks(categoryTasks)} />
                             </div>
                         ))
                     ) : (
-                        // すべて / マイタスク 表示
-                        <KanbanBoard tasks={filteredTasks} statuses={TASK_STATUSES} groupByStatus={tasksByStatus} sortTasks={sortTasks}/>
+                        // すべて / マイタスク 表示：並び替え済みタスクを渡す
+                        <KanbanBoard tasks={sortTasks(filteredTasks)} />
                     )
                 ) : (
                     <p>読み込み中...</p>
                 )}
             </section>
-        </div>
-    )
-}
-
-// ステータス別カンバン表示の小コンポーネント
-type KanbanBoardProps = {
-    tasks: Task[]
-    statuses: TaskStatus[]
-    groupByStatus: (tasks: Task[]) => { [key in TaskStatus]: Task[] }
-    sortTasks: (tasks: Task[]) => Task[]  // ← 追加
-}
-
-const KanbanBoard = ({ tasks, statuses, groupByStatus, sortTasks }: KanbanBoardProps) => {
-    const grouped = groupByStatus(tasks)
-    
-    return (
-        <div style={{ display: 'flex', gap: '16px' }}>
-            {statuses.map(status => (
-                <div key={status} style={{ flex: 1, border: '1px solid #ccc', padding: '8px' }}>
-                    <h5>{status}</h5>
-                    {grouped[status].length > 0 ? (
-                           sortTasks(grouped[status]).map(task => (
-                            <TaskCard key={task.id} task={task} />
-                        ))
-                    ) : (
-                        <p>タスクなし</p>
-                    )}
-                </div>
-            ))}
         </div>
     )
 }

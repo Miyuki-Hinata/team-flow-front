@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import type { Task, Priority, TaskStatus } from '../types/task'
 import type { TaskHistory } from '../types/taskHistory'
@@ -221,6 +221,13 @@ const AssigneeListArea = styled.div<{ $disabled: boolean }>`
 const TaskDetailPage = () => {
     const navigate = useNavigate()
     const { id } = useParams()
+    // 遷移元を state から読み取り、戻るリンクを動的に切り替える。
+    // 例：KanbanBoard（患者詳細）から来た場合は「患者詳細へ戻る」に、無ければ既定の「全タスクへ戻る」に。
+    const location = useLocation()
+    const fromPath = (location.state as { from?: string } | null)?.from
+    const isFromPatient = !!fromPath && fromPath.startsWith('/patients/')
+    const backTo = fromPath ?? '/tasks'
+    const backLabel = isFromPatient ? '患者詳細へ戻る' : '全タスクへ戻る'
 
     const [task, setTask] = useState<Task | null>(null)
     const [histories, setHistories] = useState<TaskHistory[]>([])
@@ -377,13 +384,13 @@ const TaskDetailPage = () => {
 
     return (
         <Column>
-            <BackLink to="/tasks">
+            <BackLink to={backTo}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M15 6l-6 6 6 6"
                           stroke="currentColor" strokeWidth="1.6"
                           strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                全タスクへ戻る
+                {backLabel}
             </BackLink>
 
             {isEditing ? (

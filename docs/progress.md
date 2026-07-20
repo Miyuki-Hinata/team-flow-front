@@ -115,7 +115,7 @@ App Shell（4分割）：
 - [x] **HistoryList** — 変更履歴の共通描画（お知らせ/タスク詳細で同一。audit J・優先7）→ doc: `implementation/HistoryList.md`
 - [ ] **Tabs**（汎用・カウント付き） — お知らせ未読/既読・患者詳細カンバンタブ（audit G・優先8）
 - [ ] **FilterBar** — Select を横並びにする器（audit F・優先9。Select 共通化後は薄い）
-- [ ] **KanbanBoard** — 患者詳細のカンバン（現状 PatientDetailPage にローカル定義。audit 10）
+- [x] **KanbanBoard** — 患者詳細のカンバン（PatientDetailPage のローカル定義から `ui/KanbanBoard.tsx` に切り出し。audit 10）→ doc: `implementation/KanbanBoard.md`
 - [ ] **List**（ジェネリック） — カードを map する器（audit E）
 - [x] **PageHeader** — タイトル＋作成リンクの一覧共通ヘッダー（audit M）→ `ui/PageHeader.tsx` / doc: `implementation/PageHeader.md`
 - [x] **EmptyState** — 「〜ありません」の共通表示（audit L）→ `ui/EmptyState.tsx` / doc: `implementation/EmptyState.md`
