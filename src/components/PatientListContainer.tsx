@@ -38,8 +38,10 @@ const PatientListContainer = ({ patients, departments, doctors }: Props) => {
         ).replace(/\s+/g, '').toLowerCase()
         const queryMatch = normalizedQuery === '' || nameNormalized.includes(normalizedQuery)
 
-        const departmentMatch = filterDepartmentID === null || patient.department.id === filterDepartmentID
-        const doctorMatch = filterDoctorID === null || patient.doctor.id === filterDoctorID
+        // patient.department / patient.doctor は null 可能なので optional chaining で守る。
+        // null 患者はフィルタ絞り込み時に「該当しない」として除外する（? === filterId は false になる）
+        const departmentMatch = filterDepartmentID === null || patient.department?.id === filterDepartmentID
+        const doctorMatch = filterDoctorID === null || patient.doctor?.id === filterDoctorID
         return queryMatch && departmentMatch && doctorMatch
     })
 
