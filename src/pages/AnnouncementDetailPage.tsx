@@ -25,6 +25,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Loading } from '../components/ui/Loading'
 import { formatDueDate } from '../utils/task'
 import { getCategoryTone } from '../utils/category'
+import { useToast } from '../contexts/ToastContext'
 
 // ------------------------------------------------------------
 // レイアウト（お知らせ詳細は本文がある画面なので詳細ページ用の 880px を採用。
@@ -164,6 +165,7 @@ const AnnouncementDetailPage = () => {
     const navigate = useNavigate()
     const { id } = useParams()
     const { currentUser } = useAuth()
+    const toast = useToast()
 
     const [announcement, setAnnouncement] = useState<Announcement | null>(null)
     const [histories, setHistories] = useState<AnnouncementHistory[]>([])
@@ -234,17 +236,16 @@ const AnnouncementDetailPage = () => {
     const handleDelete = async () => {
         try {
             await deleteAnnouncement(Number(id))
-            // 成功通知は既存挙動どおり alert のまま（トースト化は別Issue）
-            alert('お知らせを削除しました')
+            toast.success('お知らせを削除しました')
             navigate('/announcements')
         } catch (error) {
-            alert((error as Error).message)
+            toast.error((error as Error).message)
         }
     }
 
     useEffect(() => {
         Promise.all([loadAnnouncement(), loadHistories()]).catch((error) => {
-            alert(error.message)
+            toast.error(error.message)
             navigate('/announcements')
         })
         fetchProjects().then(setProjects)

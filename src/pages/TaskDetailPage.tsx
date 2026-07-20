@@ -27,6 +27,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Loading } from '../components/ui/Loading'
 import { formatDueDate } from '../utils/task'
 import { getCategoryTone } from '../utils/category'
+import { useToast } from '../contexts/ToastContext'
 
 // ------------------------------------------------------------
 // レイアウト（README §Design Tokens「タスク詳細/編集は 880px」）
@@ -222,6 +223,7 @@ const AssigneeListArea = styled.div<{ $disabled: boolean }>`
 const TaskDetailPage = () => {
     const navigate = useNavigate()
     const { id } = useParams()
+    const toast = useToast()
     // 遷移元を state から読み取り、戻るリンクを動的に切り替える。
     // 例：KanbanBoard（患者詳細）から来た場合は「患者詳細へ戻る」に、無ければ既定の「全タスクへ戻る」に。
     const location = useLocation()
@@ -323,7 +325,7 @@ const TaskDetailPage = () => {
             setTask(prev => prev ? { ...prev, taskStatus: newStatus } : null)
             await loadHistories()
         } catch (error) {
-            alert((error as Error).message)
+            toast.error((error as Error).message)
         }
     }
 
@@ -331,10 +333,10 @@ const TaskDetailPage = () => {
     const handleDelete = async () => {
         try {
             await deleteTask(Number(id))
-            alert('タスクを削除しました')
+            toast.success('タスクを削除しました')
             navigate('/tasks')
         } catch (error) {
-            alert((error as Error).message)
+            toast.error((error as Error).message)
         }
     }
 
@@ -346,7 +348,7 @@ const TaskDetailPage = () => {
 
     useEffect(() => {
         Promise.all([loadTask(), loadHistories()]).catch((error) => {
-            alert(error.message)
+            toast.error(error.message)
             navigate('/tasks')
         })
         fetchProjects().then(setProjects)

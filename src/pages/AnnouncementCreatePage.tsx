@@ -16,6 +16,7 @@ import { Input } from '../components/ui/Input'
 import { Select } from '../components/ui/Select'
 import { PrioritySelect } from '../components/ui/PrioritySelect'
 import { Button } from '../components/ui/Button'
+import { useToast } from '../contexts/ToastContext'
 
 // ------------------------------------------------------------
 // レイアウト用の styled（PatientCreatePage と同じ思想でページローカル）
@@ -161,6 +162,7 @@ const AnnouncementCreatePage = () => {
     const [priority, setPriority] = useState<Priority>('MEDIUM')
     const [expiredAt, setExpiredAt] = useState('')
     const [errorMessage, setErrorMessage] = useState<string>('')
+    const toast = useToast()
 
     const [projects, setProjects] = useState<Project[]>([])
     const [categories, setCategories] = useState<Category[]>([])
@@ -196,11 +198,10 @@ const AnnouncementCreatePage = () => {
     const handleDelete = async (id: number) => {
         try {
             await deleteAnnouncement(id)
-            // 成功通知は将来トースト化予定（progress.md 参照）。現状は alert のまま既存挙動維持
-            alert('お知らせを削除しました')
+            toast.success('お知らせを削除しました')
             await loadMyAnnouncements()
         } catch (error) {
-            alert((error as Error).message)
+            toast.error((error as Error).message)
         }
     }
 

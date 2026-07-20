@@ -5,6 +5,7 @@ import { Modal } from './ui/Modal'
 import { Input } from './ui/Input'
 import { FormField } from './ui/FormField'
 import { Button } from './ui/Button'
+import { useToast } from '../contexts/ToastContext'
 
 type Props = {
     isOpen: boolean
@@ -43,6 +44,7 @@ const PasswordChangeModal = ({ isOpen, onClose }: Props) => {
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
+    const toast = useToast()
 
     const handleSubmit = async () => {
         setErrorMessage('')
@@ -59,7 +61,8 @@ const PasswordChangeModal = ({ isOpen, onClose }: Props) => {
 
         try {
             await changePassword(currentPassword, newPassword)
-            alert('パスワードを変更しました')
+            // 成功はトーストで通知（alert は画面を止めるので UX が悪い）
+            toast.success('パスワードを変更しました')
             onClose()
         } catch (error) {
             setErrorMessage((error as Error).message)

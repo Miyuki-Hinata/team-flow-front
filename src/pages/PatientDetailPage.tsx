@@ -8,6 +8,7 @@ import { getPatientById } from '../api/patients'
 import { getTasksByPatientId } from '../api/tasks'
 import { getTaskSummary, generateTaskSummary } from '../api/taskSummaries'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { AISummaryCard } from '../components/ui/AISummaryCard'
 import { KanbanBoard } from '../components/ui/KanbanBoard'
 import { PatientIcon } from '../components/ui/PatientIcon'
@@ -222,6 +223,7 @@ const PatientDetailPage = () => {
     const { id } = useParams()
     const { currentUser } = useAuth()
     const theme = useTheme()
+    const toast = useToast()
 
     const [tasks, setTasks] = useState<Task[] | null>(null)
     const [patient, setPatient] = useState<Patient | null>(null)
@@ -235,14 +237,14 @@ const PatientDetailPage = () => {
         getPatientById(Number(id))
             .then(data => setPatient(data))
             .catch((error) => {
-                alert(error.message)
+                toast.error(error.message)
                 navigate('/patients')
             })
 
         getTasksByPatientId(Number(id))
             .then(data => setTasks(data))
             .catch((error) => {
-                alert(error.message)
+                toast.error(error.message)
                 navigate('/patients')
             })
 
@@ -310,7 +312,7 @@ const PatientDetailPage = () => {
             const data = await generateTaskSummary(Number(id))
             setTaskSummary(data)
         } catch (error) {
-            alert((error as Error).message)
+            toast.error((error as Error).message)
         } finally {
             setIsGenerating(false)
         }
