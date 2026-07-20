@@ -14,6 +14,7 @@ import { KanbanBoard } from '../components/ui/KanbanBoard'
 import { PatientIcon } from '../components/ui/PatientIcon'
 import { Select } from '../components/ui/Select'
 import { Loading } from '../components/ui/Loading'
+import { Accordion } from '../components/ui/Accordion'
 import { calcAge, getAgeGroup, sexLabel, ageGroupLabel } from '../utils/patient'
 
 type TabType = 'all' | 'category' | 'my'
@@ -378,7 +379,12 @@ const PatientDetailPage = () => {
                     </PatientContent>
                 </PatientRow>
 
-                {/* 追加情報：住所（全幅）/ 電話 / 緊急連絡先 */}
+            </DetailCard>
+
+            {/* 追加情報：普段は畳んでおき、必要なときだけ展開する。
+                「基本情報カード（常時表示）」と「追加情報（畳める）」を視覚的に分離することで、
+                詳細ページ全体の情報密度を下げ、タスクセクションへの導線を短くする */}
+            <Accordion title="追加情報">
                 <InfoGrid>
                     <InfoItem>
                         <InfoLabel>生年月日</InfoLabel>
@@ -397,7 +403,7 @@ const PatientDetailPage = () => {
                         <InfoValue>{emergencyDisplay}</InfoValue>
                     </InfoItemFull>
                 </InfoGrid>
-            </DetailCard>
+            </Accordion>
 
             {/* ============ AI タスクサマリ ============ */}
             <AISummaryCard
