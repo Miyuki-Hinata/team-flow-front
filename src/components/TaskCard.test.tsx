@@ -49,7 +49,7 @@ describe('TaskCard', () => {
 
         renderCard(<TaskCard task={task} />)
 
-        // 姓名の連結は元コードどおり `+ '' +`（スペースなしで詰まる）を温存中
-        expect(screen.getByText(/山田太郎/)).toBeInTheDocument()
+        // 姓名は半角スペース区切り（アプリ全体で表記統一。以前は空文字連結で「山田太郎」と詰まっていたのを修正）
+        expect(screen.getByText(/山田 太郎/)).toBeInTheDocument()
     })
 })

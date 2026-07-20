@@ -61,7 +61,8 @@ const DueValue = styled.div`
 
 const TaskCard = ({ task }: Props) => {
     // 患者名：既存挙動を維持するため姓名連結は + '' + のまま（空文字連結＝姓名が詰まる。別Issue申し送り）
-    const patientName = task.patient ? task.patient.lastName + '' + task.patient.firstName : null
+    // 姓と名の間は半角スペース区切り（他のページ・カードと表記統一。以前は空文字連結で「山田太郎」と詰まっていた）
+    const patientName = task.patient ? task.patient.lastName + ' ' + task.patient.firstName : null
 
     // 「患者 ・ カテゴリ」：存在する項目だけを「・」で連結（欠けても崩れないように）
     const subMeta = [patientName, task.category?.categoryName].filter(Boolean).join(' ・ ')
