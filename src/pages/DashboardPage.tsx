@@ -234,7 +234,8 @@ function DashboardPage() {
 
             {/* サマリカード×3：担当患者 / 本日のタスク / 未読お知らせ。それぞれ関連ページへ遷移 */}
             <SummaryGrid>
-                <SummaryCard label="担当患者" value={myPatients.length} unit="名" to="/patients" />
+                {/* 担当患者は「マイタスク（患者別グルーピング）」に着地。専用の担当患者一覧は作らず、マイタスク側で兼ねる */}
+                <SummaryCard label="担当患者" value={myPatients.length} unit="名" to="/tasks/my-tasks" />
                 <SummaryCard label="本日のタスク" value={todayTaskCount} unit="件" to="/tasks/my-tasks" />
                 <SummaryCard label="未読お知らせ" value={unread.length} unit="件" to="/announcements" />
             </SummaryGrid>
