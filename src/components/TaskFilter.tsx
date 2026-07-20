@@ -1,7 +1,7 @@
 import type { Priority, TaskStatus } from "../types/task"
-import styled from 'styled-components'
 import { TaskStatusSelect } from './ui/TaskStatusSelect'
 import { PrioritySelect } from './ui/PrioritySelect'
+import { FilterBar } from './ui/FilterBar'
 
 type Props = {
     status: TaskStatus | null,
@@ -10,17 +10,11 @@ type Props = {
     onPriorityChange: (value: Priority | null) => void
 }
 
-// フィルタの各セレクトを横並びにする器。間隔はトークンで揃える。
-// ※汎用 FilterBar は別フェーズ。ここでは既存構造のまま素の <select> を土台 Select に置換するのみ。
-const Filters = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${props => props.theme.spacing.sm};
-`
-
+// タスク用のフィルタ。汎用 FilterBar に状態/優先度の 2 セレクトを載せる薄いラッパ。
+// styled 定義は FilterBar 側に集約したので、ここは値の受け渡しに集中する
 const TaskFilter = ({ status, priority, onStatusChange, onPriorityChange }: Props) => {
     return (
-        <Filters>
+        <FilterBar>
             {/* ステータス絞り込み：placeholder="すべて" で空値(=絞り込み解除)の選択肢を先頭に出す。
                 '' ⇔ null のマッピングは従来どおり維持する。 */}
             <TaskStatusSelect
@@ -35,7 +29,7 @@ const TaskFilter = ({ status, priority, onStatusChange, onPriorityChange }: Prop
                 value={priority ?? ''}
                 onChange={(e) => onPriorityChange(e.target.value === '' ? null : e.target.value as Priority)}
             />
-        </Filters>
+        </FilterBar>
     )
 }
 

@@ -3,6 +3,7 @@ import type { User } from '../types/user'
 import styled from 'styled-components'
 import { Select } from './ui/Select'
 import { Input } from './ui/Input'
+import { FilterBar } from './ui/FilterBar'
 
 type Props = {
     query: string,
@@ -17,19 +18,7 @@ type Props = {
     onDoctorChange: (value: number | null) => void
 }
 
-// フィルタ全体：検索・Select 群を1行で横並び。狭い画面では自然に折り返す。
-// box-sizing: border-box で子要素の padding/border が幅に含まれるようにし、
-// styled(Input) の width:100% でも親をはみ出さないようにする。
-const Filters = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${props => props.theme.spacing.sm};
-    align-items: center;
-
-    * {
-        box-sizing: border-box;
-    }
-`
+// フィルタ全体のレイアウトは汎用 `ui/FilterBar` を使用。styled 定義は削除済み
 
 // 検索欄の器：Input の左に虫眼鏡アイコンを重ねるための relative コンテナ。
 // flex-basis 240px で程よい幅、Select と同じ行に自然に並ぶ。
@@ -83,7 +72,7 @@ const PatientFilter = ({
     }))
 
     return (
-        <Filters>
+        <FilterBar>
             {/* 患者名検索：虫眼鏡アイコン付き Input */}
             <SearchWrapper>
                 <SearchIconWrap>
@@ -110,7 +99,7 @@ const PatientFilter = ({
                 value={selectedDoctorId === null ? '' : String(selectedDoctorId)}
                 onChange={(e) => onDoctorChange(e.target.value === '' ? null : Number(e.target.value))}
             />
-        </Filters>
+        </FilterBar>
     )
 }
 
