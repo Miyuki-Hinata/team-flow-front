@@ -171,9 +171,15 @@ function DashboardPage() {
     const [myTasks, setMyTasks] = useState<Task[] | null>(null)
 
     // 初回に必要データを並列取得（ダッシュボードは複数リソースの集約画面）
+    // 取得失敗時は null を空配列に落として Loading ゲートを抜ける。unhandled rejection を避けるため
+    // 個別の catch を必ず付ける（トークン失効での 401 等）
     useEffect(() => {
-        fetchAnnouncements().then(setAnnouncements)
-        getMyTasks().then(setMyTasks)
+        fetchAnnouncements()
+            .then(setAnnouncements)
+            .catch(() => setAnnouncements([]))
+        getMyTasks()
+            .then(setMyTasks)
+            .catch(() => setMyTasks([]))
     }, [])
 
     // 未読お知らせ（表示は最大3件）

@@ -10,6 +10,12 @@ export const announcements = async () => {
             'Authorization': `Bearer ${getAccessToken()}`
         }
     })
+
+    // 401 等のときは body が空になるため、そのまま response.json() を呼ぶと
+    // SyntaxError（Unexpected end of JSON input）が起きる。他の API と揃えて明示的に throw する。
+    if (!response.ok) {
+        throw new Error(`お知らせの取得に失敗しました (status: ${response.status})`)
+    }
     return response.json()
 }
 
