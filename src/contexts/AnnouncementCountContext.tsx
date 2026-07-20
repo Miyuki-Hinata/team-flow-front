@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { announcements as fetchAnnouncements } from '../api/announcements'
+import { useAuth } from './AuthContext'
 
 // ------------------------------------------------------------
 // AnnouncementCountContext（未読お知らせ件数の共有）
@@ -27,6 +28,9 @@ type Props = {
 
 export const AnnouncementCountProvider = ({ children }: Props) => {
     const [unreadCount, setUnreadCount] = useState(0)
+    // ログイン状態を見て、未ログイン時は API 呼び出しをスキップする（401 の空ボディで
+    // JSON パースエラーが出るのを防ぐため）
+    const { currentUser } = useAuth()
 
     // refresh は依存なしで安定させ、Consumer 側の useEffect 依存に安全に入れられるようにする
     const refresh = useCallback(async () => {
@@ -38,11 +42,15 @@ export const AnnouncementCountProvider = ({ children }: Props) => {
         }
     }, [])
 
-    // 初回マウント時に一度だけ取得。ログイン直後は AuthProvider の子として動くので、
-    // このタイミングでは 401 になる可能性がある（未ログイン画面ではそもそも fetch しない挙動でよい）
+    // ログイン後にのみ取得。ログアウト時（currentUser が null に戻る）はバッジを 0 に戻す。
+    // これにより /login 表示中の 401 起因の JSON パースエラーを回避する
     useEffect(() => {
+        if (!currentUser) {
+            setUnreadCount(0)
+            return
+        }
         refresh()
-    }, [refresh])
+    }, [currentUser, refresh])
 
     const api = useMemo<AnnouncementCountApi>(() => ({
         unreadCount,
