@@ -24,6 +24,14 @@ const Row = styled.div`
     gap: ${props => props.theme.spacing.md};
 `
 
+// 状態バッジ列：min-width で列幅を固定し、複数カードで縦のバッジ位置が揃うようにする（README §8）。
+// トークンに無い px 値だが README で明示されたレイアウト定数なので直書きで採用する
+const StatusColumn = styled.div`
+    min-width: 64px;
+    display: flex;
+    justify-content: flex-start;
+`
+
 // 本文ブロック（タイトル＋サブメタ）。残り幅を占め、はみ出しを防ぐため min-width:0 を付ける。
 const Main = styled.div`
     flex: 1 1 auto;
@@ -45,8 +53,10 @@ const SubMeta = styled.div`
 `
 
 // 期限・担当ブロック：右寄せ。ラベル（小さく薄く）＋値の2段。
+// min-width で列幅を固定し、複数カードで期限・担当ブロックの左端が揃うようにする（README §8）
 const DueAssignee = styled.div`
     text-align: right;
+    min-width: 150px;
 `
 
 const DueLabel = styled.div`
@@ -79,8 +89,10 @@ const TaskCard = ({ task }: Props) => {
         <CardLink to={`/tasks/${task.id}`}>
             <Card>
                 <Row>
-                    {/* 左：ステータスバッジ */}
-                    <StatusBadge status={task.taskStatus} />
+                    {/* 左：ステータスバッジ（幅を固定して縦揃えを実現） */}
+                    <StatusColumn>
+                        <StatusBadge status={task.taskStatus} />
+                    </StatusColumn>
 
                     {/* 中央：タイトル＋（患者 ・ カテゴリ）。残り幅を占める */}
                     <Main>

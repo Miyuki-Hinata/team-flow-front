@@ -15,6 +15,8 @@ import { PatientIcon } from '../components/ui/PatientIcon'
 import { Select } from '../components/ui/Select'
 import { Loading } from '../components/ui/Loading'
 import { Accordion } from '../components/ui/Accordion'
+import { Tabs } from '../components/ui/Tabs'
+import type { TabItem } from '../components/ui/Tabs'
 import { calcAge, getAgeGroup, sexLabel, ageGroupLabel } from '../utils/patient'
 
 type TabType = 'all' | 'category' | 'my'
@@ -166,27 +168,7 @@ const SectionHeading = styled.h2`
     color: ${props => props.theme.colors.text.primary};
 `
 
-// タブ（AnnouncementTabs 相当のセグメント風）
-const TabList = styled.div`
-    display: inline-flex;
-    gap: ${props => props.theme.spacing.xs};
-    background: ${props => props.theme.colors.surface.sunken};
-    padding: ${props => props.theme.spacing.xs};
-    border-radius: ${props => props.theme.radius.md};
-`
-
-const Tab = styled.button<{ $active: boolean }>`
-    padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-    border: none;
-    border-radius: ${props => props.theme.radius.sm};
-    font-size: ${props => props.theme.fontSize.sm};
-    font-family: inherit;
-    cursor: pointer;
-
-    background: ${props => props.$active ? props.theme.colors.surface.raised : 'transparent'};
-    color: ${props => props.$active ? props.theme.colors.text.primary : props.theme.colors.text.secondary};
-    font-weight: ${props => props.$active ? props.theme.fontWeight.bold : props.theme.fontWeight.normal};
-`
+// タブ・Tab の styled はここで直書きせず、汎用 `ui/Tabs` を使う（AnnouncementTabs と同じ UI に統一）
 
 // 並び替えコントロール（ラベル + 2つの Select 横並び）
 const SortControls = styled.div`
@@ -415,17 +397,16 @@ const PatientDetailPage = () => {
             <TaskSection>
                 <TaskHeaderRow>
                     <SectionHeading>タスク一覧</SectionHeading>
-                    <TabList>
-                        <Tab $active={activeTab === 'all'} onClick={() => setActiveTab('all')}>
-                            すべて
-                        </Tab>
-                        <Tab $active={activeTab === 'category'} onClick={() => setActiveTab('category')}>
-                            カテゴリ別
-                        </Tab>
-                        <Tab $active={activeTab === 'my'} onClick={() => setActiveTab('my')}>
-                            マイタスク
-                        </Tab>
-                    </TabList>
+                    {/* 汎用 Tabs：セグメント風の見た目は AnnouncementTabs と共通。件数は今回付けない */}
+                    <Tabs
+                        items={([
+                            { value: 'all', label: 'すべて' },
+                            { value: 'category', label: 'カテゴリ別' },
+                            { value: 'my', label: 'マイタスク' },
+                        ]) as TabItem<TabType>[]}
+                        activeValue={activeTab}
+                        onChange={setActiveTab}
+                    />
                 </TaskHeaderRow>
 
                 <SortControls>

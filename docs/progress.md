@@ -17,27 +17,30 @@
 
 - [x] ~~**氏名のスペース**~~：TaskCard.tsx の1箇所のみ修正で完了（他ファイルは既に半角スペース区切りで統一済みだった）
 - [ ] **列揃えの min-width**：TaskCard の状態列(64px)/期限担当列(150px) など、複数行でカラムを揃えるレイアウト値。トークンに無い px のため保留中。必要ならレイアウト定数として導入。
-- [ ] **カテゴリの意味色**：AnnouncementCard のカテゴリは現状 neutral バッジ。デザインは緊急=赤等の意味色。カテゴリ名→tone マッピングの要否を検討。
-- [ ] 全体の見た目確認は **App Shell（AppLayout/Navigation）実装後**にまとめて行う（サイドバー・ヘッダー・ページ背景・最大幅が入って初めて各ページが正しく見えるため）。
-- [ ] **App Shell のオフキャンバス（レスポンシブ）**：lg 未満でサイドバーをドロワー化＋ハンバーガーボタン。今回スコープ外・後で実装予定。
+- [x] ~~**カテゴリの意味色**~~：`utils/category.ts` の tone マッピング（緊急=赤 / 連絡=青 / シフト・その他=グレー）を新設し、AnnouncementCard / AnnouncementDetailPage / TaskDetailPage で適用。
+- [x] ~~全体の見た目確認~~：App Shell 完成後、Preview で各画面を巡回確認済み。
+- [x] ~~**App Shell のオフキャンバス（レスポンシブ）**~~：AppLayout に isSidebarOpen state を持たせ、lg 未満で Sidebar を `position:fixed + transform` の off-canvas ドロワー化、Overlay + ハンバーガーボタン + ナビ項目タップで自動閉じを実装済み。
 - [ ] **未読お知らせバッジ（サイドバーのお知らせ項目右）**：件数取得の設計が必要。今回スコープ外・後で実装予定。
 - [ ] **ダークモード切替 UI**（ヘッダーのユーザーメニュー内）：theme 側は対応済み、切替 UI・状態管理は未接続。今回スコープ外・後で実装予定。
-- [ ] **レスポンシブ対応（全ページ整備後にまとめて対応）**：現状すべてのページで PC 幅前提の実装。README §レスポンシブに沿い、以下を1つのバッチで一気に対応する予定：
+- [x] ~~**レスポンシブ対応（全ページ整備後にまとめて対応）**~~：以下すべて対応済み：
     - App Shell：lg 未満でサイドバーをオフキャンバス化＋ハンバーガー
     - ヘッダー：md 未満で日付非表示、sm 未満でユーザー名ラベル非表示（アバターのみ）
     - Main の padding：md 未満で 16px に
     - サマリ・フォーム・カンバンの複数列グリッド → md 未満で1列
-    - バイタル4列 → sm 未満で1列
-    - 患者カードの「次の対応」ブロック折り返し
+    - バイタル4列（患者詳細）→ sm 未満で1列
+    - 患者カードの「次の対応」ブロック折り返しはデザイン上未使用のため対象外
 - [x] ~~【要調査】新規患者登録が失敗する~~：SEX_OPTIONS 英語化 + エラーハンドリング + フロントバリデーション追加 で解決。
 - [x] ~~【バックエンド】バリデーションエラーが 401 で返る問題~~：GlobalExceptionHandler に HttpMessageNotReadableException / DataIntegrityViolationException のハンドラを追加、Entity の @NotEmpty 削除 + DB カラムを NULL 許容に変更で解決。
 - [x] ~~【フロント】必須項目の再検討~~：バックエンド DTO の @NotEmpty / @NotNull と一致させて 6 項目に絞った（苗字/名前/かな2つ/生年月日/性別）。住所・緊急連絡先・部署・担当医は任意。
-- [ ] **成功通知の UI 統一（`alert` → アプリ内通知）**：現状 `PasswordChangeModal` の成功時などで `window.alert()` を使っている。ブラウザ標準ダイアログは見た目がアプリと合わず、複数積み重なりや自動消えにも対応できない。トースト等のアプリ内通知コンポーネント（例：`ui/Toast` + Context プロバイダ）を新設し、成功/情報通知を統一する。既存の `alert('パスワードを変更しました')` 等を横断で置換予定。
-- [ ] **Dashboard 本格実装（別Issue化候補）**：`pages/DashboardPage.tsx` は現状「未読お知らせ最大3件」のみ。デザイン（README §2）の主要要素が未実装。以下4項目を1つのIssueとしてまとめて対応するのが望ましい：
-    - **サマリカード×3**（担当患者 / 本日のタスク / 未読お知らせ数）：それぞれ件数と状態バッジ（緊急・未完等）を表示。3列グリッド。クリックで各画面へ遷移。
-    - **本日の要対応患者リスト**：患者データの新規取得＋緊急=赤ストリップの表示。`PatientCard` 系との統一。
-    - **loading 状態の追加**：現状 `isLoading` state が無いため、取得中も EmptyState が一瞬表示される（ちらつき）。`useState<boolean>` 追加＋`ui/Loading` を条件分岐で表示。
-    - **PageHeader の subtitle 追加**：デザインは「〇月〇日（曜）・3F 内科病棟」。`currentUser` の所属情報取得＋日付整形（`AppHeader.tsx` の `formatToday()` を参考）。
+- [x] ~~**成功通知の UI 統一（`alert` → アプリ内通知）**~~：`contexts/ToastContext.tsx` を新設（Provider + useToast）、セマンティックカラーで tone を伝えるカード UI、pointer-events 使い分けで背後操作を妨げない設計。PasswordChangeModal / AnnouncementDetailPage / TaskDetailPage / AnnouncementCreatePage / PatientDetailPage の alert を toast.success / toast.error で置換。
+- [x] ~~**Dashboard 本格実装（別Issue化候補）**~~：以下すべて対応済み：
+    - **サマリカード×3**（担当患者 / 本日のタスク / 未読お知らせ数）：3列グリッドで実装、各カードから該当画面へ遷移
+    - **本日の要対応患者リスト**：`myTasks` から「未完了かつ期限が今日以前」を持つ患者を逆引きしてユニーク抽出。PatientCard 再利用
+    - **loading 状態**：`useState<T[] | null>` パターンで未取得を表現、揃うまで単一 Loading ゲート
+    - **PageHeader の subtitle**：「〇年〇月〇日 (曜)」形式で挨拶付きタイトルとセットに
+- [x] ~~**マイタスクを患者別グルーピングに置換**~~：MyTasksPage を患者別セクション表示に刷新。朝一の受け持ち患者ビュー用途。Dashboard の「担当患者」枠のリンク先も /tasks/my-tasks に。
+- [x] ~~**患者詳細の追加情報をアコーディオン化**~~：汎用 Accordion（boxed / inline variant 対応）を新設し、生年月日・電話・住所・緊急連絡先を DetailCard 内に inline で埋め込み。患者名との視覚的接続を保ちつつ情報密度を下げる。
+- [x] ~~**README 本格整備**~~：プロジェクト概要・技術スタック・画面一覧・起動手順・ディレクトリ構成・設計方針・面接説明ポイントを追加。既存のテスト戦略はそのまま残す。
 
 ---
 
@@ -113,6 +116,8 @@ App Shell（4分割）：
 **専用（後回し可）**
 
 - [x] **HistoryList** — 変更履歴の共通描画（お知らせ/タスク詳細で同一。audit J・優先7）→ doc: `implementation/HistoryList.md`
+- [x] **Accordion** — 折りたたみ表示（boxed / inline variant）→ doc: `implementation/Accordion.md`
+- [x] **Toast**（+ ToastContext / useToast） — 画面右上に自動消去される通知 UI（alert 代替）→ doc: `implementation/Toast.md`
 - [ ] **Tabs**（汎用・カウント付き） — お知らせ未読/既読・患者詳細カンバンタブ（audit G・優先8）
 - [ ] **FilterBar** — Select を横並びにする器（audit F・優先9。Select 共通化後は薄い）
 - [x] **KanbanBoard** — 患者詳細のカンバン（PatientDetailPage のローカル定義から `ui/KanbanBoard.tsx` に切り出し。audit 10）→ doc: `implementation/KanbanBoard.md`
