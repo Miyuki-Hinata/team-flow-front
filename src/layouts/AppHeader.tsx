@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { setAccessToken } from '../api/tokenStore'
 import { logout } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
+import { useThemeMode } from '../contexts/ThemeModeContext'
 import PasswordChangeModal from '../components/PasswordChangeModal'
 import { findCurrentLabel } from './navItems'
 
@@ -203,6 +204,7 @@ export const AppHeader = ({ onOpenSidebar }: Props) => {
     const navigate = useNavigate()
     const { pathname } = useLocation()
     const { currentUser, setCurrentUser } = useAuth()
+    const { mode, toggle: toggleThemeMode } = useThemeMode()
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
@@ -295,7 +297,11 @@ export const AppHeader = ({ onOpenSidebar }: Props) => {
                                 >
                                     パスワード変更
                                 </MenuItem>
-                                {/* ダークモード切替はスコープ外（progress.md 参照） */}
+                                {/* ダークモード切替：ThemeModeContext のトグルを呼ぶだけ。
+                                    メニューは閉じず、切替結果を即その場で確認できるようにする */}
+                                <MenuItem onClick={toggleThemeMode}>
+                                    {mode === 'dark' ? 'ライトモードに切替' : 'ダークモードに切替'}
+                                </MenuItem>
                                 <LogoutMenuItem onClick={handleLogout}>
                                     ログアウト
                                 </LogoutMenuItem>
