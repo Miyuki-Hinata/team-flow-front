@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Card } from './ui/Card'
 import { Badge } from './ui/Badge'
 import { PriorityBadge } from './ui/PriorityBadge'
+import { getCategoryTone } from '../utils/category'
 
 type Props = {
     announcement: Announcement
@@ -69,9 +70,12 @@ const AnnouncementCard = ({ announcement, onRead }: Props) => {
                         {!announcement.isRead && <UnreadDot />}
 
                         <Content>
-                            {/* カテゴリ・部署は分類タグなので neutral バッジ（意味の色を持たせない） */}
+                            {/* カテゴリは意味色（緊急=赤 / 連絡=青 / シフト・その他=グレー）で分類を一目で伝える。
+                                部署は分類タグとして neutral のまま（意味の色は持たせない） */}
                             <BadgeRow>
-                                <Badge tone="neutral">{announcement.category.categoryName}</Badge>
+                                <Badge tone={getCategoryTone(announcement.category?.categoryName)}>
+                                    {announcement.category?.categoryName}
+                                </Badge>
                                 <Badge tone="neutral">{announcement.department?.departmentName ?? '全体'}</Badge>
                             </BadgeRow>
 

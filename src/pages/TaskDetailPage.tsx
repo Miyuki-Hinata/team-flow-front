@@ -26,6 +26,7 @@ import { HistoryList } from '../components/ui/HistoryList'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Loading } from '../components/ui/Loading'
 import { formatDueDate } from '../utils/task'
+import { getCategoryTone } from '../utils/category'
 
 // ------------------------------------------------------------
 // レイアウト（README §Design Tokens「タスク詳細/編集は 880px」）
@@ -522,7 +523,9 @@ const TaskDetailPage = () => {
                             <StatusBadge status={task.taskStatus} />
                             <PriorityBadge priority={task.priority} />
                             {task.category?.categoryName && (
-                                <Badge tone="neutral">{task.category.categoryName}</Badge>
+                                <Badge tone={getCategoryTone(task.category.categoryName)}>
+                                    {task.category.categoryName}
+                                </Badge>
                             )}
                         </BadgeRow>
 

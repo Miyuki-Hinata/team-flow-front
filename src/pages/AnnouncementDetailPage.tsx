@@ -24,6 +24,7 @@ import { HistoryList } from '../components/ui/HistoryList'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Loading } from '../components/ui/Loading'
 import { formatDueDate } from '../utils/task'
+import { getCategoryTone } from '../utils/category'
 
 // ------------------------------------------------------------
 // レイアウト（お知らせ詳細は本文がある画面なので詳細ページ用の 880px を採用。
@@ -375,7 +376,9 @@ const AnnouncementDetailPage = () => {
                     <TopRow>
                         <BadgeRow>
                             {announcement.category?.categoryName && (
-                                <Badge tone="neutral">{announcement.category.categoryName}</Badge>
+                                <Badge tone={getCategoryTone(announcement.category.categoryName)}>
+                                    {announcement.category.categoryName}
+                                </Badge>
                             )}
                             <Badge tone="neutral">
                                 {announcement.department?.departmentName ?? '全体'}
