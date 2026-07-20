@@ -13,6 +13,12 @@ import styled from 'styled-components'
 // ただし初期状態だけは props で指定できるようにして、ページごとの好みに合わせられるようにした。
 // ------------------------------------------------------------
 
+// 見た目のバリエーション。
+//   - 'boxed' (デフォルト): 独立した白カード（枠線・角丸あり）。単体でセクションを作る場合に
+//   - 'inline': 他のカード内に埋め込む用（背景・枠線・角丸なし、上下だけ区切り線）。
+//     患者詳細カード内に「追加情報」を続けて置くケースなど、親カードの一部として溶け込ませたいとき
+type AccordionVariant = 'boxed' | 'inline'
+
 type Props = {
     // 見出しに出す文字列（例：「追加情報」）
     title: string
@@ -20,25 +26,38 @@ type Props = {
     children: ReactNode
     // 初期開閉状態。デフォルトは閉じた状態
     defaultOpen?: boolean
+    // 見た目のバリエーション。デフォルトは 'boxed'（独立カード）
+    variant?: AccordionVariant
 }
 
-// 外枠：白カード風・薄い枠線・角丸で他のカード類と統一感を出す
-const Container = styled.div`
-    background: ${props => props.theme.colors.surface.raised};
-    border: 1px solid ${props => props.theme.colors.border.default};
-    border-radius: ${props => props.theme.radius.lg};
-    overflow: hidden;                 /* 内側の角を親の角丸で切り取る */
+// 外枠：boxed は白カード風、inline は親カード内に溶け込む形（背景・枠線・角丸なし・上に区切り線のみ）
+const Container = styled.div<{ $variant: AccordionVariant }>`
+    background: ${props => props.$variant === 'boxed'
+        ? props.theme.colors.surface.raised
+        : 'transparent'};
+    border: ${props => props.$variant === 'boxed'
+        ? `1px solid ${props.theme.colors.border.default}`
+        : 'none'};
+    border-top: ${props => props.$variant === 'inline'
+        ? `1px solid ${props.theme.colors.border.default}`  /* 親カード内の基本情報との仕切り */
+        : `1px solid ${props.theme.colors.border.default}`};
+    border-radius: ${props => props.$variant === 'boxed'
+        ? props.theme.radius.lg
+        : 0};
+    overflow: hidden;                 /* 内側の角を親の角丸で切り取る（boxed 時） */
 `
 
 // 見出しボタン：素の <button> のリセット + theme。カード幅いっぱいに広げてクリック領域を最大化
-// hover 時に薄く色を変え、押せる感を出す
-const Header = styled.button`
+// inline 時は親カードの padding が既に効いているので左右パディングを 0 にして揃える
+const Header = styled.button<{ $variant: AccordionVariant }>`
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: ${props => props.theme.spacing.md};
-    padding: ${props => props.theme.spacing.md} ${props => props.theme.spacing.lg};
+    padding: ${props => props.theme.spacing.md} ${props => props.$variant === 'boxed'
+        ? props.theme.spacing.lg
+        : 0};
     background: transparent;
     border: none;
     cursor: pointer;
@@ -46,7 +65,10 @@ const Header = styled.button`
     text-align: left;
 
     &:hover {
-        background: ${props => props.theme.colors.surface.sunken};
+        /* inline 時は親の背景色と干渉するので hover 反転はしない（見出しのマイナス感を避ける） */
+        background: ${props => props.$variant === 'boxed'
+            ? props.theme.colors.surface.sunken
+            : 'transparent'};
     }
 `
 
@@ -65,10 +87,13 @@ const Caret = styled.span<{ $open: boolean }>`
     transition: transform 0.15s ease;
 `
 
-// 本文エリア：閉じているときは display:none で描画自体を止める（アニメは今回スコープ外）
+// 本文エリア：閉じているときは描画自体を止める（条件描画で対応・下記参照）
 // 開いているときは Header との視覚的区切りとして上枠線を出す
-const Body = styled.div`
-    padding: ${props => props.theme.spacing.lg};
+// inline 時は左右パディングを 0 にして親カードの padding に揃える（Header と同じ考え方）
+const Body = styled.div<{ $variant: AccordionVariant }>`
+    padding: ${props => props.theme.spacing.lg} ${props => props.$variant === 'boxed'
+        ? props.theme.spacing.lg
+        : 0};
     border-top: 1px solid ${props => props.theme.colors.border.default};
 `
 
@@ -81,14 +106,15 @@ const CaretIcon = () => (
     </svg>
 )
 
-export const Accordion = ({ title, children, defaultOpen = false }: Props) => {
+export const Accordion = ({ title, children, defaultOpen = false, variant = 'boxed' }: Props) => {
     // 開閉状態は自身で管理。呼び出し側は「見出し」と「中身」を渡すだけで済む
     const [isOpen, setIsOpen] = useState(defaultOpen)
 
     return (
-        <Container>
+        <Container $variant={variant}>
             {/* aria-expanded を持たせてスクリーンリーダーにも開閉状態を伝える */}
             <Header
+                $variant={variant}
                 type="button"
                 aria-expanded={isOpen}
                 onClick={() => setIsOpen(prev => !prev)}
@@ -100,7 +126,7 @@ export const Accordion = ({ title, children, defaultOpen = false }: Props) => {
             </Header>
 
             {/* 閉じているときは中身を DOM に出さない（内部の重い描画コストを避ける） */}
-            {isOpen && <Body>{children}</Body>}
+            {isOpen && <Body $variant={variant}>{children}</Body>}
         </Container>
     )
 }

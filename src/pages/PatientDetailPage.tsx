@@ -379,31 +379,30 @@ const PatientDetailPage = () => {
                     </PatientContent>
                 </PatientRow>
 
+                {/* 追加情報：基本情報と同じカード内に inline で置き、「この患者の追加情報」であることを視覚的に接続する。
+                    普段は畳んでおき、必要なときだけ展開する。カード外に切り出すと患者名から離れて何の追加情報か伝わりにくいため、
+                    DetailCard の内側に取り込む */}
+                <Accordion title="追加情報" variant="inline">
+                    <InfoGrid>
+                        <InfoItem>
+                            <InfoLabel>生年月日</InfoLabel>
+                            <InfoValue>{patient.birth || '-'}</InfoValue>
+                        </InfoItem>
+                        <InfoItem>
+                            <InfoLabel>電話番号</InfoLabel>
+                            <InfoValue>{patient.tel || '-'}</InfoValue>
+                        </InfoItem>
+                        <InfoItemFull>
+                            <InfoLabel>住所</InfoLabel>
+                            <InfoValue>{patient.address || '-'}</InfoValue>
+                        </InfoItemFull>
+                        <InfoItemFull>
+                            <InfoLabel>緊急連絡先</InfoLabel>
+                            <InfoValue>{emergencyDisplay}</InfoValue>
+                        </InfoItemFull>
+                    </InfoGrid>
+                </Accordion>
             </DetailCard>
-
-            {/* 追加情報：普段は畳んでおき、必要なときだけ展開する。
-                「基本情報カード（常時表示）」と「追加情報（畳める）」を視覚的に分離することで、
-                詳細ページ全体の情報密度を下げ、タスクセクションへの導線を短くする */}
-            <Accordion title="追加情報">
-                <InfoGrid>
-                    <InfoItem>
-                        <InfoLabel>生年月日</InfoLabel>
-                        <InfoValue>{patient.birth || '-'}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                        <InfoLabel>電話番号</InfoLabel>
-                        <InfoValue>{patient.tel || '-'}</InfoValue>
-                    </InfoItem>
-                    <InfoItemFull>
-                        <InfoLabel>住所</InfoLabel>
-                        <InfoValue>{patient.address || '-'}</InfoValue>
-                    </InfoItemFull>
-                    <InfoItemFull>
-                        <InfoLabel>緊急連絡先</InfoLabel>
-                        <InfoValue>{emergencyDisplay}</InfoValue>
-                    </InfoItemFull>
-                </InfoGrid>
-            </Accordion>
 
             {/* ============ AI タスクサマリ ============ */}
             <AISummaryCard
