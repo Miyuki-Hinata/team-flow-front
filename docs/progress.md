@@ -16,12 +16,12 @@
 構造を先に整え、細部（サイド）の微修正は全体が揃ってから一括で行う方針。忘れないための控え。
 
 - [x] ~~**氏名のスペース**~~：TaskCard.tsx の1箇所のみ修正で完了（他ファイルは既に半角スペース区切りで統一済みだった）
-- [ ] **列揃えの min-width**：TaskCard の状態列(64px)/期限担当列(150px) など、複数行でカラムを揃えるレイアウト値。トークンに無い px のため保留中。必要ならレイアウト定数として導入。
+- [x] ~~**列揃えの min-width**~~：TaskCard の状態列(64px)/期限担当列(150px) を min-width で固定し、複数カードで縦揃えを実現。px 直書きは README のレイアウト定数として許容する方針で採用。
 - [x] ~~**カテゴリの意味色**~~：`utils/category.ts` の tone マッピング（緊急=赤 / 連絡=青 / シフト・その他=グレー）を新設し、AnnouncementCard / AnnouncementDetailPage / TaskDetailPage で適用。
 - [x] ~~全体の見た目確認~~：App Shell 完成後、Preview で各画面を巡回確認済み。
 - [x] ~~**App Shell のオフキャンバス（レスポンシブ）**~~：AppLayout に isSidebarOpen state を持たせ、lg 未満で Sidebar を `position:fixed + transform` の off-canvas ドロワー化、Overlay + ハンバーガーボタン + ナビ項目タップで自動閉じを実装済み。
-- [ ] **未読お知らせバッジ（サイドバーのお知らせ項目右）**：件数取得の設計が必要。今回スコープ外・後で実装予定。
-- [ ] **ダークモード切替 UI**（ヘッダーのユーザーメニュー内）：theme 側は対応済み、切替 UI・状態管理は未接続。今回スコープ外・後で実装予定。
+- [x] ~~**未読お知らせバッジ（サイドバーのお知らせ項目右）**~~：Sidebar が初回マウント時に fetchAnnouncements で件数を取得し、/announcements 項目にのみ赤 pill の未読バッジを表示。アクティブ時は白背景+赤文字、非アクティブは赤背景+白文字。0 件時はバッジ非表示。既読化直後の即時反映はスコープ外（次回リロードで反映）。
+- [x] ~~**ダークモード切替 UI**~~：`contexts/ThemeModeContext.tsx` を新設（styled-components の ThemeProvider を内包）、mode/setMode/toggle の 3 API + localStorage 永続化。AppHeader のユーザーメニューに切替トグルを追加。
 - [x] ~~**レスポンシブ対応（全ページ整備後にまとめて対応）**~~：以下すべて対応済み：
     - App Shell：lg 未満でサイドバーをオフキャンバス化＋ハンバーガー
     - ヘッダー：md 未満で日付非表示、sm 未満でユーザー名ラベル非表示（アバターのみ）
@@ -118,10 +118,10 @@ App Shell（4分割）：
 - [x] **HistoryList** — 変更履歴の共通描画（お知らせ/タスク詳細で同一。audit J・優先7）→ doc: `implementation/HistoryList.md`
 - [x] **Accordion** — 折りたたみ表示（boxed / inline variant）→ doc: `implementation/Accordion.md`
 - [x] **Toast**（+ ToastContext / useToast） — 画面右上に自動消去される通知 UI（alert 代替）→ doc: `implementation/Toast.md`
-- [ ] **Tabs**（汎用・カウント付き） — お知らせ未読/既読・患者詳細カンバンタブ（audit G・優先8）
-- [ ] **FilterBar** — Select を横並びにする器（audit F・優先9。Select 共通化後は薄い）
+- [x] **Tabs**（汎用・カウント付き） — ジェネリクスで union 型保持、AnnouncementTabs と PatientDetailPage タスクタブで共有 → doc: `implementation/Tabs.md`
+- [x] **FilterBar** — Select を横並びにする器。TaskFilter / PatientFilter で共有 → `ui/FilterBar.tsx`
 - [x] **KanbanBoard** — 患者詳細のカンバン（PatientDetailPage のローカル定義から `ui/KanbanBoard.tsx` に切り出し。audit 10）→ doc: `implementation/KanbanBoard.md`
-- [ ] **List**（ジェネリック） — カードを map する器（audit E）
+- [x] ~~**List**（ジェネリック）~~ — 見送り。専用の TaskList / AnnouncementList / PatientList で既に整理されており、汎用化しても呼び出し元がない。将来「タイプの違うカードを同一 UI で並べたい」要件が出た時点で切り出す方針。
 - [x] **PageHeader** — タイトル＋作成リンクの一覧共通ヘッダー（audit M）→ `ui/PageHeader.tsx` / doc: `implementation/PageHeader.md`
 - [x] **EmptyState** — 「〜ありません」の共通表示（audit L）→ `ui/EmptyState.tsx` / doc: `implementation/EmptyState.md`
 - [x] **Loading** — 「読み込み中...」の共通表示（audit L）→ `ui/Loading.tsx` / doc: `implementation/Loading.md`
