@@ -13,6 +13,7 @@ import { AISummaryCard } from '../components/ui/AISummaryCard'
 import { KanbanBoard } from '../components/ui/KanbanBoard'
 import { PatientIcon } from '../components/ui/PatientIcon'
 import { Select } from '../components/ui/Select'
+import { Button } from '../components/ui/Button'
 import { Loading } from '../components/ui/Loading'
 import { Accordion } from '../components/ui/Accordion'
 import { Tabs } from '../components/ui/Tabs'
@@ -160,6 +161,22 @@ const TaskHeaderRow = styled.div`
     gap: ${props => props.theme.spacing.md};
     flex-wrap: wrap;
 `
+
+// 見出しの右側：タブと「タスク作成」ボタンをまとめる。狭幅では折り返す
+const TaskHeaderRight = styled.div`
+    display: flex;
+    align-items: center;
+    gap: ${props => props.theme.spacing.md};
+    flex-wrap: wrap;
+`
+
+// 「＋」アイコン（他ページの作成ボタンと同一）
+const PlusIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+)
 
 const SectionHeading = styled.h2`
     margin: 0;
@@ -397,16 +414,26 @@ const PatientDetailPage = () => {
             <TaskSection>
                 <TaskHeaderRow>
                     <SectionHeading>タスク一覧</SectionHeading>
-                    {/* 汎用 Tabs：セグメント風の見た目は AnnouncementTabs と共通。件数は今回付けない */}
-                    <Tabs
-                        items={([
-                            { value: 'all', label: 'すべて' },
-                            { value: 'category', label: 'カテゴリ別' },
-                            { value: 'my', label: 'マイタスク' },
-                        ]) as TabItem<TabType>[]}
-                        activeValue={activeTab}
-                        onChange={setActiveTab}
-                    />
+                    <TaskHeaderRight>
+                        {/* 汎用 Tabs：セグメント風の見た目は AnnouncementTabs と共通。件数は今回付けない */}
+                        <Tabs
+                            items={([
+                                { value: 'all', label: 'すべて' },
+                                { value: 'category', label: 'カテゴリ別' },
+                                { value: 'my', label: 'マイタスク' },
+                            ]) as TabItem<TabType>[]}
+                            activeValue={activeTab}
+                            onChange={setActiveTab}
+                        />
+                        {/* この患者を対象患者に初期選択した状態でタスク作成へ遷移（?patientId=...） */}
+                        <Button
+                            variant="primary"
+                            onClick={() => navigate(`/tasks/create?patientId=${patient.id}`)}
+                        >
+                            <PlusIcon />
+                            タスク作成
+                        </Button>
+                    </TaskHeaderRight>
                 </TaskHeaderRow>
 
                 <SortControls>

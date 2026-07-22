@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 import type { Project } from '../types/project'
 import type { Patient } from '../types/patient'
@@ -124,11 +124,18 @@ const AssigneeListArea = styled.div<{ $disabled: boolean }>`
 `
 
 const TaskCreatePage = () => {
+    // 患者詳細ページの「タスク作成」から遷移した場合、?patientId=... で対象患者が渡ってくる。
+    // その値を対象患者の初期値にする（初回のみ評価。以降はユーザーの選択を尊重する）
+    const [searchParams] = useSearchParams()
+
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [projectId, setProjectId] = useState<number | null>(null)
     const [categoryId, setCategoryId] = useState<number | null>(null)
-    const [patientId, setPatientId] = useState<number | null>(null)
+    const [patientId, setPatientId] = useState<number | null>(() => {
+        const fromQuery = searchParams.get('patientId')
+        return fromQuery ? Number(fromQuery) : null
+    })
     const [assignedToAll, setAssignedToAll] = useState(false)
     const [priority, setPriority] = useState<Priority>('MEDIUM')
     const [taskStatus, setTaskStatus] = useState<TaskStatus>('CREATED')

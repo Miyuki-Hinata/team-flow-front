@@ -2,15 +2,23 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import type { Patient } from '../types/patient'
+import type { Task } from '../types/task'
 import { getAssignedPatients, replaceAssignedPatients } from '../api/assignments'
+import { getTasksByPatientId } from '../api/tasks'
 import { PatientCard } from '../components/ui/PatientCard'
+import { PatientTimeline } from '../components/ui/PatientTimeline'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
 import { Loading } from '../components/ui/Loading'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
+import { Tabs } from '../components/ui/Tabs'
+import type { TabItem } from '../components/ui/Tabs'
 import { AssignmentPicker } from '../components/AssignmentPicker'
 import { useToast } from '../contexts/ToastContext'
+
+// 受け持ち患者一覧 / 本日のタイムライン の表示切替タブの値
+type ViewTab = 'patients' | 'timeline'
 
 // 受け持ち患者ビュー（患者起点）。
 // 「シフト開始時に選んだ受け持ち患者だけ」にフォーカスして表示する。
@@ -31,6 +39,13 @@ const List = styled.div`
     display: flex;
     flex-direction: column;
     gap: ${props => props.theme.spacing.md};
+`
+
+// 患者カード群とタイムラインを大きめの間隔で縦に積む（セクションの区切りを明確にする）
+const Stack = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${props => props.theme.spacing.xl};
 `
 
 // カード全体を詳細ページへのリンクにする。<a> 既定の下線を消し、ブロック要素として広げる
@@ -54,14 +69,36 @@ const MyPatientsPage = () => {
     // 確定した受け持ち。null は未取得を表す（既存ページと同じ Loading 規約）
     const [assignedPatients, setAssignedPatients] = useState<Patient[] | null>(null)
 
+    // タイムライン用：受け持ち患者たちのタスク。null は未取得（Loading 切替）
+    const [patientTasks, setPatientTasks] = useState<Task[] | null>(null)
+
     // モーダル/確認ダイアログの開閉（開閉状態は各コンポーネントに渡すためここで持つ）
     const [pickerOpen, setPickerOpen] = useState(false)
     const [confirmClearOpen, setConfirmClearOpen] = useState(false)
+
+    // 表示切替：受け持ち患者が多いとタイムラインまで大きくスクロールが要るため、一覧とタイムラインをタブで分ける。
+    // デフォルトは「受け持ち患者」（まず誰を受け持つか確認する導線）
+    const [activeView, setActiveView] = useState<ViewTab>('patients')
 
     // 初回に現在の受け持ちを取得する
     useEffect(() => {
         getAssignedPatients().then(setAssignedPatients)
     }, [])
+
+    // 受け持ちが変わるたび（初回取得・保存・クリア）、その患者たちのタスクをまとめて取得する。
+    // 患者ごとに getTasksByPatientId を並列で呼び、結果を1本の配列に平坦化してタイムラインへ渡す。
+    // ※ MyPatients は患者起点なので「その患者に紐づく全タスク」を対象にする（自分のタスクだけではない）。
+    useEffect(() => {
+        if (assignedPatients === null) return
+        if (assignedPatients.length === 0) {
+            setPatientTasks([])
+            return
+        }
+        setPatientTasks(null) // 再取得中は Loading に戻す
+        Promise.all(assignedPatients.map(patient => getTasksByPatientId(patient.id)))
+            .then(results => setPatientTasks(results.flat() as Task[]))
+            .catch(() => setPatientTasks([]))
+    }, [assignedPatients])
 
     // Picker 起動時の初期チェック状態＝今の受け持ちの ID 群
     const selectedIds = assignedPatients?.map(patient => patient.id) ?? []
@@ -99,13 +136,31 @@ const MyPatientsPage = () => {
         )
     } else {
         body = (
-            <List>
-                {assignedPatients.map(patient => (
-                    <CardLink key={patient.id} to={`/patients/${patient.id}`}>
-                        <PatientCard patient={patient} />
-                    </CardLink>
-                ))}
-            </List>
+            <Stack>
+                {/* 一覧 / タイムライン の切替タブ。受け持ち数が多い時のスクロール負担を避ける（#5対策） */}
+                <Tabs
+                    items={([
+                        { value: 'patients', label: '受け持ち患者', count: assignedPatients.length },
+                        { value: 'timeline', label: '本日のタイムライン' },
+                    ]) as TabItem<ViewTab>[]}
+                    activeValue={activeView}
+                    onChange={setActiveView}
+                />
+
+                {activeView === 'patients' ? (
+                    // 受け持ち患者カード：クリックで詳細へ
+                    <List>
+                        {assignedPatients.map(patient => (
+                            <CardLink key={patient.id} to={`/patients/${patient.id}`}>
+                                <PatientCard patient={patient} />
+                            </CardLink>
+                        ))}
+                    </List>
+                ) : (
+                    // 本日のタイムライン：受け持ち患者のタスクを時系列で可視化。取得中は Loading
+                    patientTasks === null ? <Loading /> : <PatientTimeline tasks={patientTasks} />
+                )}
+            </Stack>
         )
     }
 

@@ -46,7 +46,7 @@ Issue #18（UI整備）とはスコープが異なる新機能のため、`docs/
 - [x] **#2 `Checkbox`（UI土台・新規）** — `Input`/`Select` の書き方に揃える。複数選択の基礎。→ `docs/implementation/Checkbox.md`
 - [x] **#3 `SelectablePatientCard`** — `PatientCard`（表示のみ）＋ `Checkbox` の合成。選択状態は呼び出し側の責任。PatientCard は改変しない。→ `docs/implementation/SelectablePatientCard.md`
 - [x] **#4 `AssignmentPicker`（Modal）** — 部署フィルタ＋複数選択＋一括保存。`Modal` ＋ `PatientFilter` のパターンを踏襲。→ `docs/implementation/AssignmentPicker.md`
-- [ ] **#6 `PatientTimeline`** — 縦・24時間タイムライン。今日の `dueDate` タスクを配置。期限超過は上部の独立セクション。表示のみ（stateなし）で `PatientCard` に倣う。
+- [x] **#6 `PatientTimeline`** — 縦・24時間タイムライン。今日の `dueDate` タスクを配置。期限超過は上部の独立セクション。表示のみ（stateなし）で `PatientCard` に倣う。`MyPatientsPage` に統合（受け持ち患者のタスクを `getTasksByPatientId` で並列取得して渡す）。→ `docs/implementation/PatientTimeline.md`
 - [x] **#7 Dashboard 導線ウィジェット** — Dashboard の「担当患者」サマリカードを「受け持ち患者」（人数→`/my-patients`）に置換して達成。「担当患者（タスク由来）」と「受け持ち患者（明示選択）」の名前の紛らわしさも解消。
 
 ## フロント：ページ
@@ -60,6 +60,14 @@ Issue #18（UI整備）とはスコープが異なる新機能のため、`docs/
 - [x] **サイドバーに「受け持ち患者」項目を追加** — `navItems.ts` に `/my-patients` を追加、`Sidebar.tsx` に人＋ハートのアイコンを追加。マイタスクの次に配置。
 - [x] **Picker の部署フィルタ初期値をログインユーザーの所属部署に** — `AssignmentPicker` で `useAuth()` の `currentUser.departmentId` を初期値に（未所属なら「すべて」）。`UserResponse` は部署単一モデルのため「複数あれば最初の一つ」は departmentId 一択に帰着。
 - [x] **Dashboard「担当患者」→「受け持ち患者」に置換** — #7 と同一対応（上記参照）。
+
+### タイムライン実機確認後の修正（2026-07-23 第2回）
+
+- [x] **同時刻タスクが1つしか出ない問題** — `PatientTimeline` に列分割（カレンダーDayビュー方式）を実装。近接時刻を1クラスタにまとめ、貪欲に列割当して横に等幅で並べる。
+- [x] **見出しとタイムライン本体の重なり** — 軸に上下パディング(`AXIS_PAD`)を追加＋見出しと軸を `gap` で分離。
+- [x] **タイムライン/期限超過のリンク化** — 行・チップのクリックでタスク詳細へ、患者名だけ患者詳細へ（`stopPropagation` で分岐、入れ子アンカーは避けて `role="link"`＋キーボード対応）。
+- [x] **患者詳細に「タスク作成」ボタン** — `PatientDetailPage` から `/tasks/create?patientId=...` へ遷移。`TaskCreatePage` はクエリの `patientId` を対象患者の初期値にする。
+- [x] **一覧/タイムラインのタブ切替** — `MyPatientsPage` に `Tabs` を追加（受け持ち数が多い時のスクロール負担を軽減）。
 
 ## 再利用する既存部品
 
