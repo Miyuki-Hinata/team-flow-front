@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { announcements as fetchAnnouncements } from '../api/announcements'
 import { getMyTasks } from '../api/tasks'
+import { getAssignedPatients } from '../api/assignments'
 import type { Announcement } from '../types/announcement'
 import type { Task } from '../types/task'
 import type { Patient } from '../types/patient'
@@ -169,6 +170,8 @@ function DashboardPage() {
     const { currentUser } = useAuth()
     const [announcements, setAnnouncements] = useState<Announcement[] | null>(null)
     const [myTasks, setMyTasks] = useState<Task[] | null>(null)
+    // 受け持ち患者（明示選択した患者）。サマリカードの人数表示に使う
+    const [assignedPatients, setAssignedPatients] = useState<Patient[] | null>(null)
 
     // 初回に必要データを並列取得（ダッシュボードは複数リソースの集約画面）
     // 取得失敗時は null を空配列に落として Loading ゲートを抜ける。unhandled rejection を避けるため
@@ -180,6 +183,9 @@ function DashboardPage() {
         getMyTasks()
             .then(setMyTasks)
             .catch(() => setMyTasks([]))
+        getAssignedPatients()
+            .then(setAssignedPatients)
+            .catch(() => setAssignedPatients([]))
     }, [])
 
     // 未読お知らせ（表示は最大3件）
@@ -188,18 +194,6 @@ function DashboardPage() {
         [announcements]
     )
     const unreadTop3 = unread.slice(0, 3)
-
-    // 担当患者：自分に割り当てられたタスクから患者をユニーク抽出
-    const myPatients = useMemo<Patient[]>(() => {
-        if (!myTasks) return []
-        const seen = new Map<number, Patient>()
-        myTasks.forEach(t => {
-            if (t.patient && !seen.has(t.patient.id)) {
-                seen.set(t.patient.id, t.patient as Patient)
-            }
-        })
-        return Array.from(seen.values())
-    }, [myTasks])
 
     // 本日のタスク数：自分のタスクのうち、期限が今日のもの
     const todayTaskCount = useMemo(
@@ -220,7 +214,7 @@ function DashboardPage() {
     }, [myTasks])
 
     // 全ての取得が終わるまでは Loading。並列取得なので個別ではなくまとめて判定
-    if (announcements === null || myTasks === null) {
+    if (announcements === null || myTasks === null || assignedPatients === null) {
         return <Loading />
     }
 
@@ -240,8 +234,9 @@ function DashboardPage() {
 
             {/* サマリカード×3：担当患者 / 本日のタスク / 未読お知らせ。それぞれ関連ページへ遷移 */}
             <SummaryGrid>
-                {/* 担当患者は「マイタスク（患者別グルーピング）」に着地。専用の担当患者一覧は作らず、マイタスク側で兼ねる */}
-                <SummaryCard label="担当患者" value={myPatients.length} unit="名" to="/tasks/my-tasks" />
+                {/* 受け持ち患者：シフトで自分が明示選択した患者数。受け持ちビューへ着地（Dashboard からの導線を兼ねる）。
+                    「担当患者（タスク由来）」という紛らわしい名前を避け、受け持ち機能と定義を一致させる */}
+                <SummaryCard label="受け持ち患者" value={assignedPatients.length} unit="名" to="/my-patients" />
                 <SummaryCard label="本日のタスク" value={todayTaskCount} unit="件" to="/tasks/my-tasks" />
                 <SummaryCard label="未読お知らせ" value={unread.length} unit="件" to="/announcements" />
             </SummaryGrid>

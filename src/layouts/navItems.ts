@@ -8,13 +8,15 @@ export type NavItem = {
     label: string  // サイドバーとパンくずで共通の日本語ラベル
 }
 
-// ※順序はサイドバーの表示順（デザインどおり：ダッシュボード → 患者 → お知らせ → 全タスク → マイタスク）
+// ※順序はサイドバーの表示順（ダッシュボード → 患者 → お知らせ → 全タスク → マイタスク → 受け持ち患者）。
+//   「マイタスク」「受け持ち患者」は個人の作業ビュー同士なので末尾に並べてグルーピングする。
 export const NAV_ITEMS: NavItem[] = [
     { path: '/dashboard',      label: 'ダッシュボード' },
     { path: '/patients',       label: '患者一覧' },
     { path: '/announcements',  label: 'お知らせ' },
     { path: '/tasks',          label: '全タスク' },
     { path: '/tasks/my-tasks', label: 'マイタスク' },
+    { path: '/my-patients',    label: '受け持ち患者' },
 ]
 
 // 現在の pathname から、対応する日本語ラベル（＝パンくずの現在画面名）を引く。

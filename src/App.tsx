@@ -10,6 +10,7 @@ import TaskDetailPage from './pages/TaskDetailPage'
 import TaskCreatePage from './pages/TaskCreatePage'
 import AnnouncementDetailPage from './pages/AnnouncementDetailPage'
 import MyTasksPage from './pages/MyTasksPage'
+import MyPatientsPage from './pages/MyPatientsPage'
 import PatientPage from './pages/PatientPage'
 import PatientCreatePage from './pages/PatientCreatePage'
 import PatientDetailPage from './pages/PatientDetailPage'
@@ -49,6 +50,7 @@ function App() {
                     <Route path="/tasks" element={<TasksPage />} />
                     <Route path="/tasks/create" element={<TaskCreatePage />} />
                     <Route path="/tasks/my-tasks" element={<MyTasksPage />} />
+                    <Route path="/my-patients" element={<MyPatientsPage />} />
                     <Route path="/tasks/:id" element={<TaskDetailPage />} />
                     <Route path="/announcements/:id" element={<AnnouncementDetailPage />} />
                     <Route path="/patients" element={<PatientPage />} />

@@ -174,6 +174,17 @@ const iconByPath: Record<string, React.ReactNode> = {
                   stroke="currentColor" strokeWidth="1.6" />
         </svg>
     ),
+    // 受け持ち患者：患者（人）＋ハート＝「自分がケアを受け持つ患者」を表す。
+    // /patients（中央の全身人物）や /tasks（チェック）と見分けられるよう、人＋ハートで差別化する
+    '/my-patients': (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="9" cy="8" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M3.5 19c0-3.3 2.5-5.8 5.5-5.8 1.1 0 2.1.3 3 .9"
+                  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            <path d="M17.6 13.6c.9-1 2.6-.6 2.6.9 0 1.2-1.4 2.1-2.6 3.1-1.2-1-2.6-1.9-2.6-3.1 0-1.5 1.7-1.9 2.6-.9z"
+                  stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+        </svg>
+    ),
 }
 
 export const Sidebar = ({ isOpen, onClose }: Props) => {
@@ -229,8 +240,7 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
 
             {/* 施設情報：現状は固定文言。将来は currentUser の所属情報から出す想定 */}
             <Facility>
-                さくら総合病院<br />
-                3F 内科病棟
+                さくら総合病院
             </Facility>
         </Aside>
     )
