@@ -4,6 +4,7 @@ import { vi } from 'vitest'
 import { ThemeProvider } from 'styled-components'
 import { themeLight } from '../styles/theme'
 import PasswordChangeModal from './PasswordChangeModal'
+import { ToastProvider } from '../contexts/ToastContext'
 import { changePassword } from '../api/users'
 
 // changePassword API をモック化
@@ -15,9 +16,13 @@ vi.mock('../api/users', () => ({
 window.alert = vi.fn()
 
 // styled-components が theme を参照するため ThemeProvider で包むヘルパー。
-// 他テスト（PatientCard.test / LoginPage.test）と同じパターンで揃える。
+// PasswordChangeModal は useToast を使うため ToastProvider でも包む（未提供だと throw する）。
 const renderWithTheme = (ui: React.ReactElement) =>
-    render(<ThemeProvider theme={themeLight}>{ui}</ThemeProvider>)
+    render(
+        <ThemeProvider theme={themeLight}>
+            <ToastProvider>{ui}</ToastProvider>
+        </ThemeProvider>
+    )
 
 describe('PasswordChangeModal', () => {
 
