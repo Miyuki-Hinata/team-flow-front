@@ -42,6 +42,10 @@ function App() {
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
 
+                {/* トップ("/")はダッシュボードへ寄せる。/dashboard は認証必須なので、
+                    未ログインなら PrivateRoute 経由で自動的に /login へ流れる */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
                 {/* ログイン必須のルートをAppLayoutでまとめる */}
                 <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
                     <Route path="/dashboard" element={<DashboardPage />} />
@@ -57,6 +61,10 @@ function App() {
                     <Route path="/patients/:id" element={<PatientDetailPage />} />
                     <Route path="/patients/create" element={<PatientCreatePage />} />
                 </Route>
+
+                {/* 未定義パス（catch-all）はダッシュボードへ寄せる。白画面で行き止まりにしない。
+                    ここも /dashboard 経由なので未ログインなら /login へ流れる */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
         </BrowserRouter>
     )
