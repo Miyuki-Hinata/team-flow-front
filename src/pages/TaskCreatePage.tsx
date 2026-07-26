@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 import type { Project } from '../types/project'
@@ -6,6 +6,7 @@ import type { Patient } from '../types/patient'
 import type { Category } from '../types/category'
 import type { User } from '../types/user'
 import type { Priority, TaskStatus } from '../types/task'
+import { roleLabel, roleOrder } from '../utils/role'
 import { createTask } from '../api/tasks'
 import { projects as fetchProjects } from '../api/projects'
 import { patients as fetchPatients } from '../api/patients'
@@ -106,15 +107,37 @@ const CheckLabel = styled.label`
     cursor: pointer;
 `
 
-// 担当者リスト：チェックボックスを敷き詰め＋折り返し
+// 担当者リストの外枠：部署ごとのセクションを縦に積む器
 const AssigneeList = styled.div`
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: ${props => props.theme.spacing.md};
     padding: ${props => props.theme.spacing.md};
     background: ${props => props.theme.colors.surface.sunken};
     border: 1px solid ${props => props.theme.colors.border.default};
     border-radius: ${props => props.theme.radius.md};
+`
+
+// 部署セクション：見出し ＋ その部署の担当者チェック行
+const DeptSection = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${props => props.theme.spacing.xs};
+`
+
+// 部署見出し
+const DeptHeading = styled.div`
+    font-size: ${props => props.theme.fontSize.sm};
+    font-weight: ${props => props.theme.fontWeight.bold};
+    color: ${props => props.theme.colors.text.secondary};
+`
+
+// その部署の担当者を敷き詰め＋折り返し。見出しの下に少しインデント
+const DeptRow = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: ${props => props.theme.spacing.md};
+    padding-left: ${props => props.theme.spacing.sm};
 `
 
 // 「全員割当のとき担当者リストを薄く見せる」の視覚キュー（機能はそのまま）
@@ -194,6 +217,28 @@ const TaskCreatePage = () => {
         value: String(p.id),
         label: `${p.lastName} ${p.firstName}`,
     }))
+
+    // 担当者を「部署別」にまとめる。各部署内は「職種順」に並べて職種のかたまりも分かるようにする。
+    // 部署は id 昇順（未所属は最後）。→ 誰がどの部署・職種か一目で選べる。
+    const assigneesByDept = useMemo(() => {
+        const NO_DEPT = -1
+        const groups = new Map<number, { name: string; users: User[] }>()
+        userList.forEach(user => {
+            const key = user.department?.id ?? NO_DEPT
+            const name = user.department?.departmentName ?? '未所属'
+            if (!groups.has(key)) groups.set(key, { name, users: [] })
+            groups.get(key)!.users.push(user)
+        })
+        // 部署の並び：id 昇順、未所属は末尾
+        const ordered = Array.from(groups.entries())
+            .sort(([a], [b]) => (a === NO_DEPT ? 1 : b === NO_DEPT ? -1 : a - b))
+            .map(([, v]) => v)
+        // 各部署内：職種順（医師→看護師→…）→ 同姓など安定のため id
+        ordered.forEach(g =>
+            g.users.sort((a, b) => (roleOrder[a.role] - roleOrder[b.role]) || a.id - b.id)
+        )
+        return ordered
+    }, [userList])
 
     return (
         <Column>
@@ -307,16 +352,23 @@ const TaskCreatePage = () => {
                 <FormField label="担当者" htmlFor="task-assignees">
                     <AssigneeListArea $disabled={assignedToAll}>
                         <AssigneeList id="task-assignees">
-                            {userList.map(user => (
-                                <CheckLabel key={user.id}>
-                                    <input
-                                        type="checkbox"
-                                        checked={assigneeIds.includes(user.id)}
-                                        onChange={(e) => handleAssigneeChange(user.id, e.target.checked)}
-                                        disabled={assignedToAll}
-                                    />
-                                    {user.lastName} {user.firstName}
-                                </CheckLabel>
+                            {assigneesByDept.map(group => (
+                                <DeptSection key={group.name}>
+                                    <DeptHeading>{group.name}</DeptHeading>
+                                    <DeptRow>
+                                        {group.users.map(user => (
+                                            <CheckLabel key={user.id}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={assigneeIds.includes(user.id)}
+                                                    onChange={(e) => handleAssigneeChange(user.id, e.target.checked)}
+                                                    disabled={assignedToAll}
+                                                />
+                                                {user.lastName} {user.firstName}（{roleLabel[user.role]}）
+                                            </CheckLabel>
+                                        ))}
+                                    </DeptRow>
+                                </DeptSection>
                             ))}
                         </AssigneeList>
                     </AssigneeListArea>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import type { Patient } from '../types/patient'
@@ -63,6 +63,73 @@ const EmptyWrap = styled.div`
     gap: ${props => props.theme.spacing.md};
 `
 
+// タイムラインの上に置く日付切替バー（今日〜6日後）。狭幅では横スクロール
+const DateBar = styled.div`
+    display: flex;
+    gap: ${props => props.theme.spacing.xs};
+    overflow-x: auto;
+    padding-bottom: ${props => props.theme.spacing.xs};
+`
+
+// 日付チップ：選択中はティール塗り＋白文字、非選択は白背景＋枠線
+const DateChip = styled.button<{ $active: boolean }>`
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 52px;
+    padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
+    border-radius: ${props => props.theme.radius.md};
+    cursor: pointer;
+    font-family: inherit;
+    background: ${props => props.$active ? props.theme.colors.brand.teal : props.theme.colors.surface.raised};
+    color: ${props => props.$active ? props.theme.colors.text.onBrand : props.theme.colors.text.primary};
+    border: 1px solid ${props => props.$active ? props.theme.colors.brand.teal : props.theme.colors.border.default};
+`
+
+// チップ内の曜日（小さめ）と日付
+const DateChipDow = styled.span`
+    font-size: ${props => props.theme.fontSize.xs};
+`
+const DateChipMd = styled.span`
+    font-size: ${props => props.theme.fontSize.sm};
+    font-weight: ${props => props.theme.fontWeight.bold};
+`
+
+// 1日分のセル：上に「今日」バッジ枠、下にチップ。バッジ枠は常に確保して高さを揃える
+const DateCell = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 0 0 auto;
+`
+
+// 「今日」バッジ（ティールの小さなピル）
+const TodayBadge = styled.span`
+    font-size: 10px;
+    line-height: 16px;
+    height: 16px;
+    padding: 0 ${props => props.theme.spacing.sm};
+    border-radius: ${props => props.theme.radius.full};
+    background: ${props => props.theme.colors.brand.teal};
+    color: ${props => props.theme.colors.text.onBrand};
+    font-weight: ${props => props.theme.fontWeight.bold};
+`
+
+// 今日以外のセルで高さを合わせるための空スロット（バッジと同じ高さ）
+const TodayBadgeSlot = styled.span`
+    height: 16px;
+`
+
+// タイムラインタブの中身（日付バー＋タイムライン）を縦に積む
+const TimelineWrap = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${props => props.theme.spacing.md};
+`
+
 const MyPatientsPage = () => {
     const toast = useToast()
 
@@ -79,6 +146,23 @@ const MyPatientsPage = () => {
     // 表示切替：受け持ち患者が多いとタイムラインまで大きくスクロールが要るため、一覧とタイムラインをタブで分ける。
     // デフォルトは「受け持ち患者」（まず誰を受け持つか確認する導線）
     const [activeView, setActiveView] = useState<ViewTab>('patients')
+
+    // タイムラインで表示する日付（既定は今日の 0:00）。日付チップで切り替える
+    const [selectedDate, setSelectedDate] = useState<Date>(() => {
+        const d = new Date()
+        d.setHours(0, 0, 0, 0)
+        return d
+    })
+
+    // 切替候補：今日〜6日後の7日分（向こう1週間）
+    const weekDates = useMemo<Date[]>(() => (
+        Array.from({ length: 7 }, (_, i) => {
+            const d = new Date()
+            d.setHours(0, 0, 0, 0)
+            d.setDate(d.getDate() + i)
+            return d
+        })
+    ), [])
 
     // 初回に現在の受け持ちを取得する
     useEffect(() => {
@@ -141,7 +225,7 @@ const MyPatientsPage = () => {
                 <Tabs
                     items={([
                         { value: 'patients', label: '受け持ち患者', count: assignedPatients.length },
-                        { value: 'timeline', label: '本日のタイムライン' },
+                        { value: 'timeline', label: 'タイムライン' },
                     ]) as TabItem<ViewTab>[]}
                     activeValue={activeView}
                     onChange={setActiveView}
@@ -157,8 +241,32 @@ const MyPatientsPage = () => {
                         ))}
                     </List>
                 ) : (
-                    // 本日のタイムライン：受け持ち患者のタスクを時系列で可視化。取得中は Loading
-                    patientTasks === null ? <Loading /> : <PatientTimeline tasks={patientTasks} />
+                    // タイムライン：日付チップ（今日〜6日後）で表示日を切り替え、選択日のタスクを可視化
+                    <TimelineWrap>
+                        <DateBar>
+                            {weekDates.map((d, i) => {
+                                const dow = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()]
+                                const active = d.getTime() === selectedDate.getTime()
+                                const isToday = i === 0 // weekDates は今日始まりなので先頭が今日
+                                return (
+                                    <DateCell key={d.getTime()}>
+                                        {isToday ? <TodayBadge>今日</TodayBadge> : <TodayBadgeSlot />}
+                                        <DateChip
+                                            type="button"
+                                            $active={active}
+                                            onClick={() => setSelectedDate(d)}
+                                        >
+                                            <DateChipDow>{dow}</DateChipDow>
+                                            <DateChipMd>{d.getMonth() + 1}/{d.getDate()}</DateChipMd>
+                                        </DateChip>
+                                    </DateCell>
+                                )
+                            })}
+                        </DateBar>
+                        {patientTasks === null
+                            ? <Loading />
+                            : <PatientTimeline tasks={patientTasks} date={selectedDate} />}
+                    </TimelineWrap>
                 )}
             </Stack>
         )

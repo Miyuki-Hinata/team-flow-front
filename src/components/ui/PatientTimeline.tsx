@@ -14,6 +14,8 @@ import { EmptyState } from './EmptyState'
 // 取得や受け持ち患者の絞り込みは呼び出し側の責任（PatientCard と同じ分担）。
 type PatientTimelineProps = {
     tasks: Task[]
+    // 表示する日付（その日の 0:00〜23:59 のタスクを並べる）。呼び出し側が切り替える。
+    date: Date
 }
 
 // 時間帯の区切り定義（午前 0-11 / 午後 12-17 / 夜 18-23）
@@ -279,39 +281,47 @@ const UserMiniIcon = () => (
     </svg>
 )
 
-export const PatientTimeline = ({ tasks }: PatientTimelineProps) => {
+export const PatientTimeline = ({ tasks, date }: PatientTimelineProps) => {
     const navigate = useNavigate()
 
-    const startOfToday = new Date()
-    startOfToday.setHours(0, 0, 0, 0)
-    const endOfToday = new Date()
-    endOfToday.setHours(23, 59, 59, 999)
+    // 表示対象日の 0:00〜23:59
+    const startOfDay = new Date(date)
+    startOfDay.setHours(0, 0, 0, 0)
+    const endOfDay = new Date(date)
+    endOfDay.setHours(23, 59, 59, 999)
 
-    // 期限超過：期限が今日より前で、まだ完了していないタスク（DONE は除外）
-    const overdue = tasks
-        .filter(t => t.dueDate && new Date(t.dueDate) < startOfToday && t.taskStatus !== 'DONE')
-        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+    // 選択日が「今日」か（期限超過セクションは今日を見ているときだけ出す）
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const isToday = startOfDay.getTime() === todayStart.getTime()
 
-    // 本日：期限が今日の 0:00〜23:59 に入るタスク
-    const todayTasks = tasks.filter(t => {
+    // 期限超過：今日より前で未完了のタスク（DONE 除外）。※今日を表示中のときだけ意味を持つ
+    const overdue = isToday
+        ? tasks
+            .filter(t => t.dueDate && new Date(t.dueDate) < todayStart && t.taskStatus !== 'DONE')
+            .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+        : []
+
+    // 表示対象日：期限がその日の 0:00〜23:59 に入るタスク
+    const dayTasks = tasks.filter(t => {
         if (!t.dueDate) return false
         const due = new Date(t.dueDate)
-        return due >= startOfToday && due <= endOfToday
+        return due >= startOfDay && due <= endOfDay
     })
 
-    if (overdue.length === 0 && todayTasks.length === 0) {
-        return <EmptyState message="本日のタスクはありません" />
+    if (overdue.length === 0 && dayTasks.length === 0) {
+        return <EmptyState message={isToday ? '本日のタスクはありません' : 'この日のタスクはありません'} />
     }
 
     // タスクを「同時刻(HH:mm)」ごとにまとめる
     const byTime = new Map<string, Task[]>()
-    todayTasks.forEach(t => {
+    dayTasks.forEach(t => {
         const key = formatTime(t.dueDate)
         if (!byTime.has(key)) byTime.set(key, [])
         byTime.get(key)!.push(t)
     })
     // タスクが存在する「時」の集合（この時間には空き目盛りを出さない）
-    const hoursWithTasks = new Set(todayTasks.map(t => new Date(t.dueDate).getHours()))
+    const hoursWithTasks = new Set(dayTasks.map(t => new Date(t.dueDate).getHours()))
 
     // レール上の目盛りを組み立てる：
     //   ・タスクが無い各時（HH）→ 空き目盛り(tick)
@@ -437,7 +447,7 @@ export const PatientTimeline = ({ tasks }: PatientTimelineProps) => {
 
             {/* 本日のタイムライン（空き＝1時間おきの薄い目盛り／タスク＝実時刻＋ドット） */}
             <TimelineArea>
-                <TimelineTitle>本日のタイムライン</TimelineTitle>
+                <TimelineTitle>タイムライン</TimelineTitle>
                 {PERIODS.map(period => {
                     const periodEntries = entries.filter(e => e.hour >= period.startHour && e.hour <= period.endHour)
                     if (periodEntries.length === 0) return null

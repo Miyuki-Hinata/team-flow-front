@@ -5,6 +5,7 @@ import { Card } from './ui/Card'
 import { StatusBadge } from './ui/StatusBadge'
 import { PriorityBadge } from './ui/PriorityBadge'
 import { formatDueDate } from '../utils/task'
+import { roleLabel } from '../utils/role'
 
 type Props = {
     task: Task
@@ -77,8 +78,8 @@ const TaskCard = ({ task }: Props) => {
     // 「患者 ・ カテゴリ」：存在する項目だけを「・」で連結（欠けても崩れないように）
     const subMeta = [patientName, task.category?.categoryName].filter(Boolean).join(' ・ ')
 
-    // 担当者（複数可）は姓を「、」で連結
-    const assigneeText = task.assignees?.map(assignee => assignee.lastName).join('、')
+    // 担当者（複数可）は「姓（職種）」を「、」で連結。職種を添えて医師/看護師などを判別しやすくする
+    const assigneeText = task.assignees?.map(assignee => `${assignee.lastName}（${roleLabel[assignee.role]}）`).join('、')
 
     // 「期限 ・ 担当」の値：存在する項目だけを「・」で連結
     // 「期限 ・ 担当」の値：期限は ISO 文字列を "M/D H:mm" に整形。存在する項目だけを「・」で連結
