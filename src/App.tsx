@@ -14,6 +14,7 @@ import MyPatientsPage from './pages/MyPatientsPage'
 import PatientPage from './pages/PatientPage'
 import PatientCreatePage from './pages/PatientCreatePage'
 import PatientDetailPage from './pages/PatientDetailPage'
+import AdminPage from './pages/AdminPage'
 import { AppLayout} from './layouts/AppLayout'
 
 // ログインしていないと入れないルートのラッパーコンポーネント
@@ -33,6 +34,16 @@ function PrivateRoute({ children }: { children: ReactNode }) {
     }
 
     // ③ログイン済みなら、本来の子コンポーネントを表示
+    return <>{children}</>
+}
+
+// 管理者(admin)以外を弾くラッパー。PrivateRoute の内側で使う前提（認証は済んでいる）。
+// admin でなければダッシュボードへ戻す（＝画面を見せない）。本当の防御はサーバー側(SecurityConfig)。
+function AdminRoute({ children }: { children: ReactNode }) {
+    const { currentUser } = useAuth()
+    if (!currentUser?.admin) {
+        return <Navigate to="/dashboard" replace />
+    }
     return <>{children}</>
 }
 
@@ -60,6 +71,8 @@ function App() {
                     <Route path="/patients" element={<PatientPage />} />
                     <Route path="/patients/:id" element={<PatientDetailPage />} />
                     <Route path="/patients/create" element={<PatientCreatePage />} />
+                    {/* 管理ページ：admin 限定（AdminRoute で非adminはダッシュボードへ） */}
+                    <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
                 </Route>
 
                 {/* 未定義パス（catch-all）はダッシュボードへ寄せる。白画面で行き止まりにしない。

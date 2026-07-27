@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { NAV_ITEMS } from './navItems'
 import { useAnnouncementCount } from '../contexts/AnnouncementCountContext'
+import { useAuth } from '../contexts/AuthContext'
 
 type Props = {
     // lg 未満（off-canvas モード）でのみ意味を持つ開閉状態。lg 以上では常に表示される
@@ -185,6 +186,14 @@ const iconByPath: Record<string, React.ReactNode> = {
                   stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
         </svg>
     ),
+    // 管理：歯車アイコン（設定/管理の定番）
+    '/admin': (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M12 3.5v2M12 18.5v2M4.6 8.3l1.7 1M17.7 14.7l1.7 1M4.6 15.7l1.7-1M17.7 9.3l1.7-1"
+                  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+    ),
 }
 
 export const Sidebar = ({ isOpen, onClose }: Props) => {
@@ -195,6 +204,12 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
     // お知らせの未読件数は AnnouncementCountContext から取得。
     // 既読化した側（AnnouncementsPage 等）が refresh を呼ぶことでバッジが即座に更新される
     const { unreadCount } = useAnnouncementCount()
+
+    // ログインユーザー（admin 判定に使う）
+    const { currentUser } = useAuth()
+
+    // adminOnly の項目（管理）は admin ユーザーのときだけ表示する
+    const visibleNavItems = NAV_ITEMS.filter(item => !item.adminOnly || currentUser?.admin)
 
     const isActive = (itemPath: string): boolean => {
         // より具体的な（長い）パスが他にも一致するなら、そちらを優先させる
@@ -218,7 +233,7 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
 
             <NavList>
                 <NavHeading>メニュー</NavHeading>
-                {NAV_ITEMS.map(item => {
+                {visibleNavItems.map(item => {
                     const active = isActive(item.path)
                     // お知らせ項目にのみ未読バッジを付ける。0 件のときは出さない（存在感で「未対応がない」を伝える）
                     const showBadge = item.path === '/announcements' && unreadCount > 0

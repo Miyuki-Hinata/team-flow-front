@@ -4,12 +4,13 @@
 // 追加/変更時はここだけ直せば、サイドバーの項目もパンくずの現在画面名も自動で追従する。
 
 export type NavItem = {
-    path: string   // ルーティングのパス（前方一致でアクティブ判定に使う）
-    label: string  // サイドバーとパンくずで共通の日本語ラベル
+    path: string        // ルーティングのパス（前方一致でアクティブ判定に使う）
+    label: string       // サイドバーとパンくずで共通の日本語ラベル
+    adminOnly?: boolean // true の項目は admin ユーザーにだけサイドバー表示する
 }
 
-// ※順序はサイドバーの表示順（ダッシュボード → 患者 → お知らせ → 全タスク → マイタスク → 受け持ち患者）。
-//   「マイタスク」「受け持ち患者」は個人の作業ビュー同士なので末尾に並べてグルーピングする。
+// ※順序はサイドバーの表示順（ダッシュボード → 患者 → お知らせ → 全タスク → マイタスク → 受け持ち患者 → 管理）。
+//   「マイタスク」「受け持ち患者」は個人の作業ビュー同士なので並べてグルーピング。管理は末尾（admin限定）。
 export const NAV_ITEMS: NavItem[] = [
     { path: '/dashboard',      label: 'ダッシュボード' },
     { path: '/patients',       label: '患者一覧' },
@@ -17,6 +18,7 @@ export const NAV_ITEMS: NavItem[] = [
     { path: '/tasks',          label: '全タスク' },
     { path: '/tasks/my-tasks', label: 'マイタスク' },
     { path: '/my-patients',    label: '受け持ち患者' },
+    { path: '/admin',          label: '管理', adminOnly: true },
 ]
 
 // 現在の pathname から、対応する日本語ラベル（＝パンくずの現在画面名）を引く。

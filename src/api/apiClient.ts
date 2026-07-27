@@ -36,3 +36,22 @@ export const fetchWithAuth = async (input: RequestInfo, init?: RequestInit): Pro
         },
     })
 }
+
+// レスポンスが失敗(!ok)ならユーザー向けメッセージで throw する共通ヘルパー。
+// 作成/更新/削除など「成否をユーザーに伝えたい」呼び出しでエラー処理を重複させないために使う。
+// ・401 は apiClient 側でログイン画面へ自動遷移するが、一瞬見える可能性に備えて意味を持たせる
+// ・それ以外はサーバー返却の error メッセージを優先、無ければ fallback。空/非JSONでも落ちないよう try/catch
+export const okOrThrow = async (response: Response, fallbackMessage: string): Promise<void> => {
+    if (response.ok) return
+    if (response.status === 401) {
+        throw new Error('セッションが切れました。再度ログインしてください。')
+    }
+    let message = fallbackMessage
+    try {
+        const errorData = await response.json()
+        if (errorData?.error) message = errorData.error
+    } catch {
+        // 空ボディ等で JSON パースに失敗した場合は fallback を使う
+    }
+    throw new Error(message)
+}
