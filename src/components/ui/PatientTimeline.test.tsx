@@ -3,6 +3,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { themeLight } from '../../styles/theme'
 import { PatientTimeline } from './PatientTimeline'
+import type { Task } from '../../types/task'
 import { createMockTask } from '../../test/factories/taskFactory'
 import { createMockPatient } from '../../test/factories/patientFactory'
 
@@ -29,11 +30,14 @@ const LocationProbe = () => {
     return <div data-testid="loc">{location.pathname}</div>
 }
 
-const renderTimeline = (tasks: Parameters<typeof PatientTimeline>[0]['tasks']) =>
+// PatientTimeline は「どの日を表示するか」を props で受け取る（向こう1週間の日付切替）。
+// テストは todayAt/yesterdayAt で今日視点のタスクを組むため、既定の表示日も「今日」に揃える。
+// ルータは MemoryRouter：遷移先を LocationProbe で観測しつつ、jsdom の履歴をテスト間で汚さないため。
+const renderTimeline = (tasks: Task[], date: Date = new Date()) =>
     render(
         <ThemeProvider theme={themeLight}>
             <MemoryRouter initialEntries={['/my-patients']}>
-                <PatientTimeline tasks={tasks} />
+                <PatientTimeline tasks={tasks} date={date} />
                 <LocationProbe />
             </MemoryRouter>
         </ThemeProvider>
@@ -42,6 +46,7 @@ const renderTimeline = (tasks: Parameters<typeof PatientTimeline>[0]['tasks']) =
 describe('PatientTimeline', () => {
     it('期限超過も本日タスクも無ければ空表示を出す', () => {
         renderTimeline([])
+        // 表示日が today のときの空メッセージ（別日を選ぶと「この日の〜」に変わる）
         expect(screen.getByText('本日のタスクはありません')).toBeInTheDocument()
     })
 
@@ -66,7 +71,8 @@ describe('PatientTimeline', () => {
         const task = createMockTask({ id: 3, title: 'リハビリ付き添い', dueDate: todayAt(10, 0) })
         renderTimeline([task])
 
-        expect(screen.getByText('本日のタイムライン')).toBeInTheDocument()
+        // 見出しは日付切替の導入で「タイムライン」に統一された（どの日を見ているかは呼び出し側の日付UIが示す）
+        expect(screen.getByText('タイムライン')).toBeInTheDocument()
         expect(screen.getByText('リハビリ付き添い')).toBeInTheDocument()
     })
 
