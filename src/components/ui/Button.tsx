@@ -54,4 +54,14 @@ export const Button = styled.button<ButtonProps>`
     /* variantが指定されなければ primary を使う（|| で既定値） */
     ${props => variantStyles[props.variant || 'primary']}
     font-weight: ${props => props.theme.fontWeight.bold};
+
+    /* 無効時：押せないことを見た目でも伝える。
+       Input/Select/Checkbox が :disabled を持つのに Button だけ無かったため揃える。
+       variant ごとに背景色が違うので個別に色を指定せず、opacity で一律に弱める
+       （どの variant でも「弱まった」と読み取れる）。
+       cursor も not-allowed にして、押しても反応しない理由を伝える。 */
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 `

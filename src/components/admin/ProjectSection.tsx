@@ -16,10 +16,11 @@ import { projects as fetchProjects, createProject, updateProject, deleteProject 
 // 汎用の MasterSection ではなく専用コンポーネントにする（部署ドロップダウンを持つ）。
 // 構造は MasterSection と同じ（一覧・追加・インライン編集・削除確認）。
 
+// 余白の考え方は MasterSection と同じ（見出し／追加フォーム／一覧を lg で分ける）
 const Wrapper = styled(Card)`
     display: flex;
     flex-direction: column;
-    gap: ${props => props.theme.spacing.md};
+    gap: ${props => props.theme.spacing.lg};
 `
 
 const Title = styled.h2`
@@ -69,6 +70,12 @@ const RowActions = styled.div`
     display: flex;
     gap: ${props => props.theme.spacing.xs};
     flex: 0 0 auto;
+
+    /* margin-left:auto で左側の余りを吸わせ、常に行の右端に寄せる。
+       1行に収まるときは ItemName が伸びて自然に右端へ来るが、
+       幅が狭くて折り返したときは操作ボタンだけの行になり、
+       これが無いと左端に張り付いて他の行とボタン位置が揃わなくなる。 */
+    margin-left: auto;
 `
 
 // 部署一覧は親(AdminPage)が保持して渡す。部署セクションで追加/削除されたら親が取り直して

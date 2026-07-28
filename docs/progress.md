@@ -153,12 +153,53 @@ App Shell（4分割）：
 | 10 | タスク詳細 | `/tasks/:id` | `pages/TaskDetailPage.tsx` | [x] |
 | 11 | タスク編集 | （詳細内インライン） | `pages/TaskDetailPage.tsx` | [x] TaskDetailPage 内の編集モードでインライン編集を実装済み |
 | 12 | パスワード変更モーダル | ヘッダーから起動 | `components/PasswordChangeModal.tsx` | [x] doc: `implementation/PasswordChangeModal.md`（Toast 化 + FormField/Input 適用済み） |
+| — | 管理（admin限定） | `/admin` | `pages/AdminPage.tsx` | [x] doc: `implementation/AdminPage.md`（Issue #20。README の Screens には無い追加画面） |
 
 ### 備考（README の Screens と実ルーティングの差分）
 
 - README の「お知らせ編集(7)」「タスク編集(11)」は独立画面として記載されているが、実装では詳細ページ内のインライン編集。今回は既存構造を踏襲する。
 - 「パスワード変更モーダル(12)」はルートを持たず、ヘッダーのユーザーメニューから起動するモーダル。
 - audit「仕様が曖昧だった箇所」（Dashboard のリンク先不一致 `/mypage` `/my-tasks`、catch-all 無し、権限チェック非一貫、Role 未活用 等）は **Issue #18 の範囲外**。今回は触らず別Issueへ。
+
+---
+
+## Issue #20：管理機能（admin 限定の /admin）
+
+Issue #18（UI整備）の完了後に着手した追加スコープ。「マスタ（部署・カテゴリ・プロジェクト）を admin が追加できるようにしたい」から始まり、ユーザー（職員）管理まで広げた。
+
+### コンポーネント
+
+- [x] **MasterSection** — 名前1項目のマスタ向け汎用CRUD（部署・カテゴリで使い回す）→ `components/admin/MasterSection.tsx`
+- [x] **ProjectSection** — 名前＋所属部署のCRUD（部署ドロップダウンは props で受け取る）→ `components/admin/ProjectSection.tsx`
+- [x] **UserSection** — ユーザー一覧（職種→部署の2階層グルーピング）＋削除 → `components/admin/UserSection.tsx` / doc: `implementation/UserSection.md`
+- [x] **UserFormModal** — ユーザーの追加/編集フォーム（10項目・Modal）→ `components/admin/UserFormModal.tsx` / doc: `implementation/UserFormModal.md`
+- [x] **AdminPage** — 4セクションをタブで切替 → `pages/AdminPage.tsx` / doc: `implementation/AdminPage.md`
+
+### 導線・ガード
+
+- [x] `/admin` ルート＋`AdminRoute`（admin 以外は /dashboard へ）→ `App.tsx`
+- [x] `NavItem` に `adminOnly` を追加し、Sidebar は admin のときだけ「管理」を表示 → `layouts/navItems.ts` / `layouts/Sidebar.tsx`
+
+### 付随して直した既存の不具合
+
+- [x] **`Card` が `className` を転送していなかった** — `styled(Card)` の指定が全て無視され、管理ページの余白が消えていた。`className` を受け取って中の要素へ渡すよう修正。再発防止に `ui/Card.test.tsx` を追加（修正を戻すと落ちることも確認）。
+- [x] **`Button` に `:disabled` のスタイルが無かった** — 無効化しても見た目が変わらず押せることと区別がつかなかった。`opacity: 0.5` + `cursor: not-allowed` を追加（Input/Select/Checkbox と揃えた）。
+- [x] **`ProjectSection` の行が折り返すとボタンが左寄せになる** — `RowActions` に `margin-left: auto` を付け、折り返し後も右端で揃うように。
+- [x] **部署を追加してもプロジェクトの選択肢に出ない** — 部署一覧を `AdminPage` に lift state up し、`onChanged` で取り直す形に。
+
+### バックエンド側（別リポジトリ team-flow）
+
+- [x] マスタの POST/PUT/DELETE を `hasRole("ADMIN")` に（departments / categories / projects）
+- [x] ユーザーの POST `/api/users`・PUT/DELETE `/api/users/*` を `hasRole("ADMIN")` に。※`PUT /api/users/me/password`（自分のパスワード変更）を塞がないよう、`/**` ではなく `/*` を使い、`me/password` は先に `authenticated()` で通す
+- [x] 各 Repository に `findByDeletedAtIsNull` を追加し、一覧GETで論理削除済みを除外
+- [x] `UserRequest` に `role`（職種）を追加。従来はDTOに無く、APIから職種を設定できなかった
+- [x] `UserRequest.password` の `@NotEmpty` を外し、必須チェックを `createUser` に移動。`updateUser` は**空欄なら変更しない**（空文字を encode すると既存パスワードが壊れ、本人がログインできなくなる）
+- [x] デモデータの `level` を見直し、管理者は `admin` のみに（医師全員が管理者になっていたのを是正）
+
+### 残課題
+
+- [ ] ユーザーの物理削除・パスワードリセットの運用（現状は論理削除のみ）
+- [ ] `UserController` 冒頭コメントにある「PUT は自分のIDなら一般ユーザーOK」は未実装（現状 admin のみ）。必要になった時点で判断する
 
 ---
 

@@ -26,10 +26,13 @@ type MasterSectionProps = {
     onChanged?: () => void
 }
 
+// セクション内は「見出し／追加フォーム／一覧」の3ブロック。
+// 一覧の行間(xs)より広い lg を空けることで、この3つが別のかたまりだと余白だけで伝わる。
+// （md だと行間との差が小さく、全体がひと固まりに見えて窮屈になる）
 const Wrapper = styled(Card)`
     display: flex;
     flex-direction: column;
-    gap: ${props => props.theme.spacing.md};
+    gap: ${props => props.theme.spacing.lg};
 `
 
 const Title = styled.h2`
