@@ -38,3 +38,7 @@ docs/learning-log.md
 .env
 .env.local
 .env.*.local
+
+# 個人的な作業メモは *.local.md という名前にして追跡しない
+# （learning-log のように個別指定を増やさず、命名規則で一括除外する）
+docs/*.local.md
