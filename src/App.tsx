@@ -70,7 +70,10 @@ function App() {
                     <Route path="/announcements/:id" element={<AnnouncementDetailPage />} />
                     <Route path="/patients" element={<PatientPage />} />
                     <Route path="/patients/:id" element={<PatientDetailPage />} />
-                    <Route path="/patients/create" element={<PatientCreatePage />} />
+                    {/* 患者登録：admin 限定。サーバー側で POST /api/patients を ADMIN 限定にしたため、
+                        一般ユーザーが URL 直打ちでフォームに到達しても送信時に必ず 403 になる。
+                        入力させてから弾くのではなく画面ごと見せない（/admin と同じ方針） */}
+                    <Route path="/patients/create" element={<AdminRoute><PatientCreatePage /></AdminRoute>} />
                     {/* 管理ページ：admin 限定（AdminRoute で非adminはダッシュボードへ） */}
                     <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
                 </Route>

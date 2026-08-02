@@ -8,6 +8,7 @@ import type { User } from '../types/user'
 import PatientListContainer from '../components/PatientListContainer'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Button } from '../components/ui/Button'
+import { useAuth } from '../contexts/AuthContext'
 
 // 「＋」アイコン：新規作成ボタン用。stroke="currentColor" で親（Button の onBrand 白）を継承する
 const PlusIcon = () => (
@@ -19,6 +20,10 @@ const PlusIcon = () => (
 
 const PatientPage = () => {
     const navigate = useNavigate()
+    // 患者登録は管理者のみ（サーバー側 SecurityConfig で POST /api/patients を ADMIN 限定にしている）。
+    // 一般ユーザーにボタンを見せると、押した先で必ず 403 になる導線を作ってしまうため隠す。
+    // ※これは UX のための出し分けであって防御ではない。本当の防御はサーバー側。
+    const { currentUser } = useAuth()
     const [patients, setPatients] = useState<Patient[]>([])
     const [departments, setDepartments] = useState<Department[]>([])
 
@@ -47,10 +52,12 @@ const PatientPage = () => {
                 title="患者一覧"
                 subtitle={`全 ${patients.length} 名`}
                 action={
-                    <Button variant="primary" onClick={() => navigate('/patients/create')}>
-                        <PlusIcon />
-                        患者を追加
-                    </Button>
+                    currentUser?.admin ? (
+                        <Button variant="primary" onClick={() => navigate('/patients/create')}>
+                            <PlusIcon />
+                            患者を追加
+                        </Button>
+                    ) : undefined
                 }
             />
 
