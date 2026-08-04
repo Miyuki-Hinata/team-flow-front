@@ -24,8 +24,3 @@
 ## 使用した theme トークン
 - `spacing.sm`（セレクト間 gap）
 - ※セレクト自体の見た目は Select 側に委譲
-
-## 面接で説明できるポイント
-- **汎用と専用の使い分け**：値の固定/動的で PrioritySelect（専用）と Select（汎用）を使い分ける判断。
-- **placeholder に fieldName プレフィックス**：デザイン準拠＋未選択時の可読性を両立。
-- **型変換の一元化**：ドメイン(number/null) と HTML(string) の境界を Container/Filter 側で明示的に変換。

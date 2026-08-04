@@ -47,6 +47,12 @@ Column (max-width: 760px, 中央寄せ)
 ### `handleChange` の型 union
 Input と Select の onChange イベント型が異なるため、汎用ハンドラは `React.ChangeEvent<HTMLInputElement | HTMLSelectElement>` で受け取る。既存パターンを維持。
 
+### 土台の合成でフォームを組み立てる
+`FormField × Input/Select` の統一パターンで12入力を並べているが、各行は宣言的で読みやすい。将来のフィールド追加もパターンをコピーするだけ。
+
+### レイアウトの層構造
+AppLayout(1080) → Column(760) → FormCard(padding+gap) → Grid2/Grid3（列） → FormField（1入力）と、責務を層で分けている。
+
 ## 挙動を維持するために気をつけた点
 - **`useState<PatientRequest>` の初期値・全12フィールド不変**
 - **`useEffect` の `fetchDepartments` / `fetchUsers('DOCTOR')` 呼び出し不変**
@@ -66,9 +72,3 @@ Input と Select の onChange イベント型が異なるため、汎用ハン�
 - **`sex` 型の整理**：ドメイン型として `'MALE'|'FEMALE'|'UNKNOWN'` に狭める価値は高いが、表示値の変更＋バックエンドAPIとの整合確認が必要なので別Issue
 - **バリデーション/エラー表示**：`FormField` は既に `error?: string` prop を持つ。将来バリデーション実装時、`FormField` に error を渡すだけで表示できる
 - **ボタンの Enter 送信対応**：`<form onSubmit>` 化は挙動の追加なのでスコープ外（LoginPage と同様）
-
-## 面接で説明できるポイント
-- **土台の合成でフォームを組み立てる**：`FormField × Input/Select` の統一パターンで12入力を並べているが、各行は宣言的で読みやすい。将来のフィールド追加もパターンをコピーするだけ
-- **レイアウトの層構造**：AppLayout(1080) → Column(760) → FormCard(padding+gap) → Grid2/Grid3（列） → FormField（1入力）と、責務を層で分けている
-- **土台の再利用と新規判断**：`ui/Card` は padding が合わないので新設せず、ページローカル FormCard で対応する判断（既存土台に手を入れる影響を最小化）
-- **既存のバグ（sex の型 vs 表示値の齟齬）を「見つけたが今回は温存」した判断**：範囲を守るためにドキュメントに残し、別Issue に切り出す姿勢を説明できる

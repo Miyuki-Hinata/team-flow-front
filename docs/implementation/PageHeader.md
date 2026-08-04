@@ -44,8 +44,3 @@
 ## 判断した点・申し送り
 - **アクション用アイコン（＋マーク SVG）は PageHeader に持たせない**：デザインでは「新規作成」ボタンに `+` の SVG アイコンが付いているが、これはアクション側（Button の中身）の責任として呼び出し側で `<Button><PlusIcon />新規作成</Button>` のように書く方針。PageHeader が特定アクションを想定した作りを持たないことで単一責任を保つ。
 - **audit M 対応**：現状 `TasksPage:18` / `PatientPage:36` / `AnnouncementsPage:34` に同型の素実装が散在。今回は新設のみで、置換は各ページ着手時に順次適用する。
-
-## 面接で説明できるポイント
-- **合成（composition）の徹底**：`action: ReactNode` により、PageHeader は特定のボタン実装に依存せず、あらゆる右アクション（Button / Link / DropdownMenu 等）を受け入れられる。
-- **意味的な HTML**：`h1` を使い、`margin: 0` で既定を打ち消す。デザイン合わせだけでなくアクセシビリティ・SEO 観点でも正しい。
-- **align-items:flex-end** のような些細な指定が「視覚の安定感」を生むという判断の言語化。

@@ -46,9 +46,3 @@
 - **`fieldName` の日本語化**（例：`priority` → `優先度`）：既存も変換していないためそのまま。将来 utils に `fieldNameLabel: Record<string, string>` を追加する形が自然。progress.md 申し送り候補。
 - **`oldValue` / `newValue` の値変換**（例：`HIGH` → `高`）：既存も変換していない。上記と同じく別Issue。バックエンドが日本語ラベルで送ってくる可能性もあり、要確認。
 - **並び替え**：呼び出し側の責任。API が新しい順に返してくる想定だが、将来 `sort((a, b) => b.changedAt - a.changedAt)` を追加する場合は呼び出し側で。
-
-## 面接で説明できるポイント
-- **構造的型付け（Structural Typing）の活用**：`AnnouncementHistory` / `TaskHistory` を変換せず、共通型 `HistoryEntry` として受けられる TypeScript の特性を利用した集約
-- **単一責任**：データ取得・並び替え・空判定を含めず、描画に絞った
-- **既存ユーティリティの再利用**：`formatDueDate` を意味的にほぼ同じ用途で流用（将来汎用化の余地あり）
-- **`aria-hidden` によるアクセシビリティ**：装飾ドットは支援技術で読み上げない

@@ -14,6 +14,7 @@
   - `#9298A6` → `text.muted`
   - `16px` → `fontSize.md`
 - **audit L 対応**：現状「〜ありません」文言が `DashboardPage:20` / `AnnouncementCreatePage:135` / `TaskDetailPage:255` / `PatientDetailPage:254` 等に散在。今回は新設のみ行い、置換は各ページ着手時に順次適用する。
+- **必須 props と任意 props の使い分け**：Loading の `message?` と対比。既定値が意味を持つか（Loading = 常に「読み込み中」）／持たないか（EmptyState = 文脈依存）で判断が分かれる。
 
 ## 判断した点・申し送り
 - **デザインには亜種がある**：`TeamFlow.dc.html` を見ると、メインタイプ（padding:48px・枠あり）以外に、サブタイプ（padding:32px・枠あり）や履歴なしタイプ（padding:24px・枠なし・fontSize:14px）が存在する。今回はメインタイプを EmptyState として実装し、亜種は必要性が明確になったタイミングで props 追加（`size` や `variant`）または別コンポーネント化を検討する（YAGNI）。特に**変更履歴の空表示**は HistoryList 内部の責任として持たせるのが自然なので、EmptyState では扱わない方針。
@@ -24,8 +25,3 @@
 - 余白：`spacing.xxl`（padding = 48px）
 - 角丸：`radius.lg`（12px）
 - 文字：`fontSize.md`（16px）
-
-## 面接で説明できるポイント
-- **必須 props と任意 props の使い分け**：Loading の `message?` と対比。既定値が意味を持つか（Loading = 常に「読み込み中」）／持たないか（EmptyState = 文脈依存）で判断が分かれる。
-- **YAGNI**：亜種（padding 違い、枠なし版）を先取りしない。使う場面が2つ以上出たら props で共通化する、というルール。
-- **トークン厳守の徹底**：デザインの直値（`#9298A6` / `48px` / `12px` 等）を1つも直書きせず、すべて theme に対応させた。

@@ -10,6 +10,9 @@
 - **自動消去 3.2秒**：短すぎると読めず、長すぎると邪魔になる。3〜4秒あたりが業界標準。
 - **`pointer-events: none` をコンテナに**：背後の操作を邪魔しないため。個別カードだけ `pointer-events: auto` で受ける。
 - **クリックで即消える**：ユーザーがすぐ消したいときの UX。
+- **API の粒度設計**：`showToast(type, message)` ではなく `toast.success(message)` にした理由は「呼び出し側の意図（成功/失敗）が読み取りやすい」。
+- **アニメーション**：`keyframes` で右からスライドイン。styled-components の `keyframes` API を活用。
+- **ID 生成**：`Date.now() + Math.random()` で同一ミリ秒での衝突を避け、React key の warning を防いでいる。
 
 ## どのお手本に倣ったか
 - **Modal.tsx**：`isOpen` / `onClose` を持ち、コンポーネント自身が表示判断する分離パターン → トーストも状態を Provider 内に閉じ、外からは命令だけ渡す形にした。
@@ -24,10 +27,3 @@
 - `radius.md` — 角丸
 - `fontSize.sm` — 本文サイズ
 - `lineHeight.normal` — 行間
-
-## 面接で説明できるポイント
-- **Provider パターンで DOM を 1 箇所に集約**：トーストが呼ばれる場所と描画される場所を分離。個別ページに描画責務を持たせない。
-- **`pointer-events` の使い分け**：`fixed` オーバーレイが背後の操作を邪魔しないためのテクニック（コンテナ透過・カード受付）。
-- **API の粒度設計**：`showToast(type, message)` ではなく `toast.success(message)` にした理由は「呼び出し側の意図（成功/失敗）が読み取りやすい」。
-- **アニメーション**：`keyframes` で右からスライドイン。styled-components の `keyframes` API を活用。
-- **ID 生成**：`Date.now() + Math.random()` で同一ミリ秒での衝突を避け、React key の warning を防いでいる。

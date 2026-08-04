@@ -52,7 +52,7 @@ type KanbanBoardProps = {
 - **状態変更には履歴が必要**：タスクのステータス変更は変更履歴に残す必要がある（TaskDetailPage で実装済み）。D&D で変えると「誰がどのタイミングで変えたか」の意識が薄くなる
 - **明示的な操作導線を用意している**：ステータス変更は TaskDetailPage の「ステータス変更バー」で行う（変更すると履歴に記録されます、というヒント表示付き）
 
-将来 D&D を追加する場合は、`@dnd-kit/*` 等のライブラリ導入＋確認ダイアログの併用が前提。
+将来 D&D を追加する場合は、`@dnd-kit/*` 等のライブラリ導入＋確認ダイアログの併用が前提。機能を作らないという判断も、医療現場のドメイン理解に基づく設計判断の一つ。
 
 ### インラインスタイルを全廃
 切り出し前は `style={{ display: 'flex', gap: '16px', border: '1px solid #ccc', padding: '8px' }}` などの直書きだった。theme トークンで置換：
@@ -61,12 +61,15 @@ type KanbanBoardProps = {
 - `padding: 8px` → `spacing.sm`（列見出しとカード間の狭い間隔）／`spacing.md`（列全体の内側 padding）
 
 ### 列見出しの日本語ラベル化
-切り出し前は `{status}` で `CREATED` などの英語がそのまま表示されていたバグを修正。`utils/task.ts` の `statusLabel` から日本語ラベルを引く（未着手／進行中／レビュー待ち／完了）。件数は `Count`（xs / secondary）で控えめに添えた。
+切り出し前は `{status}` で `CREATED` などの英語がそのまま表示されていたバグを修正。`utils/task.ts` の `statusLabel` から日本語ラベルを引く（未着手／進行中／レビュー待ち／完了）。件数は `Count`（xs / secondary）で控えめに添えた。実装漏れの発見と修正を同時にできる、分割設計の副次効果でもある。
 
 ### 列内の空表示（`ui/EmptyState` を使わなかった理由）
 `ui/EmptyState` は `padding: spacing.xxl（48px）` と大きく、狭いカンバン列（`flex: 1 1 200px`）には過剰。KanbanBoard 内部に列向けの控えめな空表示（`padding: md, fontSize: xs, muted`）を持たせた。
 
 これは「単一責任は保ちつつ、局所的な体裁調整はコンポーネント内に閉じ込める」判断。将来 `ui/EmptyState` に `size` prop を追加して共通化する余地はあるが、YAGNI で今はしない。
+
+### props を減らす価値
+`4 個 → 1 個` の props 削減で、呼び出し側のコード量が減り、KanbanBoard のテスト・再利用が容易になった。
 
 ## 使用した theme トークン
 - 余白：`spacing.md`（Board の gap・列の内側 padding）/ `spacing.sm`（列内の gap・カード間）/ `spacing.xs`（Heading の gap）
@@ -83,10 +86,3 @@ type KanbanBoardProps = {
 - 呼び出しを `<KanbanBoard tasks={sortTasks(filteredTasks)} />`／`<KanbanBoard tasks={sortTasks(categoryTasks)} />` に変更（**並び替え済み配列を渡す形**）
 - 未使用になった `TaskStatus` 型 import と `TaskCard` の直接 import を削除
 - **それ以外のロジック**（データ取得・タブ切替・並び替え state・useMemo）**には手を入れていない**
-
-## 面接で説明できるポイント
-- **単一責任の実践**：「渡されたタスクをステータス別の列に並べて表示する」だけに絞り、それ以外のロジックは呼び出し側に返した設計判断
-- **props を減らす価値**：`4 個 → 1 個` の props 削減で、呼び出し側のコード量が減り、KanbanBoard のテスト・再利用が容易になった
-- **コンポーネントの本質を見極める**：グルーピングは「カンバンの定義そのもの」だから内部に、並び替えは「ページの UI 都合」だから外部に、という判断基準
-- **D&D を採用しない意図的な設計**：機能を作らないという判断も、医療現場のドメイン理解に基づく設計。面接では「何を作らなかったか」も語れる
-- **英語ラベルバグの副次修正**：切り出しのついでに `{status}` の生表示（`CREATED` 等）を `statusLabel[status]` で日本語化した。実装漏れの発見と修正を同時にできる分割設計の副次効果
