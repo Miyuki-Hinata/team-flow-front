@@ -1,7 +1,7 @@
 // components/ui/HistoryList.tsx
 import styled from 'styled-components'
 import type { HistoryEntry } from '../../types/historyEntry'
-import { formatDueDate } from '../../utils/task'
+import { formatDueDate, historyValueLabel } from '../../utils/task'
 
 // HistoryList が受け取る props。
 // 履歴は AnnouncementHistory / TaskHistory と互換な HistoryEntry[] を受ける。
@@ -77,8 +77,9 @@ const EmptyMessage = styled.p`
     font-size: ${props => props.theme.fontSize.sm};
 `
 
-// null / 空文字は「(なし)」で表示（既存の生描画のフォールバックを踏襲）
-const displayValue = (value: string | null): string => value ?? '(なし)'
+// null / 空文字は「(なし)」で表示（既存の生描画のフォールバックを踏襲）。
+// enum 名（'CREATED' 等）で保存されている値は historyValueLabel で日本語ラベルに変換する
+const displayValue = (value: string | null): string => historyValueLabel(value) ?? '(なし)'
 
 // HistoryList 本体。
 // 単一責任：「変更履歴の一覧描画」だけを担う。データ取得・並び替えは呼び出し側の責任。

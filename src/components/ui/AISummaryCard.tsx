@@ -2,6 +2,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { Card } from "./Card"
 import { Button } from './Button'
+import { formatDueDate } from '../../utils/task'
 import type { TaskSummaryResponse } from "../../types/taskSummary"
 
 // 呼び出し側から受け取るprops
@@ -75,8 +76,9 @@ export const AISummaryCard = ({ taskSummary, isGenerating, handleGenerateSummary
             {isOpen &&(
                 taskSummary? (
                     <>
+                        {/* generatedAt は ISO 文字列で届くため、履歴と同じ短い日時形式（M/D HH:mm）に整形する */}
                         <Meta>
-                            最終更新：{taskSummary.generatedAt} / 生成者：{taskSummary.generatedByName}
+                            最終更新：{formatDueDate(taskSummary.generatedAt)} / 生成者：{taskSummary.generatedByName}
                         </Meta>
                         <SummaryBody>
                             {taskSummary.summary}

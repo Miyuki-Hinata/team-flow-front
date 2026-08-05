@@ -31,6 +31,9 @@
 ### `null` / 空値のフォールバック
 `displayValue(value)` で `null` を `(なし)` に変換。既存実装のロジックを踏襲。
 
+### 値の日本語化は「既知のトークンに完全一致した場合だけ」（2026-08-06 追加）
+サーバー（TaskHistoryBuilder）は old/new を enum の name（`CREATED` / `HIGH`）や boolean 文字列で保存するため、そのまま出すと「ステータス：CREATED → PROGRESS」と英語が露出していた。`utils/task.ts` の `historyValueLabel` で、`statusLabel` / `priorityLabel`（バッジ・セレクトと同じ一元管理の対応表）に**完全一致した値だけ**を日本語へ変換する。部分一致や自由入力（タイトル・詳細の変更値）まで変換しないための制約。変換表を新設せず既存の対応表を参照することで、文言変更時の修正箇所を1つに保っている。
+
 ## どのお手本に倣ったか
 - **PatientCard**：単一責任・表示のみ・`useTheme` パターンではなく theme トークンを styled 内で参照
 - **PriorityBadge / StatusBadge**：`{値：表示}` のマッピングを別関数で表現するパターン（`displayValue`）
@@ -43,6 +46,6 @@
 - 角丸：`radius.full`（ドット）
 
 ## 判断した点・申し送り
-- **`fieldName` の日本語化**（例：`priority` → `優先度`）：既存も変換していないためそのまま。将来 utils に `fieldNameLabel: Record<string, string>` を追加する形が自然。progress.md 申し送り候補。
-- **`oldValue` / `newValue` の値変換**（例：`HIGH` → `高`）：既存も変換していない。上記と同じく別Issue。バックエンドが日本語ラベルで送ってくる可能性もあり、要確認。
+- ~~**`fieldName` の日本語化**~~：**解決済み（2026-08-06 確認）**。バックエンドの TaskHistoryBuilder が最初から日本語（「ステータス」「優先度」）で保存していたため、フロント側の変換は不要だった。
+- ~~**`oldValue` / `newValue` の値変換**~~：**解決済み（2026-08-06 実装）**。値は enum name で保存されていることを確認し、`historyValueLabel`（utils/task.ts）で表示時に変換する形にした（上記「値の日本語化」参照）。
 - **並び替え**：呼び出し側の責任。API が新しい順に返してくる想定だが、将来 `sort((a, b) => b.changedAt - a.changedAt)` を追加する場合は呼び出し側で。

@@ -39,6 +39,19 @@ export const PRIORITY_OPTIONS = (['HIGH', 'MEDIUM', 'LOW'] as Priority[]).map(va
     label: priorityLabel[value],
 }))
 
+// 変更履歴の old/new 値を表示用の日本語に変換する。
+// サーバー（TaskHistoryBuilder）は enum の name（'CREATED' や 'HIGH'）や boolean の文字列を
+// そのまま保存するため、既知のトークンに一致した場合のみラベルへ置き換える。
+// タイトル・詳細などの自由入力値まで変換しないよう、完全一致だけを対象にする。
+export const historyValueLabel = (value: string | null): string | null => {
+    if (value == null) return value
+    if (value in statusLabel) return statusLabel[value as TaskStatus]
+    if (value in priorityLabel) return priorityLabel[value as Priority]
+    if (value === 'true') return 'はい'
+    if (value === 'false') return 'いいえ'
+    return value
+}
+
 // タスクの期限（ISO 文字列）を日本語風の短い表示に整形する。
 // 例: "2026-11-11T11:11:00" → "11/11 11:11"
 // デザイン準拠（README §8 / TeamFlow.dc.html の期限表示形式）。
