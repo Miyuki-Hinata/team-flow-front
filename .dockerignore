@@ -1,0 +1,31 @@
+# docker build がビルドコンテキスト（Docker へ送るフォルダ一式）に含めないもの。
+# 目的はバックエンド側と同じ：①転送を軽く ②古い成果物・ローカル設定の混入防止 ③秘密情報を焼き込まない
+
+# 依存ライブラリ。数百MB級で最大の除外対象。コンテナ内で npm ci により
+# package-lock.json どおりに新しく入れ直すため、ホスト側のものは持ち込まない
+node_modules/
+
+# ホスト側のビルド成果物。コンテナ内で新しくビルドするため不要
+dist/
+
+# 環境変数ファイル。値はビルド時に外から渡す（Dockerfile の ARG）
+.env
+
+# バージョン管理・IDE・OS のメタデータ
+.git/
+.gitignore
+.claude/
+.DS_Store
+
+# デザイン同期ツールの作業ファイル。アプリのビルドに無関係
+.design-sync/
+.ds-sync/
+ds-bundle/
+
+# ドキュメント類
+docs/
+README.md
+CLAUDE.md
+
+# コンテナ構成ファイル自体
+.dockerignore
