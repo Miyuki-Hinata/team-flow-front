@@ -1,8 +1,11 @@
 import { getAccessToken } from './tokenStore'
 import { fetchWithAuth , API_BASE_URL } from './apiClient'
 import type { AnnouncementRequest } from '../types/announcementRequest'
+import type { Announcement } from '../types/announcement'
 
-export const announcements = async () => {
+// 戻り値の型を明示する。response.json() は Promise<any> のため、
+// 省略すると any が呼び出し側へ連鎖し、型チェックが効かなくなる
+export const announcements = async (): Promise<Announcement[]> => {
     const response = await fetchWithAuth(`${API_BASE_URL}/api/announcements`, {
         method: 'GET',
         headers: {
