@@ -4,6 +4,7 @@ import { vi } from 'vitest'
 import LoginPage from './LoginPage'
 import userEvent from '@testing-library/user-event'
 import { getCurrentUser } from '../api/users'
+import { createMockUser } from '../test/factories/userFactory'
 import { login } from '../api/auth'
 import { ThemeProvider } from 'styled-components'
 import { themeLight } from '../styles/theme'
@@ -85,12 +86,11 @@ describe('LoginPage', () => {
         
         // モック化された login が「成功」を返すように設定
         vi.mocked(login).mockResolvedValue({ token: 'fake-token' })
-        vi.mocked(getCurrentUser).mockResolvedValue({
-            id: 1,
-            loginId: 'admin',
-            lastName: '管理者',
-            firstName: 'ユーザー',
-        } as any)
+        // 部分オブジェクトの as any キャストではなく、ファクトリで完全な User を渡す
+        // （lint の no-explicit-any 対応。型が正しいままテストの意図も読める）
+        vi.mocked(getCurrentUser).mockResolvedValue(
+            createMockUser({ loginId: 'admin', lastName: '管理者', firstName: 'ユーザー' })
+        )
         
         render(
             <ThemeProvider theme={selectedThemeColor}>

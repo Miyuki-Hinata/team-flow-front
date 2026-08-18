@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components'
 import { themeLight } from '../styles/theme'
 import TaskCard from './TaskCard'
 import { createMockTask } from '../test/factories/taskFactory'
+import { createMockPatient } from '../test/factories/patientFactory'
 
 // styled-components が theme を参照するため ThemeProvider で包むヘルパー。
 // PatientCard.test / LoginPage.test / PasswordChangeModal.test と同じパターン。
@@ -39,12 +40,10 @@ describe('TaskCard', () => {
     })
 
     it('患者情報がある時に表示される', () => {
+        // 部分オブジェクトの as any キャストではなく、ファクトリで完全な Patient を渡す
+        // （lint の no-explicit-any 対応。型が正しいままテストの意図も読める）
         const task = createMockTask({
-            patient: {
-                id: 1,
-                lastName: '山田',
-                firstName: '太郎'
-            } as any
+            patient: createMockPatient({ lastName: '山田', firstName: '太郎' })
         })
 
         renderCard(<TaskCard task={task} />)

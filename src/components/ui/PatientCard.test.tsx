@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { PatientCard } from './PatientCard'
 import { createMockPatient } from '../../test/factories/patientFactory'
+import { createMockUser } from '../../test/factories/userFactory'
 import { ThemeProvider } from 'styled-components'
 import { themeLight } from '../../styles/theme'
 
@@ -46,12 +47,10 @@ describe('PatientCard', () => {
     })
     
     it('主治医情報がある時に表示される', () => {
+        // 部分オブジェクトの as any キャストではなく、ファクトリで完全な User を渡す
+        // （lint の no-explicit-any 対応。型が正しいままテストの意図も読める）
         const patient = createMockPatient({
-            doctor: { 
-                id: 1, 
-                lastName: '田中', 
-                firstName: '真一郎' 
-            } as any
+            doctor: createMockUser({ lastName: '田中', firstName: '真一郎', role: 'DOCTOR' })
         })
         
         render(

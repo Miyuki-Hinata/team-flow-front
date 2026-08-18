@@ -1,4 +1,7 @@
 import type { Task } from '../../types/task'
+import type { Project } from '../../types/project'
+import type { Category } from '../../types/category'
+import type { Patient } from '../../types/patient'
 
 /**
  * テスト用のモック Task を作成するファクトリ関数
@@ -18,9 +21,12 @@ export function createMockTask(overrides?: Partial<Task>): Task {
         priority: 'MEDIUM',
         assignedToAll: false,
         dueDate: '',
-        project: null as any,
-        category: null as any,
-        patient: null as any,
+        // 型上は必須だが、「患者に紐付かないタスク」等をテストで作るため既定は null。
+        // any を避けて unknown 経由で明示キャストする
+        // （型定義そのものの是正（| null 化）は別 Issue で扱う）
+        project: null as unknown as Project,
+        category: null as unknown as Category,
+        patient: null as unknown as Patient,
         assignees: [],
         relatedTasks: [],
         createdAt: '2026-06-17T08:00:00',
