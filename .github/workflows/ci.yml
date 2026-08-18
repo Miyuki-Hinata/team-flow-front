@@ -1,0 +1,32 @@
+# フロント CI：push のたびに lint / テスト / 本番ビルドを検証する。
+# build を含める理由：dev と vitest は型検査をしないため、
+# 型エラーが潜伏する（8/13 に実際に起きた）。tsc -b を毎回必ず走らせる。
+name: CI
+
+on: push
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリの中身を runner にコピーする（毎回まっさらなので必須）
+      - uses: actions/checkout@v7
+
+      # Node 24 を入れる。Dockerfile（node:24-alpine）と揃えて
+      # 「検証した環境」と「出荷物を作る環境」の差異をなくす
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      # package-lock.json どおりに依存をゼロから再現（Dockerfile と同じ）
+      - run: npm ci
+
+      # 危険な書き方の検出（未使用 import・フックの誤用など）
+      - run: npm run lint
+
+      # テスト26件。watch モードにならないよう vitest run を直接叩く
+      - run: npx vitest run
+
+      # 型検査（tsc -b）＋ 本番ビルド。8/13 の型エラー潜伏の再発防止
+      - run: npm run build
