@@ -1,5 +1,7 @@
 # TeamFlow フロントエンド
 
+[![Frontend CI](https://github.com/Miyuki-Hinata/team-flow-front/actions/workflows/ci.yml/badge.svg)](https://github.com/Miyuki-Hinata/team-flow-front/actions/workflows/ci.yml)
+
 病棟の多職種チームがタスクを患者単位で共有するアプリ「TeamFlow」の **React フロントエンド**です。
 React 19 + TypeScript + styled-components の SPA で、デザイントークンの一元管理・ライト/ダーク切替・JWT のサイレントリフレッシュ・「お手本 4 型」によるコード一貫性の仕組みを実装しています。
 
@@ -24,6 +26,7 @@ React 19 + TypeScript + styled-components の SPA で、デザイントークン
 | スタイリング | styled-components 6（デザイントークンを `props.theme` 経由で参照） |
 | ルーティング | React Router 7（`PrivateRoute` / `AdminRoute` で多段ガード） |
 | テスト | Vitest 4 + React Testing Library |
+| CI | GitHub Actions（push ごとに lint → vitest → build） |
 
 ---
 
@@ -89,9 +92,14 @@ React 19 + TypeScript + styled-components の SPA で、デザイントークン
 
 ```bash
 npm test           # watch モード
-npx vitest run     # 1回だけ実行（CI 想定）
+npx vitest run     # 1回だけ実行（CI と同じ）
 npm run coverage   # カバレッジレポート
 ```
+
+### CI
+
+push ごとに GitHub Actions で `npm run lint` → `npx vitest run` → `npm run build` を実行します（[`.github/workflows/ci.yml`](./.github/workflows/ci.yml)）。
+テストだけでなく build も含めているのは、型検査が `tsc -b`（build の前段）でしか走らないためです。Vite の開発サーバーと Vitest は速度のため型検査を省くので、型エラーは CI の build ステップで検出します。
 
 ---
 
@@ -151,7 +159,6 @@ npm run dev            # → http://localhost:5173（デモアカウント：nur
 ## 今後の課題
 
 - [#23](https://github.com/Miyuki-Hinata/team-flow/issues/23) Storybook 導入（テーマ切替 decorator つき）と GitHub Pages 公開
-- [#24](https://github.com/Miyuki-Hinata/team-flow/issues/24) 残存する lint エラー（一部 `any`）の解消
 - [#27](https://github.com/Miyuki-Hinata/team-flow/issues/27) E2E テスト（Selenium）
 
 ---
