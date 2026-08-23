@@ -1,7 +1,7 @@
 # フロント CI：push のたびに lint / テスト / 本番ビルドを検証する。
 # build を含める理由：dev と vitest は型検査をしないため、
 # 型エラーが潜伏する（8/13 に実際に起きた）。tsc -b を毎回必ず走らせる。
-name: CI
+name: Frontend CI
 
 on: push
 
