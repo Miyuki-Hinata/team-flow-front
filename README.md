@@ -88,7 +88,7 @@ React 19 + TypeScript + styled-components の SPA で、デザイントークン
 | [PatientCard](./src/components/ui/PatientCard.test.tsx) | 3 | 表示 |
 | [Card](./src/components/ui/Card.test.tsx) | 2 | children 描画・`styled(Card)` 拡張時の className 伝播 |
 
-バックエンド側のテスト（認証・認可の回帰テスト 22 件）は [`team-flow`](https://github.com/Miyuki-Hinata/team-flow) にあります。
+バックエンド側のテスト 22 件（MockMvc による認証・認可の回帰テスト 15 件を含む）は [`team-flow`](https://github.com/Miyuki-Hinata/team-flow) にあります。
 
 ```bash
 npm test           # watch モード
