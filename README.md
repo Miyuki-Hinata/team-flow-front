@@ -158,8 +158,8 @@ npm run dev            # → http://localhost:5173（デモアカウント：nur
 
 ## 今後の課題
 
-- [#23](https://github.com/Miyuki-Hinata/team-flow/issues/23) Storybook 導入（テーマ切替 decorator つき）と GitHub Pages 公開
-- [#27](https://github.com/Miyuki-Hinata/team-flow/issues/27) E2E テスト（Selenium）
+- [#27](https://github.com/Miyuki-Hinata/team-flow/issues/27) E2E テスト（Playwright）
+- [#25](https://github.com/Miyuki-Hinata/team-flow/issues/25) 公開デモ環境のデプロイ
 
 ---
 
