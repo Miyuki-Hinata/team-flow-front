@@ -108,7 +108,11 @@ const Footer = styled.p`
     margin: ${props => props.theme.spacing.lg} 0 0;
     text-align: center;
     font-size: ${props => props.theme.fontSize.xs};
-    color: ${props => props.theme.colors.text.secondary};
+    line-height: 1.8;
+    /* 画面背景は brand.navyDeep（モード共通の濃紺）なので、文字もモード共通の onBrand を
+       薄めて使う。デモアカウントの案内を載せるため text.secondary より視認性を上げた */
+    color: ${props => props.theme.colors.text.onBrand};
+    opacity: 0.8;
 `
 
 // ロゴアイコン（Sidebar と同じ稲妻風 SVG。共通化すると密結合になるためページ内に留める）
@@ -201,7 +205,13 @@ function LoginPage() {
                     </Fields>
                 </FormCard>
 
-                <Footer>さくら総合病院 業務支援システム</Footer>
+                {/* 公開デモの案内。架空でも病院名を名乗ると実在システムと誤認されうるため、
+                    プロダクト名で名乗り、デモアカウントとデータの扱いを明示する */}
+                <Footer>
+                    デモ環境：<code>nurse / admin1234</code>（管理者は <code>admin / admin1234</code>）でログインできます
+                    <br />
+                    データはすべて架空のもので、毎日 4:00 に初期化されます
+                </Footer>
             </Column>
         </Screen>
     )

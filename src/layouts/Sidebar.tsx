@@ -253,9 +253,10 @@ export const Sidebar = ({ isOpen, onClose }: Props) => {
                 })}
             </NavList>
 
-            {/* 施設情報：現状は固定文言。将来は currentUser の所属情報から出す想定 */}
+            {/* 施設情報の枠：公開デモでは架空の病院名を名乗らず（実在システムとの誤認防止）、
+                デモ環境であることを示す。将来は currentUser の所属情報から出す想定 */}
             <Facility>
-                さくら総合病院
+                TeamFlow デモ環境
             </Facility>
         </Aside>
     )
