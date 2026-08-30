@@ -59,16 +59,26 @@ const MenuButton = styled.button`
 `
 
 // パンくず：「病棟管理 / <現在画面>」
+// ヘッダーは常に濃紺（brand.navy・モード共通）なので、上に載せる文字も
+// モード共通の text.onBrand を使う。薄く見せたい部分は opacity で調整する。
+// （以前は border.strong を流用していたが、ダークテーマでは暗色に変わり読めなくなった）
 const Crumb = styled.div`
     display: flex;
     align-items: center;
     gap: ${props => props.theme.spacing.sm};
     font-size: ${props => props.theme.fontSize.sm};
-    color: ${props => props.theme.colors.border.strong}; /* #C5CAD4：暗背景上の淡いグレー */
+    color: ${props => props.theme.colors.text.onBrand};
+`
+
+// 階層の親（「病棟管理」）は薄く、現在ページ（CrumbCurrent）は白のまま。
+// opacity は要素単位で指定する（親に付けると CrumbCurrent まで薄くなるため）
+const CrumbHome = styled.span`
+    opacity: 0.75;
 `
 
 const CrumbSep = styled.span`
-    color: ${props => props.theme.colors.text.secondary};
+    color: ${props => props.theme.colors.text.onBrand};
+    opacity: 0.6;
 `
 
 const CrumbCurrent = styled.span`
@@ -85,7 +95,10 @@ const Right = styled.div`
 // 日付：md 未満では非表示（README §レスポンシブ挙動）
 const Today = styled.span`
     font-size: ${props => props.theme.fontSize.sm};
-    color: ${props => props.theme.colors.border.strong};
+    /* 濃紺ヘッダー上の文字なのでモード共通の onBrand を薄めて使う（border.strong の流用は
+       ダークテーマで暗色になり読めなくなるため廃止） */
+    color: ${props => props.theme.colors.text.onBrand};
+    opacity: 0.75;
 
     @media (max-width: ${props => props.theme.breakpoints.md}) {
         display: none;
@@ -258,7 +271,7 @@ export const AppHeader = ({ onOpenSidebar }: Props) => {
                         </svg>
                     </MenuButton>
                     <Crumb>
-                        <span>病棟管理</span>
+                        <CrumbHome>病棟管理</CrumbHome>
                         {currentLabel && (
                             <>
                                 <CrumbSep>/</CrumbSep>

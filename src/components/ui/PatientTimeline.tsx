@@ -96,10 +96,14 @@ const OverdueRow = styled.div`
     flex-wrap: wrap;
     gap: ${props => props.theme.spacing.sm};
     font-size: ${props => props.theme.fontSize.sm};
-    color: ${props => props.theme.colors.text.primary};
+    /* danger.bg（モード共通の薄い赤）の上に載る文字なので、モード依存の text.primary ではなく
+       ペア運用の danger.main を使う（ダークモードで text.primary が明色になり読めなくなるため） */
+    color: ${props => props.theme.colors.semantic.danger.main};
     cursor: pointer;
     border-radius: ${props => props.theme.radius.md};
-    &:hover { background: ${props => props.theme.colors.surface.raised}; }
+    /* hover もモード共通の薄い赤の上で機能させる。surface.raised はダークで暗色になり
+       赤文字が読めなくなるため、モード非依存の半透明黒で薄く沈ませる */
+    &:hover { background: rgba(0, 0, 0, 0.05); }
 `
 
 const OverdueWhen = styled.span`
